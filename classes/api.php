@@ -53,11 +53,66 @@ class api {
     }
     /** @var int Maximum number of log records to return per request. */
     const LOG_LIMIT = 10000;
+
+    /** @var int Maximum number of intervention records returned per request. */
+    const INTERVENTION_LIMIT = 5000;
     /**
      * Default time window in days when no explicit $since is provided.
      * Prevents unbounded queries on large logstore_standard_log tables.
      */
     const LOG_DEFAULT_DAYS  = 90;
+
+    /**
+     * Fetch intervention rows for a course using bounded database pagination.
+     *
+     * @param int $courseid Course id.
+     * @param int $since Return rows at or after this timestamp, or all retained rows when 0.
+     * @param int $groupid Optional course group id.
+        * @return \stdClass[] Database rows keyed by intervention id.
+     */
+    public static function get_interventions(int $courseid, int $since = 0, int $groupid = 0): array {
+        global $DB;
+
+        $conditions = ['m.courseid = :courseid'];
+        $params = ['courseid' => $courseid];
+        if ($since > 0) {
+            $conditions[] = 'm.timesent >= :since';
+            $params['since'] = $since;
+        }
+        if ($groupid > 0) {
+            $conditions[] = 'EXISTS (
+                SELECT 1
+                  FROM {groups_members} gm
+                 WHERE gm.groupid = :groupid
+                   AND gm.userid = m.userid
+            )';
+            $params['groupid'] = $groupid;
+        }
+
+        return $DB->get_records_sql(
+            "SELECT m.id, m.courseid, m.userid, m.teacherid, m.subject, m.message,
+                    m.timesent, m.status, m.ai_generated, m.intervention_reason, m.send_type,
+                    m.moodle_msgid, m.target_type, m.target_items, m.teacher_note,
+                    m.teacher_note_updated,
+                    s.reason AS snapshot_reason, s.situation AS snapshot_situation,
+                    s.actiontaken AS snapshot_action, s.objective AS snapshot_objective,
+                    s.snapshotdata AS snapshot_data, s.timecreated AS snapshot_timecreated,
+                    u.firstname AS student_firstname, u.lastname AS student_lastname,
+                    u.email AS student_email, u.picture AS student_picture,
+                    u.imagealt AS student_imagealt,
+                    t.firstname AS teacher_firstname, t.lastname AS teacher_lastname
+               FROM {block_mwa_dashboard_messages} m
+          LEFT JOIN {block_mwa_dashboard_snapshot} s ON s.interventionid = m.id
+               JOIN {user} u ON u.id = m.userid
+               JOIN {user} t ON t.id = m.teacherid
+              WHERE " . implode(' AND ', $conditions) . "
+           ORDER BY m.timesent DESC, m.id DESC",
+            $params,
+            0,
+            self::INTERVENTION_LIMIT
+        );
+    }
+
     /**
      * Return the Moodle profile picture URL when the user has a custom picture.
      *
@@ -375,7 +430,7 @@ class api {
         $logs = [];
         foreach ($records as $r) {
             $dt = new \DateTime('@' . $r->timecreated);
-            $dt->setTimezone(new \DateTimeZone('America/Sao_Paulo'));
+            $dt->setTimezone(new \DateTimeZone('America/Merida'));
             $cmid    = (int)($r->contextinstanceid ?? 0);
             $component = (string)($r->component ?? '');
             if ($cmid > 0 && isset($excluded[$cmid]) && strpos($component, 'mod_') === 0) {

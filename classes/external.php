@@ -793,39 +793,13 @@ class external extends \external_api {
     }
 
     public static function get_interventions(int $courseid, int $groupid = 0): array {
-        global $DB;
-
         $params = self::validate_parameters(self::get_interventions_parameters(), compact('courseid', 'groupid'));
         $ctx    = \context_course::instance($params['courseid']);
         self::validate_context($ctx);
         require_capability('block/mwa_dashboard:view', $ctx);
         require_capability('block/mwa_dashboard:manageinterventions', $ctx);
         $groupid = self::validate_group_scope($params['courseid'], $params['groupid'], $ctx);
-        $groupparams = [];
-        $groupsql = '';
-        if ($groupid > 0) {
-            $groupsql = ' AND m.userid IN (SELECT gm.userid FROM {groups_members} gm WHERE gm.groupid = :groupid)';
-            $groupparams['groupid'] = $groupid;
-        }
-
-        $rows = $DB->get_records_sql(
-            "SELECT m.id, m.courseid, m.userid, m.teacherid, m.subject, m.message,
-                     m.timesent, m.status, m.ai_generated, m.intervention_reason, m.send_type, m.moodle_msgid,
-                    m.target_type, m.target_items, m.teacher_note, m.teacher_note_updated,
-                     s.reason AS snapshot_reason, s.situation AS snapshot_situation,
-                     s.actiontaken AS snapshot_action, s.objective AS snapshot_objective,
-                     s.snapshotdata AS snapshot_data, s.timecreated AS snapshot_timecreated,
-                     u.firstname AS student_firstname, u.lastname AS student_lastname, u.email AS student_email,
-                     u.picture AS student_picture, u.imagealt AS student_imagealt,
-                     t.firstname AS teacher_firstname, t.lastname AS teacher_lastname
-                FROM {block_mwa_dashboard_messages} m
-          LEFT JOIN {block_mwa_dashboard_snapshot} s ON s.interventionid = m.id
-               JOIN {user} u ON u.id = m.userid
-               JOIN {user} t ON t.id = m.teacherid
-              WHERE m.courseid = :courseid" . $groupsql . "
-              ORDER BY m.timesent DESC",
-            array_merge(['courseid' => $params['courseid']], $groupparams)
-        );
+        $rows = api::get_interventions($params['courseid'], 0, $groupid);
 
         $records = [];
         foreach ($rows as $r) {
