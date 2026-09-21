@@ -570,6 +570,81 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
         send();
     }
 
+    function hasClassData(){
+        var state=((w.MWADashboard||{}).state)||{};
+        return !!((state.logs&&state.logs.length) || (state.grades&&state.grades.length) ||
+            (state.students&&state.students.length));
+    }
+
+    function directChatDataLoad(){
+        var cfg=Store.getConfig?Store.getConfig():{};
+        var courseid=parseInt(cfg.courseid||0,10);
+        var groupid=parseInt(cfg.groupid||0,10);
+        if(courseid<=0){
+            return Promise.reject(new Error('Dashboard data load skipped: invalid courseid '+courseid));
+        }
+        var requests=[
+            {name:'block_mwa_dashboard_get_logs', args:{courseid:courseid,since:0,groupid:groupid}},
+            {name:'block_mwa_dashboard_get_grades', args:{courseid:courseid,groupid:groupid}}
+        ];
+        return Promise.all(requests.map(function(request){
+            return Store.callAction(request.name,request.args).then(function(result){
+                return {name:request.name, result:result||{}};
+            }).catch(function(error){
+                console.error('[MWA Chat] AJAX endpoint failed:',request.name,{
+                    courseid:courseid,groupid:groupid,error:error
+                });
+                return {name:request.name,result:{},error:error};
+            });
+        })).then(function(results){
+            var failed=results.filter(function(item){return item.error;});
+            var dashboard=w.MWADashboard;
+            if(dashboard&&typeof dashboard.receiveData==='function'){
+                dashboard.receiveData({
+                    type:'mwa-data',
+                    logs:results[0].result.logs||'[]',
+                    logsCount:results[0].result.count||0,
+                    grades:results[1].result.grades||'[]',
+                    gradesCount:results[1].result.count||0
+                });
+            }
+            if(failed.length||!hasClassData()){
+                var detail=failed.map(function(item){return item.name;}).join(', ')||'empty response';
+                console.error('[MWA Chat] Class data unavailable after AJAX load:',{
+                    courseid:courseid,groupid:groupid,failedEndpoints:detail,
+                    logsCount:results[0].result.count||0,gradesCount:results[1].result.count||0
+                });
+                throw new Error('Class data unavailable: '+detail);
+            }
+            return true;
+        });
+    }
+
+    function ensureChatData(){
+        if(hasClassData())return Promise.resolve(true);
+        var load=w.MWAEnsureDashboardData||w.MWAReloadData;
+        var primary=typeof load==='function'?Promise.resolve(load(true)):Promise.resolve(false);
+        return primary.then(function(ready){
+            return ready!==false&&hasClassData()?true:directChatDataLoad();
+        }).catch(function(error){
+            console.error('[MWA Chat] Shared dashboard loader failed; using direct endpoint fallback:',error);
+            return directChatDataLoad();
+        });
+    }
+
+    function showDataLoadError(error){
+        var message=tr('chat_load_data_error','No se pudieron cargar los datos de la clase. Revise la consola del navegador para identificar el endpoint con problemas.');
+        console.error('[MWA Chat] '+message,error);
+        var conv=getCur();
+        if(conv){
+            conv.messages.push({role:'assistant',content:message});
+            renderMessages();
+        }else{
+            var status=$('chatConvSub');
+            if(status)status.textContent=message;
+        }
+    }
+
     function send(){
         if(BUSY)return;
         var input=$('chatInput')||$('chatInputEl');
@@ -581,28 +656,16 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
             alert(tr('ai_unavailable_message','🔒 Os recursos de Inteligência Artificial estão indisponíveis. Configure uma chave de API válida na administração do MWA.'));
             return;
         }
-        var state=((w.MWADashboard||{}).state)||{};
-        if(!(state.logs&&state.logs.length) && !(state.grades&&state.grades.length) &&
-            !(state.students&&state.students.length)){
+        if(!hasClassData()){
             if (DATA_RETRYING) return;
             DATA_RETRYING = true;
-            var load = w.MWAEnsureDashboardData || w.MWAReloadData;
-            if (typeof load !== 'function') {
+            ensureChatData().then(function() {
                 DATA_RETRYING = false;
-                alert(tr('chat_load_data_first','Carregue os dados da turma primeiro.'));
-                return;
-            }
-            load(true).then(function(ready) {
-                DATA_RETRYING = false;
-                if (ready === false) {
-                    alert(tr('chat_load_data_first','No se pudieron cargar los datos de la clase. Intente actualizar nuevamente.'));
-                    return;
-                }
                 render();
                 send();
-            }).catch(function() {
+            }).catch(function(error) {
                 DATA_RETRYING = false;
-                alert(tr('chat_load_data_first','No se pudieron cargar los datos de la clase. Intente actualizar nuevamente.'));
+                showDataLoadError(error);
             });
             return;
         }
@@ -668,7 +731,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
     }
 
     function updateContextChips(){
-        var el=$('chatContextChips');if(!el)return;
+        var el=$('chatContextChips');if(!el)return Promise.resolve();
         var cfg=Store.getConfig?Store.getConfig():{};
         var state=((w.MWADashboard||{}).state)||{};
         var logs=state.logs||[];
@@ -702,11 +765,11 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
         function reloadClassData(){
             var button=$('chatReloadBtn');
             var label=$('chatReloadLabel');
-            var loader=w.MWAReloadData || w.MWAEnsureDashboardData;
+            var loader=directChatDataLoad;
             if(typeof loader!=='function')return;
             if(button){button.disabled=true;button.setAttribute('aria-busy','true');}
             if(label)label.textContent=tr('chat_reloading_data','Actualizando datos de clase...');
-            Promise.resolve(loader(true)).then(function(){
+            Promise.resolve(loader()).then(function(){
                 updateContextChips();
                 render();
             }).catch(function(){
@@ -785,7 +848,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
         if(newBtn)newBtn.addEventListener('click',newConv);
     }
 
-    w.MWAChat={render:render,send:send};
+    w.MWAChat={render:render,send:send,ensureData:ensureChatData};
 
     })();
     return w.MWAChat;

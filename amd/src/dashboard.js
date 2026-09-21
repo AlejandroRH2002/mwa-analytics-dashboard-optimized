@@ -67,16 +67,27 @@ define([
             }
         ]);
 
-        var safeCall = function(call) {
+        var safeCall = function(call, endpoint) {
             return call.then(function(result) {
-                return {ok: true, value: result || {}};
+                var value=result||{};
+                if(!value.logs&&endpoint==='block_mwa_dashboard_get_logs'){
+                    console.error('[MWA Dashboard] Empty logs response:',{endpoint:endpoint,courseid:courseid,groupid:groupid,response:value});
+                }
+                if(!value.grades&&endpoint==='block_mwa_dashboard_get_grades'){
+                    console.error('[MWA Dashboard] Empty grades response:',{endpoint:endpoint,courseid:courseid,groupid:groupid,response:value});
+                }
+                return {ok: true, value: value};
             }).catch(function(error) {
-                Log.error('block_mwa_dashboard/dashboard: one data source failed');
+                console.error('[MWA Dashboard] AJAX endpoint failed:',endpoint,{courseid:courseid,groupid:groupid,error:error});
+                Log.error('block_mwa_dashboard/dashboard: one data source failed: '+endpoint);
                 Log.error(error);
-                return {ok: false, value: {}, error: error};
+                return {ok: false, value: {}, error: error, endpoint:endpoint};
             });
         };
-        activeLoad = Promise.all([safeCall(calls[0]), safeCall(calls[1])]).then(function(results) {
+        activeLoad = Promise.all([
+            safeCall(calls[0],'block_mwa_dashboard_get_logs'),
+            safeCall(calls[1],'block_mwa_dashboard_get_grades')
+        ]).then(function(results) {
             var dashboard = Store.getModule('MWADashboard');
             var logsResult = results[0].value;
             var gradesResult = results[1].value;
