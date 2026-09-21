@@ -116,8 +116,18 @@ define([
     var init = function(params) {
         params = params || {};
         var config = params.config || {};
-        var courseid = params.courseid ? parseInt(params.courseid, 10) : parseInt(config.courseid || 0, 10);
+        var root = document.getElementById('block-mwa-dashboard-app');
+        var domcourseid = root && root.getAttribute('data-courseid');
+        var courseid = params.courseid ? parseInt(params.courseid, 10) :
+            parseInt(config.courseid || domcourseid || 0, 10);
         var groupid = parseInt(config.groupid || 0, 10);
+        if (!courseid || courseid <= 0) {
+            console.error('[MWA Dashboard] Invalid course id before AJAX requests:', {
+                paramsCourseid: params.courseid,
+                configCourseid: config.courseid,
+                domCourseid: domcourseid,
+            });
+        }
 
         Store.configure(config, params.strings || {}, callAction);
         DashboardApp.init(config);

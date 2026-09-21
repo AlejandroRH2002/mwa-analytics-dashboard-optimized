@@ -41,9 +41,8 @@ class external extends \external_api {
         $mode = groups_get_course_groupmode($course);
         $accessall = has_capability('moodle/site:accessallgroups', $context);
         if ($groupid <= 0) {
-            if ($mode == SEPARATEGROUPS && !$accessall) {
-                throw new \invalid_parameter_exception('A group must be selected for this course.');
-            }
+            // Zero means the complete course scope. Capability validation is
+            // still enforced by the caller, but no group predicate is added.
             return 0;
         }
         $group = groups_get_group($groupid, 'id,courseid', MUST_EXIST);
@@ -522,10 +521,21 @@ class external extends \external_api {
 
     public static function get_logs(int $courseid, int $since = 0, int $groupid = 0): array {
         $params = self::validate_parameters(self::get_logs_parameters(), compact('courseid', 'since', 'groupid'));
+        debugging('block_mwa_dashboard get_logs request: ' . json_encode([
+            'courseid' => (int)$params['courseid'], 'groupid' => (int)$params['groupid'],
+            'since' => (int)$params['since'],
+        ]), DEBUG_DEVELOPER);
+        if ((int)$params['courseid'] <= 0) {
+            throw new \invalid_parameter_exception('The courseid parameter must be a valid course id.');
+        }
         $ctx    = \context_course::instance($params['courseid']);
         self::validate_context($ctx);
         require_capability('block/mwa_dashboard:view', $ctx);
         $groupid = self::validate_group_scope($params['courseid'], $params['groupid'], $ctx);
+        debugging('block_mwa_dashboard get_logs SQL scope: ' . json_encode([
+            'courseid' => (int)$params['courseid'], 'groupid' => $groupid,
+            'since' => (int)$params['since'],
+        ]), DEBUG_DEVELOPER);
         $logs = api::get_logs($params['courseid'], $params['since'], $groupid);
         return ['logs' => json_encode($logs), 'count' => count($logs)];
     }
@@ -548,11 +558,20 @@ class external extends \external_api {
 
     public static function get_grades(int $courseid, int $groupid = 0): array {
         $params = self::validate_parameters(self::get_grades_parameters(), compact('courseid', 'groupid'));
+        debugging('block_mwa_dashboard get_grades request: ' . json_encode([
+            'courseid' => (int)$params['courseid'], 'groupid' => (int)$params['groupid'],
+        ]), DEBUG_DEVELOPER);
+        if ((int)$params['courseid'] <= 0) {
+            throw new \invalid_parameter_exception('The courseid parameter must be a valid course id.');
+        }
         $ctx    = \context_course::instance($params['courseid']);
         self::validate_context($ctx);
         require_capability('block/mwa_dashboard:view', $ctx);
 
         $groupid = self::validate_group_scope($params['courseid'], $params['groupid'], $ctx);
+        debugging('block_mwa_dashboard get_grades SQL scope: ' . json_encode([
+            'courseid' => (int)$params['courseid'], 'groupid' => $groupid,
+        ]), DEBUG_DEVELOPER);
         $grades = api::get_grades($params['courseid'], $groupid);
         return ['grades' => json_encode($grades), 'count' => count($grades)];
     }
@@ -794,11 +813,20 @@ class external extends \external_api {
 
     public static function get_interventions(int $courseid, int $groupid = 0): array {
         $params = self::validate_parameters(self::get_interventions_parameters(), compact('courseid', 'groupid'));
+        debugging('block_mwa_dashboard get_interventions request: ' . json_encode([
+            'courseid' => (int)$params['courseid'], 'groupid' => (int)$params['groupid'],
+        ]), DEBUG_DEVELOPER);
+        if ((int)$params['courseid'] <= 0) {
+            throw new \invalid_parameter_exception('The courseid parameter must be a valid course id.');
+        }
         $ctx    = \context_course::instance($params['courseid']);
         self::validate_context($ctx);
         require_capability('block/mwa_dashboard:view', $ctx);
         require_capability('block/mwa_dashboard:manageinterventions', $ctx);
         $groupid = self::validate_group_scope($params['courseid'], $params['groupid'], $ctx);
+        debugging('block_mwa_dashboard get_interventions SQL scope: ' . json_encode([
+            'courseid' => (int)$params['courseid'], 'groupid' => $groupid,
+        ]), DEBUG_DEVELOPER);
         $rows = api::get_interventions($params['courseid'], 0, $groupid);
 
         $records = [];

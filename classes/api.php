@@ -72,6 +72,9 @@ class api {
      */
     public static function get_interventions(int $courseid, int $since = 0, int $groupid = 0): array {
         global $DB;
+        debugging('block_mwa_dashboard api::get_interventions SQL parameters: ' . json_encode([
+            'courseid' => $courseid, 'groupid' => $groupid, 'since' => $since,
+        ]), DEBUG_DEVELOPER);
 
         $conditions = ['m.courseid = :courseid'];
         $params = ['courseid' => $courseid];
@@ -364,9 +367,15 @@ class api {
      */
     public static function get_logs(int $courseid, int $since = 0, int $groupid = 0): array {
         global $DB;
+        debugging('block_mwa_dashboard api::get_logs SQL parameters: ' . json_encode([
+            'courseid' => $courseid, 'groupid' => $groupid, 'since' => $since,
+        ]), DEBUG_DEVELOPER);
         if ($since <= 0) {
             $since = time() - (self::LOG_DEFAULT_DAYS * DAYSECS);
         }
+        debugging('block_mwa_dashboard api::get_logs effective parameters: ' . json_encode([
+            'courseid' => $courseid, 'groupid' => $groupid, 'since' => $since,
+        ]), DEBUG_DEVELOPER);
         $excluded = array_flip(self::get_excluded_cmids($courseid));
         $namemap = self::build_cm_name_map($courseid);
         foreach ($excluded as $cmid => $unused) {
@@ -744,6 +753,9 @@ class api {
      */
     public static function get_grades(int $courseid, int $groupid = 0): array {
         global $DB, $CFG;
+        debugging('block_mwa_dashboard api::get_grades SQL parameters: ' . json_encode([
+            'courseid' => $courseid, 'groupid' => $groupid,
+        ]), DEBUG_DEVELOPER);
         require_once($CFG->libdir . '/gradelib.php');
         // Keep the participant roster independent from grade items and logs.
         $context = \context_course::instance($courseid);
