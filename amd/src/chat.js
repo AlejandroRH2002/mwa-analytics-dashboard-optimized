@@ -113,6 +113,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
     var CONVS     = [];
     var CUR_ID    = null;
     var BUSY      = false;
+    var DATA_RETRYING = false;
     var _initDone = false;
 
     function save(){
@@ -583,7 +584,26 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
         var state=((w.MWADashboard||{}).state)||{};
         if(!(state.logs&&state.logs.length) && !(state.grades&&state.grades.length) &&
             !(state.students&&state.students.length)){
-            alert(tr('chat_load_data_first','Carregue os dados da turma primeiro.'));
+            if (DATA_RETRYING) return;
+            DATA_RETRYING = true;
+            var load = w.MWAEnsureDashboardData || w.MWAReloadData;
+            if (typeof load !== 'function') {
+                DATA_RETRYING = false;
+                alert(tr('chat_load_data_first','Carregue os dados da turma primeiro.'));
+                return;
+            }
+            load(true).then(function(ready) {
+                DATA_RETRYING = false;
+                if (ready === false) {
+                    alert(tr('chat_load_data_first','No se pudieron cargar los datos de la clase. Intente actualizar nuevamente.'));
+                    return;
+                }
+                render();
+                send();
+            }).catch(function() {
+                DATA_RETRYING = false;
+                alert(tr('chat_load_data_first','No se pudieron cargar los datos de la clase. Intente actualizar nuevamente.'));
+            });
             return;
         }
 

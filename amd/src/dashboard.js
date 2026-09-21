@@ -40,6 +40,7 @@ define([
     };
     var lastLoadAt = 0;
     var activeLoad = null;
+    var dataReady = null;
 
     
     var deliverError = function(err) {
@@ -135,6 +136,29 @@ define([
 
         
         window.MWAReloadData = refreshDashboardData;
+
+        window.MWAEnsureDashboardData = function() {
+            var dashboard = Store.getModule('MWADashboard');
+            var state = dashboard && dashboard.state ? dashboard.state : {};
+            var hasData = (state.logs && state.logs.length) ||
+                (state.grades && state.grades.length) ||
+                (state.students && state.students.length);
+            if (hasData) {
+                return Promise.resolve(true);
+            }
+            if (!dataReady) {
+                dataReady = refreshDashboardData(true).then(function() {
+                    var current = Store.getModule('MWADashboard');
+                    var currentState = current && current.state ? current.state : {};
+                    return !!((currentState.logs && currentState.logs.length) ||
+                        (currentState.grades && currentState.grades.length) ||
+                        (currentState.students && currentState.students.length));
+                }).finally(function() {
+                    dataReady = null;
+                });
+            }
+            return dataReady;
+        };
 
         setTimeout(function() {
             window.addEventListener('pageshow', function(event) {

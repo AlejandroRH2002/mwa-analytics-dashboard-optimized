@@ -332,6 +332,7 @@ define([], function() {
         defineFacadeProperty(facade, 'toggleSelectPriority', function() { return handlers.toggleSelectPriority; }, function(value) { handlers.toggleSelectPriority = value; });
         defineFacadeProperty(facade, 'openBulkEmail', function() { return handlers.openBulkEmail; }, function(value) { handlers.openBulkEmail = value; });
         defineFacadeProperty(facade, 'MWAReloadData', function() { return window.MWAReloadData; }, function(value) { window.MWAReloadData = value; });
+        defineFacadeProperty(facade, 'MWAEnsureDashboardData', function() { return window.MWAEnsureDashboardData; }, function(value) { window.MWAEnsureDashboardData = value; });
         facade.location = window.location;
         facade.history = window.history;
         facade.URL = window.URL;
