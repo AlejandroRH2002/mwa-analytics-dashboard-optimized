@@ -1078,8 +1078,8 @@ class dashboard_page implements renderable, templatable {
             'pl_prompt_format', 'pl_prompt_trail_inst', 'pl_prompt_rhythm_inst',
             'pl_prompt_style_inst', 'pl_prompt_action_inst', 'pl_prompt_active', 'pl_prompt_rules',
             'pl_copy_header', 'pl_copied', 'pl_empty_response',
-            'chat_history', 'chat_new_conv', 'chat_context_label', 'chat_assistant_name', 'chat_no_data_sub', 'chat_data_ready', 'chat_input_placeholder', 'chat_no_convs', 'chat_welcome_data', 'chat_welcome_nodata', 'chat_sug1', 'chat_sug2', 'chat_sug3', 'chat_sug4', 'chat_sug5', 'chat_sug6', 'chat_load_data_first', 'chat_no_reply', 'chat_error', 'chat_no_data',
-            'chat_unknown_course', 'chat_all_period', 'chat_ia_not_configured', 'chat_ia_not_configured_alert',
+            'chat_history', 'chat_new_conv', 'chat_context_label', 'chat_assistant_name', 'chat_no_data_sub', 'chat_data_ready', 'chat_input_placeholder', 'chat_no_convs', 'chat_welcome_data', 'chat_welcome_nodata', 'chat_sug1', 'chat_sug2', 'chat_sug3', 'chat_sug4', 'chat_sug5', 'chat_sug6', 'chat_load_data_first', 'chat_no_reply', 'chat_error', 'chat_no_data', 'chat_reload_data', 'chat_reloading_data', 'chat_reload_error', 'chat_load_data_error',
+            'chat_unknown_course', 'chat_all_period', 'chat_ia_not_configured', 'chat_ia_not_configured_alert', 'chat_lang_instr_pt', 'chat_lang_instr_es',
             'ai_unavailable_message',
             // ── Engagement prediction tab ──
             'ev_low_part', 'ev_never_access', 'ev_med_part', 'ev_high_part', 'ev_avg_score',

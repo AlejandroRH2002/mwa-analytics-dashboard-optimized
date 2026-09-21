@@ -409,5 +409,10 @@ function xmldb_block_mwa_dashboard_upgrade($oldversion) {
         upgrade_block_savepoint(true, 2026092100, 'mwa_dashboard');
     }
 
+    if ($oldversion < 2026092101) {
+        // Register the asynchronous dashboard language/configuration service.
+        upgrade_block_savepoint(true, 2026092101, 'mwa_dashboard');
+    }
+
     return true;
 }

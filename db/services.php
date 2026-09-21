@@ -33,6 +33,14 @@ $functions = [
         'ajax'          => true,
         'loginrequired' => true,
     ],
+    'block_mwa_dashboard_get_dashboard_strings' => [
+        'classname'     => 'block_mwa_dashboard\\external',
+        'methodname'    => 'get_dashboard_strings',
+        'description'   => 'Get dashboard language strings',
+        'type'          => 'read',
+        'ajax'          => true,
+        'loginrequired' => true,
+    ],
     'block_mwa_dashboard_get_grades' => [
         'classname'     => 'block_mwa_dashboard\external',
         'methodname'    => 'get_grades',

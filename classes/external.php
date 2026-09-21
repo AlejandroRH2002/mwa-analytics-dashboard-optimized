@@ -547,6 +547,37 @@ class external extends \external_api {
         ]);
     }
 
+    /** Return dashboard UI strings asynchronously, avoiding a large AMD init payload. */
+    public static function get_dashboard_strings_parameters() {
+        return new \external_function_parameters([
+            'courseid' => new \external_value(PARAM_INT, 'Course ID'),
+        ]);
+    }
+
+    public static function get_dashboard_strings(int $courseid): array {
+        $params = self::validate_parameters(self::get_dashboard_strings_parameters(), compact('courseid'));
+        if ($params['courseid'] <= 0) {
+            throw new \invalid_parameter_exception('The courseid parameter must be a valid course id.');
+        }
+        $context = \context_course::instance($params['courseid']);
+        self::validate_context($context);
+        require_capability('block/mwa_dashboard:view', $context);
+        $dashboard = new \block_mwa_dashboard\output\dashboard_page($params['courseid']);
+        return [
+            'strings' => json_encode($dashboard->get_strings(), JSON_UNESCAPED_UNICODE),
+            'language' => current_language(),
+            'ia_enabled' => \block_mwa_dashboard\ai\client::is_configured(),
+        ];
+    }
+
+    public static function get_dashboard_strings_returns() {
+        return new \external_single_structure([
+            'strings' => new \external_value(PARAM_RAW, 'Dashboard language strings'),
+            'language' => new \external_value(PARAM_TEXT, 'Current language'),
+            'ia_enabled' => new \external_value(PARAM_BOOL, 'Whether AI is configured'),
+        ]);
+    }
+
     // -- get_grades -------------------------------------------------------
 
     public static function get_grades_parameters() {

@@ -121,6 +121,11 @@ define([
         var courseid = params.courseid ? parseInt(params.courseid, 10) :
             parseInt(config.courseid || domcourseid || 0, 10);
         var groupid = parseInt(config.groupid || 0, 10);
+        try {
+            groupid = parseInt(new URL(window.location.href).searchParams.get('group') || groupid, 10) || 0;
+        } catch (error) {
+            console.error('[MWA Dashboard] Could not read group from URL:', error);
+        }
         if (!courseid || courseid <= 0) {
             console.error('[MWA Dashboard] Invalid course id before AJAX requests:', {
                 paramsCourseid: params.courseid,
@@ -129,8 +134,26 @@ define([
             });
         }
 
-        Store.configure(config, params.strings || {}, callAction);
-        DashboardApp.init(config);
+        var bootstrap = callAction('block_mwa_dashboard_get_dashboard_strings', {courseid: courseid})
+            .then(function(result) {
+                var strings = {};
+                try {
+                    strings = JSON.parse(result.strings || '{}');
+                } catch (error) {
+                    console.error('[MWA Dashboard] Could not parse localized strings:', error);
+                }
+                config.courseid = courseid;
+                config.groupid = groupid;
+                config.language = result.language || 'en';
+                config.ia_enabled = !!result.ia_enabled;
+                Store.configure(config, strings, callAction);
+                DashboardApp.init(config);
+            })
+            .catch(function(error) {
+                console.error('[MWA Dashboard] String/config bootstrap failed:', error);
+                Store.configure(config, params.strings || {}, callAction);
+                DashboardApp.init(config);
+            });
 
         var refreshDashboardData = function(forceFresh) {
             if (courseid <= 0) {
@@ -153,7 +176,9 @@ define([
             });
         }
 
-        refreshDashboardData();
+        bootstrap.then(function() {
+            refreshDashboardData();
+        });
 
         
         window.MWAReloadData = refreshDashboardData;
