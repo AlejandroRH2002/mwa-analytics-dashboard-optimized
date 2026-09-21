@@ -542,7 +542,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
     function renderMessages(){
         var el=$('chatMessages');
         var sugEl=$('chatSuggestions');
-        if(!el)return;
+        if(!el)return Promise.resolve();
 
         var conv=getCur();
         if(!conv||!conv.messages.length){showWelcome();return;}
@@ -691,12 +691,48 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
             });
             chips.push({background:'var(--green-dim)',color:'var(--green)',border:'var(--green-dim)',label:studs.size+' alunos'});
         }
-        renderTemplate(el, 'chat_chips', {chips:chips});
+        var rendered=renderTemplate(el, 'chat_chips', {chips:chips});
         var sub=$('chatConvSub');
         if(sub)sub.textContent=(logs.length || grades.length || (state.students||[]).length)
             ?tr('chat_data_ready','Dados carregados — pronto para analisar')
             :tr('chat_no_data_sub','Carregue dados para ativar o chat');
+        return rendered;
     }
+
+        function reloadClassData(){
+            var button=$('chatReloadBtn');
+            var label=$('chatReloadLabel');
+            var loader=w.MWAReloadData || w.MWAEnsureDashboardData;
+            if(typeof loader!=='function')return;
+            if(button){button.disabled=true;button.setAttribute('aria-busy','true');}
+            if(label)label.textContent=tr('chat_reloading_data','Actualizando datos de clase...');
+            Promise.resolve(loader(true)).then(function(){
+                updateContextChips();
+                render();
+            }).catch(function(){
+                if(label)label.textContent=tr('chat_reload_error','No se pudieron actualizar los datos');
+            }).then(function(){
+                if(button){button.disabled=false;button.removeAttribute('aria-busy');}
+                if(label&&!button.disabled)label.textContent=tr('chat_reload_data','Actualizar datos de clase');
+            });
+        }
+
+        function ensureReloadButton(){
+            var host=$('chatContextChips');
+            if(!host||$('chatReloadBtn'))return;
+            var button=document.createElement('button');
+            button.type='button';
+            button.id='chatReloadBtn';
+            button.className='btn-ghost';
+            button.title=tr('chat_reload_data','Actualizar datos de clase');
+            button.setAttribute('aria-label',button.title);
+            button.style.cssText='font-size:.72rem;white-space:nowrap;';
+            button.innerHTML='<svg class="mwa-ui-icon" aria-hidden="true"><use href="#mwa-icon-refresh"></use></svg>'+
+                '<span id="chatReloadLabel"></span>';
+            host.insertBefore(button,host.firstChild);
+            button.querySelector('span').textContent=button.title;
+            button.addEventListener('click',reloadClassData);
+        }
 
     function render(){
         if(!_initDone){
@@ -705,7 +741,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
             if(!CUR_ID&&CONVS.length)CUR_ID=CONVS[0].id;
             setupDelegation();
         }
-        updateContextChips();
+        updateContextChips().then(ensureReloadButton);
         renderSidebar();
         var inp=$('chatInput')||$('chatInputEl');
         if(inp)inp.placeholder=tr('chat_input_placeholder','Pergunte sobre a turma, peça análises ou relatórios...');
