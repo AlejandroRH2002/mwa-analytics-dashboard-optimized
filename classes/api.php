@@ -27,6 +27,9 @@ defined('MOODLE_INTERNAL') || die();
  */
 class api {
 
+    /** @var array<int, int[]> Excluded course-module ids cached for this request. */
+    private static $excludedcmidcache = [];
+
     /**
      * Return course module ids excluded from dashboard tracking.
      *
@@ -35,12 +38,18 @@ class api {
      */
     public static function get_excluded_cmids(int $courseid): array {
         global $DB;
+        if (array_key_exists($courseid, self::$excludedcmidcache)) {
+            return self::$excludedcmidcache[$courseid];
+        }
+
         $json = $DB->get_field('block_mwa_dashboard_course', 'excludedcmids', ['courseid' => $courseid]);
         $values = json_decode((string)$json, true);
         if (!is_array($values)) {
-            return [];
+            self::$excludedcmidcache[$courseid] = [];
+            return self::$excludedcmidcache[$courseid];
         }
-        return array_values(array_unique(array_filter(array_map('intval', $values))));
+        self::$excludedcmidcache[$courseid] = array_values(array_unique(array_filter(array_map('intval', $values))));
+        return self::$excludedcmidcache[$courseid];
     }
     /** @var int Maximum number of log records to return per request. */
     const LOG_LIMIT = 10000;
@@ -216,6 +225,14 @@ class api {
      */
     private static function build_cm_name_map(int $courseid): array {
         global $DB;
+
+        $cache = \cache::make('block_mwa_dashboard', 'course_module_metadata');
+        $cachekey = (string)$courseid;
+        $cached = $cache->get($cachekey);
+        if ($cached !== false) {
+            return is_array($cached) ? $cached : [];
+        }
+
         $map = [];
         $cms = $DB->get_records_sql("
             SELECT cm.id, m.name AS modname, cm.instance, cm.visible, cm.availability, cm.deletioninprogress,
@@ -269,6 +286,7 @@ class api {
                 continue;
             }
         }
+        $cache->set($cachekey, $map);
         return $map;
     }
     /**
@@ -301,6 +319,12 @@ class api {
         }
         // Always use the plugin's own table â€” populated by event observers.
         // Never query logstore_standard_log to avoid slow full-table scans.
+        $groupjoin = '';
+        $groupparams = [];
+        if ($groupid > 0) {
+            $groupjoin = "\n            JOIN {groups_members} gm ON gm.userid = l.userid AND gm.groupid = :groupid";
+            $groupparams['groupid'] = $groupid;
+        }
         $sql = "
             SELECT
                 l.id,
@@ -318,6 +342,7 @@ class api {
                 l.origin
             FROM {block_mwa_dashboard_log} l
             JOIN {user} u ON u.id = l.userid
+            $groupjoin
             WHERE l.courseid = :courseid
               AND l.timecreated > :since
                AND l.userid IN (
@@ -345,7 +370,7 @@ class api {
             'since'     => $since,
             'now'       => time(),
             'now2'      => time(),
-        ];
+        ] + $groupparams;
         $records = $DB->get_records_sql($sql, $params, 0, self::LOG_LIMIT);
         $logs = [];
         foreach ($records as $r) {
@@ -394,18 +419,12 @@ class api {
                 '_userid'          => (int)$r->userid,
             ];
         }
-        $completionlogs = self::get_h5p_completion_logs($courseid, $since, $namemap);
+        $completionlogs = self::get_h5p_completion_logs($courseid, $since, $namemap, $groupid);
         if (!empty($completionlogs)) {
             $logs = array_merge($completionlogs, $logs);
             usort($logs, function($a, $b) {
                 return ($b['_ts'] ?? 0) <=> ($a['_ts'] ?? 0);
             });
-        }
-        if ($groupid > 0) {
-            $members = array_flip(array_map('intval', array_keys(groups_get_members($groupid, 'u.id'))));
-            $logs = array_values(array_filter($logs, function(array $log) use ($members): bool {
-                return isset($members[(int)($log['_userid'] ?? 0)]);
-            }));
         }
         return $logs;
     }
@@ -421,8 +440,19 @@ class api {
      * @param array $namemap Map of cmid => module information.
      * @return array Synthetic log rows.
      */
-    private static function get_h5p_completion_logs(int $courseid, int $since, array $namemap): array {
+    private static function get_h5p_completion_logs(
+        int $courseid,
+        int $since,
+        array $namemap,
+        int $groupid = 0
+    ): array {
         global $DB;
+        $groupjoin = '';
+        $groupparams = [];
+        if ($groupid > 0) {
+            $groupjoin = "\n              JOIN {groups_members} gm ON gm.userid = cmc.userid AND gm.groupid = :groupid";
+            $groupparams['groupid'] = $groupid;
+        }
         $sql = "
             SELECT
                 cmc.id,
@@ -440,6 +470,7 @@ class api {
               JOIN {course_modules} cm ON cm.id = cmc.coursemoduleid
               JOIN {modules} m ON m.id = cm.module
               JOIN {user} u ON u.id = cmc.userid
+              $groupjoin
              WHERE cm.course = :courseid
                AND cmc.timemodified > :since
                AND cmc.completionstate > 0
@@ -469,7 +500,7 @@ class api {
             'since' => $since,
             'now' => time(),
             'now2' => time(),
-        ]);
+        ] + $groupparams);
         $logs = [];
         foreach ($records as $r) {
             $cmid = (int)$r->coursemoduleid;

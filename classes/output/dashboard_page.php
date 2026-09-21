@@ -36,6 +36,9 @@ class dashboard_page implements renderable, templatable {
     /** @var int Course id. */
     protected $courseid;
 
+    /** @var array|null Groups visible to the current user and active group. */
+    protected $groupconfig;
+
     /**
      * Constructor.
      *
@@ -136,13 +139,18 @@ class dashboard_page implements renderable, templatable {
 
     /** Return groups visible to the current teacher and the active group. */
     protected function get_group_config(): array {
+        if ($this->groupconfig !== null) {
+            return $this->groupconfig;
+        }
+
         global $CFG, $USER;
         require_once($CFG->dirroot . '/group/lib.php');
         $course = get_course($this->courseid);
         $context = \context_course::instance($this->courseid);
         $mode = groups_get_course_groupmode($course);
         if ($mode == NOGROUPS) {
-            return ['groupid' => 0, 'groups' => []];
+            $this->groupconfig = ['groupid' => 0, 'groups' => []];
+            return $this->groupconfig;
         }
         $accessall = has_capability('moodle/site:accessallgroups', $context);
         $canviewall = $accessall || $mode == VISIBLEGROUPS;
@@ -161,7 +169,8 @@ class dashboard_page implements renderable, templatable {
             $group['selected'] = (int)$group['id'] === $active;
         }
         unset($group);
-        return ['groupid' => $active, 'groups' => $groups];
+        $this->groupconfig = ['groupid' => $active, 'groups' => $groups];
+        return $this->groupconfig;
     }
 
     /**

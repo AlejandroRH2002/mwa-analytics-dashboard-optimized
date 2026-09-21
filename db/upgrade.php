@@ -404,5 +404,10 @@ function xmldb_block_mwa_dashboard_upgrade($oldversion) {
         upgrade_block_savepoint(true, 2026081524, 'mwa_dashboard');
     }
 
+    if ($oldversion < 2026092100) {
+        // Register the MUC definition for cached course module metadata.
+        upgrade_block_savepoint(true, 2026092100, 'mwa_dashboard');
+    }
+
     return true;
 }
