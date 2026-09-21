@@ -43,7 +43,15 @@ $dashboard = new dashboard_page($courseid);
 $dashboard->require_assets($PAGE);
 
 $PAGE->requires->js_call_amd('block_mwa_dashboard/dashboard', 'init', [
-    $dashboard->export_for_amd(),
+    [
+        'courseid' => $courseid,
+        'config' => [
+            'courseid' => $courseid,
+            'groupid' => optional_param('group', 0, PARAM_INT),
+            'language' => current_language(),
+            'ia_enabled' => \block_mwa_dashboard\ai\client::is_configured(),
+        ],
+    ],
 ]);
 
 $renderer = $PAGE->get_renderer('block_mwa_dashboard');

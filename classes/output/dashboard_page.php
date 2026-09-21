@@ -87,10 +87,22 @@ class dashboard_page implements renderable, templatable {
      * @return array
      */
     public function export_for_amd(): array {
+        global $CFG;
+        $requestedpage = optional_param('mwa_page', '', PARAM_ALPHA);
+        $allowedpages = [
+            'ac', 'alerts', 'classlist', 'grades', 'activities', 'heatmap',
+            'studentprofile', 'chat', 'interventions', 'teacherfeedback',
+        ];
         return [
             'courseid' => (int)$this->courseid,
-            'config' => $this->get_config(),
-            'strings' => $this->get_strings(),
+            'config' => [
+                'courseid' => (int)$this->courseid,
+                'initialpage' => in_array($requestedpage, $allowedpages, true) ? $requestedpage : 'ac',
+                'wwwroot' => (string)$CFG->wwwroot,
+                'language' => current_language(),
+                'ia_enabled' => \block_mwa_dashboard\ai\client::is_configured(),
+            ],
+            'strings' => [],
         ];
     }
 
