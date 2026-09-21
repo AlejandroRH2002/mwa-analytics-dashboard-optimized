@@ -151,7 +151,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
         var grades=state.grades||[];
         var cfg=Store.getConfig?Store.getConfig():{};
         var isPortuguese=String(cfg.language||'pt_br').indexOf('pt')===0;
-        if(!logs.length)return null;
+        if(!logs.length && !grades.length && !(state.students||[]).length)return null;
         var data=logs.map(function(r){var d=parseDate(r);return d?Object.assign({},r,{_date:d}):null;}).filter(Boolean);
         /* The roster must come from the dashboard state, which merges the logs
            with the grade export. Building it from logs alone silently dropped
@@ -581,7 +581,8 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
             return;
         }
         var state=((w.MWADashboard||{}).state)||{};
-        if(!(state.logs&&state.logs.length)){
+        if(!(state.logs&&state.logs.length) && !(state.grades&&state.grades.length) &&
+            !(state.students&&state.students.length)){
             alert(tr('chat_load_data_first','Carregue os dados da turma primeiro.'));
             return;
         }
@@ -636,7 +637,12 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
             _chatDone();
         }).catch(function(e){
             Log.error(e);
-            conv.messages.push({role:'assistant',content:tr('chat_error','Erro ao conectar com a IA')+': '+esc(e.message||String(e))});
+            var details=String(e&&e.message||e||'').toLowerCase();
+            var friendly=details.indexOf('configuration')>=0 || details.indexOf('configura')>=0 ||
+                details.indexOf('disabled')>=0 || details.indexOf('desabil')>=0
+                ? tr('chat_ia_not_configured_alert','La IA no está configurada. Configure el proveedor y la clave API en Administración.')
+                : tr('chat_error','Error al conectar con la IA');
+            conv.messages.push({role:'assistant',content:friendly});
             _chatDone();
         });
     }
@@ -654,14 +660,20 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
         } else {
             chips.push({background:'var(--red-dim)',color:'var(--red)',border:'rgba(240,101,112,.3)',label:tr('chat_ia_not_configured','AI not configured')});
         }
-        if(logs.length){
+        if(logs.length || grades.length || (state.students||[]).length){
             var studs=new Set();
             logs.forEach(function(r){if(r.nomecompleto)studs.add(norm(r.nomecompleto));});
+            (state.students||[]).forEach(function(s){if(s.name)studs.add(norm(s.name));});
+            grades.forEach(function(g){
+                if(!g || g.__mwa_type__==='activity_names')return;
+                var name=norm((g['First name']||'')+' '+(g['Last name']||''));
+                if(name)studs.add(name);
+            });
             chips.push({background:'var(--green-dim)',color:'var(--green)',border:'var(--green-dim)',label:studs.size+' alunos'});
         }
         renderTemplate(el, 'chat_chips', {chips:chips});
         var sub=$('chatConvSub');
-        if(sub)sub.textContent=logs.length
+        if(sub)sub.textContent=(logs.length || grades.length || (state.students||[]).length)
             ?tr('chat_data_ready','Dados carregados — pronto para analisar')
             :tr('chat_no_data_sub','Carregue dados para ativar o chat');
     }

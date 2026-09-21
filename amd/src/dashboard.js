@@ -66,10 +66,19 @@ define([
             }
         ]);
 
-        activeLoad = Promise.all([calls[0], calls[1]]).then(function(results) {
+        var safeCall = function(call) {
+            return call.then(function(result) {
+                return {ok: true, value: result || {}};
+            }).catch(function(error) {
+                Log.error('block_mwa_dashboard/dashboard: one data source failed');
+                Log.error(error);
+                return {ok: false, value: {}, error: error};
+            });
+        };
+        activeLoad = Promise.all([safeCall(calls[0]), safeCall(calls[1])]).then(function(results) {
             var dashboard = Store.getModule('MWADashboard');
-            var logsResult = results[0];
-            var gradesResult = results[1];
+            var logsResult = results[0].value;
+            var gradesResult = results[1].value;
 
             if (dashboard && typeof dashboard.receiveData === 'function') {
                 dashboard.receiveData({
@@ -80,12 +89,11 @@ define([
                     gradesCount: gradesResult.count || 0
                 });
             }
+            if (!results[0].ok && !results[1].ok) {
+                deliverError(results[0].error || results[1].error);
+            }
             lastLoadAt = Date.now();
             return results;
-        }).catch(function(err) {
-            Log.error('block_mwa_dashboard/dashboard: data load failed');
-            Log.error(err);
-            deliverError(err);
         }).then(function(results) {
             activeLoad = null;
             return results;

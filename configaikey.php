@@ -201,6 +201,10 @@ if (data_submitted() && confirm_sesskey()) {
             redirect($url, get_string('settings_ia_credential_required', 'block_mwa_dashboard'), null,
                 \core\output\notification::NOTIFY_ERROR);
         }
+        if (strlen($credential) < 8 || strlen($credential) > 4096 || preg_match('/[\r\n]/', $credential)) {
+            redirect($url, get_string('settings_ia_credential_required', 'block_mwa_dashboard'), null,
+                \core\output\notification::NOTIFY_ERROR);
+        }
         set_config($configkey,   $credential, 'block_mwa_dashboard');
         set_config($rotationkey, time(),       'block_mwa_dashboard');
         redirect($url, get_string('settings_ia_credential_saved', 'block_mwa_dashboard'), null,
