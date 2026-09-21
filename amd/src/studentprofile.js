@@ -45,6 +45,10 @@ function(Store, EngagementCalc, ActionCenter, Templates, Chart) {
         return '<svg class="mwa-ui-icon" aria-hidden="true"><use href="#mwa-icon-' + esc(name) + '"></use></svg>';
       }
       function norm(v) { return (v === undefined || v === null) ? '' : String(v).trim(); }
+      function studentKey(v) {
+        var value = norm(v).toLowerCase();
+        return value.normalize ? value.normalize('NFD').replace(/[\u0300-\u036f]/g, '') : value;
+      }
       function renderTemplate(node, template, context) {
         if (!node) return Promise.resolve(null);
         return Templates.render('block_mwa_dashboard/' + template, context || {}).then(function(html, js) {
@@ -543,7 +547,8 @@ function(Store, EngagementCalc, ActionCenter, Templates, Chart) {
         var logs   = state.logs   || [];
         var grades = state.grades || [];
         var students = state.students || [];
-        var sLogs = logs.filter(function (r) { return norm(r.nomecompleto) === name; })
+        var selectedKey = studentKey(name);
+        var sLogs = logs.filter(function (r) { return studentKey(r.nomecompleto) === selectedKey; })
           .map(function (r) { var clone = Object.assign({}, r); clone._parsed_date = parseDate(r); return clone; })
           .filter(function (r) { return r._parsed_date; })
           .sort(function (a, b) { return a._parsed_date - b._parsed_date; });
@@ -560,8 +565,8 @@ function(Store, EngagementCalc, ActionCenter, Templates, Chart) {
         var uniqDays  = new Set(sLogs.map(function (r) { var d = r._parsed_date; return d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate(); })).size;
         var total     = sLogs.length;
         var rosterStudent = (students || []).find(function(student) {
-          var sameEmail = email && norm(student.email).toLowerCase() === norm(email).toLowerCase();
-          var sameName = norm(student.name || student.fullname).toLowerCase() === norm(name).toLowerCase();
+          var sameEmail = email && studentKey(student.email) === studentKey(email);
+          var sameName = studentKey(student.name || student.fullname) === selectedKey;
           return sameEmail || sameName;
         }) || {};
         var confirmedNever = Number(rosterStudent.moodleLastAccess || 0) === 0 && !rosterStudent.last && Number(rosterStudent.interactions || 0) === 0;
@@ -571,7 +576,7 @@ function(Store, EngagementCalc, ActionCenter, Templates, Chart) {
         if (grades.length) {
           grades.some(function (g) {
             var gn = (norm(g['First name']) + ' ' + norm(g['Last name'])).trim();
-            if (gn.toLowerCase() === name.toLowerCase()) {
+            if (studentKey(gn) === selectedKey) {
               gradeRow = g;
               var k = Object.keys(g).find(function (x) { var lx = x.toLowerCase(); return lx.includes('course total') || lx.includes('total do curso'); });
               if (k) { var n = parseFloat(String(g[k]).replace(',','.')); if (!isNaN(n)) grade = n; }
@@ -826,7 +831,22 @@ function(Store, EngagementCalc, ActionCenter, Templates, Chart) {
           search.dataset.spSearchInit = '1';
           search.addEventListener('input', function() {
             search.dataset.spUserSearching = '1';
-            fillSelect('', search.value);
+            var selected = fillSelect('', search.value);
+            var d = getNames();
+            var query = studentKey(search.value);
+            var matches = d.names.filter(function(candidate) {
+              var candidateKey = studentKey(candidate);
+              var email = studentKey(getEmailForStudent(candidate, d.logs, d.grades, d.students));
+              return candidateKey.indexOf(query) !== -1 || email.indexOf(query) !== -1;
+            });
+            // A unique text match is a complete selection; do not require an
+            // additional hidden change/blur action to load the profile.
+            if (query && matches.length === 1 && selected !== matches[0]) {
+              search.value = matches[0];
+              sel.value = matches[0];
+              if (suggestions) suggestions.hidden = true;
+              loadProfile(matches[0]);
+            }
           });
           search.addEventListener('focus', function() {
             search.dataset.spUserSearching = '0';
@@ -835,7 +855,7 @@ function(Store, EngagementCalc, ActionCenter, Templates, Chart) {
             var d = getNames();
             var query = norm(search.value).toLowerCase();
             var matchedStudent = d.names.find(function(name) {
-              return name.toLowerCase() === query || getEmailForStudent(name, d.logs, d.grades, d.students).toLowerCase() === query;
+              return studentKey(name) === studentKey(query) || studentKey(getEmailForStudent(name, d.logs, d.grades, d.students)) === studentKey(query);
             }) || '';
             fillSelect(matchedStudent, search.value);
             if (matchedStudent) loadProfile(matchedStudent);
