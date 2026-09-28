@@ -1246,6 +1246,9 @@ class external extends \external_api {
         $instanceid = $cm->instance;
         $sections = [];   // Blocos estruturados para o prompt
         $activityname = $cm->name ?? '';
+        $activitystring = function(string $key, $a = null): string {
+            return get_string('activitycontent_' . $key, 'block_mwa_dashboard', $a);
+        };
 
         // Helper: add non-empty section, preserving spaces between HTML blocks
         $add_section = function(string $label, string $text) use (&$sections) {
@@ -1271,11 +1274,14 @@ class external extends \external_api {
                 $rec = $DB->get_record('page', ['id' => $instanceid], 'name, content, intro');
                 if ($rec) {
                     $activityname = $rec->name ?? $activityname;
-                    $add_section('Descrição/introdução', $rec->intro ?? '');
-                    $add_section('Conteúdo da página', $rec->content ?? '');
+                    $add_section($activitystring('description_intro'), $rec->intro ?? '');
+                    $add_section($activitystring('page_content'), $rec->content ?? '');
                     // Reading metrics
                     $word_count = str_word_count(strip_tags($rec->content ?? ''));
-                    $sections[] = "[Métricas]\nPalavras: $word_count | Leitura estimada: " . ceil($word_count / 200) . " min";
+                    $sections[] = '[' . $activitystring('metrics') . "]\n" . get_string('activitycontent_page_metrics', 'block_mwa_dashboard', (object)[
+                        'words' => $word_count,
+                        'minutes' => ceil($word_count / 200),
+                    ]);
                 }
                 break;
 
@@ -1287,41 +1293,41 @@ class external extends \external_api {
                     'teamsubmission, attemptreopenmethod, blindmarking');
                 if ($rec) {
                     $activityname = $rec->name ?? $activityname;
-                    $add_section('Enunciado da tarefa', $rec->intro ?? '');
+                    $add_section($activitystring('assignment_prompt'), $rec->intro ?? '');
                     // Additional activity instructions ("activity" field)
                     if (!empty($rec->activity)) {
-                        $add_section('Instruções da atividade', $rec->activity);
+                        $add_section($activitystring('activity_instructions'), $rec->activity);
                     }
                     // Metadata relevant for pedagogical analysis
                     $meta = [];
-                    if (!empty($rec->allowsubmissionsfromdate)) $meta[] = "Abertura: " . date('d/m/Y H:i', $rec->allowsubmissionsfromdate);
-                    if (!empty($rec->duedate))    $meta[] = "Prazo de entrega: " . date('d/m/Y H:i', $rec->duedate);
-                    if (!empty($rec->cutoffdate)) $meta[] = "Prazo máximo (após, não aceita): " . date('d/m/Y H:i', $rec->cutoffdate);
-                    if ($rec->grade > 0)          $meta[] = "Valor: {$rec->grade} pontos";
-                    elseif ($rec->grade < 0)      $meta[] = "Avaliação por escala/conceito";
+                    if (!empty($rec->allowsubmissionsfromdate)) $meta[] = $activitystring('opens') . ': ' . date('d/m/Y H:i', $rec->allowsubmissionsfromdate);
+                    if (!empty($rec->duedate))    $meta[] = $activitystring('due_date') . ': ' . date('d/m/Y H:i', $rec->duedate);
+                    if (!empty($rec->cutoffdate)) $meta[] = $activitystring('cutoff_date') . ': ' . date('d/m/Y H:i', $rec->cutoffdate);
+                    if ($rec->grade > 0)          $meta[] = get_string('activitycontent_grade_points', 'block_mwa_dashboard', (object)['grade' => $rec->grade]);
+                    elseif ($rec->grade < 0)      $meta[] = $activitystring('grade_scale');
                     // Tentativas: -1 = ilimitadas
-                    if ($rec->maxattempts == -1)      $meta[] = "Tentativas: ILIMITADAS";
-                    elseif ($rec->maxattempts > 0)    $meta[] = "Tentativas permitidas: {$rec->maxattempts}";
-                    else                              $meta[] = "Tentativas: 1 (única)";
+                    if ($rec->maxattempts == -1)      $meta[] = $activitystring('attempts_unlimited');
+                    elseif ($rec->maxattempts > 0)    $meta[] = get_string('activitycontent_attempts_allowed', 'block_mwa_dashboard', $rec->maxattempts);
+                    else                              $meta[] = $activitystring('attempts_single');
                     // Como reabre tentativa
-                    $reopen_labels = ['none' => 'Não reabre', 'manual' => 'Reabertura manual', 'untilpass' => 'Reabre até atingir nota de aprovação'];
+                    $reopen_labels = ['none' => $activitystring('reopen_none'), 'manual' => $activitystring('reopen_manual'), 'untilpass' => $activitystring('reopen_until_pass')];
                     if (!empty($rec->attemptreopenmethod) && isset($reopen_labels[$rec->attemptreopenmethod])) {
-                        $meta[] = "Reabertura: " . $reopen_labels[$rec->attemptreopenmethod];
+                        $meta[] = $activitystring('reopen') . ': ' . $reopen_labels[$rec->attemptreopenmethod];
                     }
-                    if ($rec->submissiondrafts)   $meta[] = "Exige clicar em 'Enviar' para finalizar (rascunhos)";
-                    if ($rec->teamsubmission)     $meta[] = "Entrega em grupo: Sim";
-                    if ($rec->requiresubmissionstatement) $meta[] = "Exige declaração de autoria";
-                    if ($rec->blindmarking)       $meta[] = "Correção às cegas (anônima)";
-                    if ($meta) $sections[] = "[Configurações de entrega]\n" . implode("\n", $meta);
+                    if ($rec->submissiondrafts)   $meta[] = $activitystring('submission_drafts');
+                    if ($rec->teamsubmission)     $meta[] = $activitystring('group_submission') . ': ' . get_string('yes');
+                    if ($rec->requiresubmissionstatement) $meta[] = $activitystring('authorship_declaration');
+                    if ($rec->blindmarking)       $meta[] = $activitystring('blind_marking');
+                    if ($meta) $sections[] = '[' . $activitystring('submission_settings') . "]\n" . implode("\n", $meta);
                     // Grading criteria (rubric/guide)
                     try {
                         $modctx = \context_module::instance($params['cmid']);
                         $gc = $DB->get_record('grading_areas', ['contextid' => $modctx->id, 'component' => 'mod_assign'], 'activemethod');
                         if ($gc && !empty($gc->activemethod)) {
-                            $method_labels = ['rubric' => 'Rubrica', 'guide' => 'Guia de avaliação', 'btec' => 'BTEC'];
-                            $sections[] = "[Método de avaliação]\n" . ($method_labels[$gc->activemethod] ?? ucfirst($gc->activemethod));
+                            $method_labels = ['rubric' => $activitystring('rubric'), 'guide' => $activitystring('grading_guide'), 'btec' => 'BTEC'];
+                            $sections[] = '[' . $activitystring('grading_method') . "]\n" . ($method_labels[$gc->activemethod] ?? ucfirst($gc->activemethod));
                         } else {
-                            $sections[] = "[Método de avaliação]\nAvaliação simples por nota direta (sem rubrica)";
+                            $sections[] = '[' . $activitystring('grading_method') . "]\n" . $activitystring('direct_grade');
                         }
                     } catch (\Exception $e) {}
                     // Campos de envio habilitados
@@ -1329,11 +1335,11 @@ class external extends \external_api {
                         ['assignment' => $instanceid, 'subtype' => 'assignsubmission', 'name' => 'enabled', 'value' => '1'],
                         '', 'plugin');
                     if ($plugins) {
-                        $plug_labels = ['file' => 'Envio de arquivo', 'onlinetext' => 'Texto online', 'comments' => 'Comentários'];
+                        $plug_labels = ['file' => $activitystring('file_submission'), 'onlinetext' => $activitystring('online_text'), 'comments' => $activitystring('comments')];
                         $plug_names = array_map(function($p) use ($plug_labels) {
                             return $plug_labels[$p->plugin] ?? $p->plugin;
                         }, array_values($plugins));
-                        $sections[] = "[Tipos de envio aceitos]\n" . implode(', ', $plug_names);
+                        $sections[] = '[' . $activitystring('accepted_submission_types') . "]\n" . implode(', ', $plug_names);
                     }
                 }
                 break;
@@ -1343,13 +1349,13 @@ class external extends \external_api {
                 $rec = $DB->get_record('forum', ['id' => $instanceid], '*');
                 if ($rec) {
                     $activityname = $rec->name ?? $activityname;
-                    $add_section('Descrição/pergunta norteadora do fórum', $rec->intro ?? '');
+                    $add_section($activitystring('forum_description'), $rec->intro ?? '');
                     $meta = [];
-                    $type_labels = ['general'=>'Fórum geral','eachuser'=>'Cada aluno inicia tópico','single'=>'Discussão simples','qanda'=>'Perguntas e respostas','blog'=>'Blog'];
-                    $meta[] = "Tipo: " . ($type_labels[$rec->type] ?? $rec->type);
-                    if (!empty($rec->grade) && $rec->grade > 0) $meta[] = "Pontuação: {$rec->grade} pts";
-                    if (!empty($rec->assessed)) $meta[] = "Avaliação das postagens: Sim";
-                    $sections[] = "[Configurações]\n" . implode("\n", $meta);
+                    $type_labels = ['general'=>$activitystring('forum_general'),'eachuser'=>$activitystring('forum_each_user'),'single'=>$activitystring('forum_single'),'qanda'=>$activitystring('forum_qanda'),'blog'=>'Blog'];
+                    $meta[] = $activitystring('type') . ': ' . ($type_labels[$rec->type] ?? $rec->type);
+                    if (!empty($rec->grade) && $rec->grade > 0) $meta[] = get_string('activitycontent_points', 'block_mwa_dashboard', $rec->grade);
+                    if (!empty($rec->assessed)) $meta[] = $activitystring('post_rating') . ': ' . get_string('yes');
+                    $sections[] = '[' . $activitystring('settings') . "]\n" . implode("\n", $meta);
 
                     // Read ALL discussions and posts — same approach as smartedu
                     try {
@@ -1389,15 +1395,15 @@ class external extends \external_api {
                                 }
                             }
                             if ($disc_posts) {
-                                $disc_title = trim($disc->name ?? 'Sem título');
+                                $disc_title = trim($disc->name ?? $activitystring('untitled'));
                                 // Post inicial separado das respostas
                                 $initial = array_shift($disc_posts);
-                                $block = "TÓPICO: $disc_title\n  [Post inicial] " . mb_substr($initial, 0, 400);
+                                $block = $activitystring('topic') . ": $disc_title\n  [" . $activitystring('initial_post') . '] ' . mb_substr($initial, 0, 400);
                                 foreach (array_slice($disc_posts, 0, 8) as $reply) {
-                                    $block .= "\n  [Resposta] " . mb_substr($reply, 0, 300);
+                                    $block .= "\n  [" . $activitystring('reply') . '] ' . mb_substr($reply, 0, 300);
                                 }
                                 if (count($disc_posts) > 8) {
-                                    $block .= "\n  [...+" . (count($disc_posts) - 8) . " respostas]";
+                                    $block .= "\n  [...+" . (count($disc_posts) - 8) . ' ' . $activitystring('replies') . ']';
                                 }
                                 $disc_texts[] = $block;
                                 // Corpus agregado
@@ -1411,7 +1417,7 @@ class external extends \external_api {
                         $disc_count = count($discussions);
                         $author_count = count($author_ids);
                         if ($disc_count > 0) {
-                            $sections[] = "[Atividade real do fórum]\nDiscussões: $disc_count | Posts: $total_posts | Participantes: $author_count";
+                            $sections[] = '[' . $activitystring('actual_forum_activity') . "]\n" . get_string('activitycontent_forum_stats', 'block_mwa_dashboard', (object)['discussions' => $disc_count, 'posts' => $total_posts, 'participants' => $author_count]);
                         }
 
                         // Pseudonymise enrolled student names inside forum text before it is added to the AI prompt.
@@ -1421,7 +1427,7 @@ class external extends \external_api {
                                 $block = self::pseudonymize_students_for_ai($params['courseid'], $block);
                             }
                             unset($block);
-                            $add_section('O que os alunos escreveram — faça um resumo dos temas discutidos', implode("\n\n", $disc_texts));
+                            $add_section($activitystring('student_posts_summary'), implode("\n\n", $disc_texts));
                         }
 
                         // Build a pseudonymised aggregated corpus for thematic analysis.
@@ -1431,10 +1437,10 @@ class external extends \external_api {
                                 $corpus = mb_substr($corpus, 0, 3000) . ' [...]';
                             }
                             $corpus = self::pseudonymize_students_for_ai($params['courseid'], $corpus);
-                            $sections[] = "[Texto completo dos alunos — use para resumir temas, argumentos e lacunas]\n$corpus";
+                            $sections[] = '[' . $activitystring('student_posts_full') . "]\n$corpus";
                         }
                     } catch (\Throwable $e) {
-                        $sections[] = "[Posts do fórum]\nErro ao ler posts: " . $e->getMessage();
+                        $sections[] = '[' . $activitystring('forum_posts') . "]\n" . get_string('activitycontent_forum_posts_error', 'block_mwa_dashboard', $e->getMessage());
                     }
                 }
                 break;
@@ -1444,14 +1450,14 @@ class external extends \external_api {
                 $rec = $DB->get_record('quiz', ['id' => $instanceid], '*');
                 if ($rec) {
                     $activityname = $rec->name ?? $activityname;
-                    $add_section('Introdução/instruções do questionário', $rec->intro ?? '');
+                    $add_section($activitystring('quiz_intro'), $rec->intro ?? '');
                     $meta = [];
-                    if (isset($rec->attempts) && $rec->attempts == 0) $meta[] = "Tentativas: ILIMITADAS";
-                    elseif (isset($rec->attempts) && $rec->attempts > 0) $meta[] = "Tentativas: {$rec->attempts}";
-                    if (!empty($rec->grade) && $rec->grade > 0) $meta[] = "Nota máxima: {$rec->grade}";
-                    if (!empty($rec->timelimit) && $rec->timelimit > 0) $meta[] = "Tempo limite: " . round($rec->timelimit / 60) . " min";
-                    if (!empty($rec->shuffleanswers)) $meta[] = "Alternativas embaralhadas: Sim";
-                    if ($meta) $sections[] = "[Configurações]\n" . implode("\n", $meta);
+                    if (isset($rec->attempts) && $rec->attempts == 0) $meta[] = $activitystring('attempts_unlimited');
+                    elseif (isset($rec->attempts) && $rec->attempts > 0) $meta[] = get_string('activitycontent_attempts', 'block_mwa_dashboard', $rec->attempts);
+                    if (!empty($rec->grade) && $rec->grade > 0) $meta[] = get_string('activitycontent_max_grade', 'block_mwa_dashboard', $rec->grade);
+                    if (!empty($rec->timelimit) && $rec->timelimit > 0) $meta[] = get_string('activitycontent_time_limit', 'block_mwa_dashboard', round($rec->timelimit / 60));
+                    if (!empty($rec->shuffleanswers)) $meta[] = $activitystring('shuffled_answers') . ': ' . get_string('yes');
+                    if ($meta) $sections[] = '[' . $activitystring('settings') . "]\n" . implode("\n", $meta);
 
                     // Fetch questions: ultra-simple step-by-step approach
                     $questions = [];
@@ -1702,10 +1708,10 @@ class external extends \external_api {
                     // Step 4: format the questions
                     if ($questions) {
                         $qtype_labels = [
-                            'multichoice'=>'Múltipla escolha','truefalse'=>'V/F',
-                            'shortanswer'=>'Resposta curta','essay'=>'Dissertativa',
-                            'numerical'=>'Numérica','match'=>'Associação',
-                            'gapselect'=>'Lacunas','calculated'=>'Calculada',
+                            'multichoice'=>$activitystring('multiple_choice'),'truefalse'=>'T/F',
+                            'shortanswer'=>$activitystring('short_answer'),'essay'=>$activitystring('essay'),
+                            'numerical'=>$activitystring('numerical'),'match'=>$activitystring('matching'),
+                            'gapselect'=>$activitystring('gap_select'),'calculated'=>$activitystring('calculated'),
                         ];
                         $type_counts = [];
                         foreach ($questions as $q) {
@@ -1714,14 +1720,15 @@ class external extends \external_api {
                         }
                         $type_summary = [];
                         foreach ($type_counts as $t => $n) { $type_summary[] = "$n × $t"; }
-                        $sections[] = "[Composição]\n" . count($questions) . " questões: " . implode(', ', $type_summary);
+                    $sections[] = '[' . $activitystring('composition') . "]\n" . get_string('activitycontent_question_composition', 'block_mwa_dashboard', (object)['count' => count($questions), 'types' => implode(', ', $type_summary)]);
 
                         // Question text, alternatives and correctness are deliberately excluded.
                         // Only aggregate composition metadata may leave Moodle.
                     } else {
-                        $err_detail = $q_errors ? implode(' | ', array_slice($q_errors, 0, 3)) : 'nenhum erro capturado';
-                        $sections[] = "[Questões]\n" . count($slots) . " slots. IDs resolvidos: " . count($question_ids)
-                            . ". Questões carregadas: 0. Erros: $err_detail";
+                        $err_detail = $q_errors ? implode(' | ', array_slice($q_errors, 0, 3)) : $activitystring('no_errors');
+                        $sections[] = '[' . $activitystring('questions') . "]\n" . get_string('activitycontent_question_diagnostics', 'block_mwa_dashboard', (object)[
+                            'slots' => count($slots), 'resolved' => count($question_ids), 'errors' => $err_detail,
+                        ]);
                     }
                 }
                 break;
@@ -1731,10 +1738,10 @@ class external extends \external_api {
                 $rec = $DB->get_record('book', ['id' => $instanceid], 'name, intro, numbering');
                 if ($rec) {
                     $activityname = $rec->name ?? $activityname;
-                    $add_section('Introdução', $rec->intro ?? '');
+                    $add_section($activitystring('introduction'), $rec->intro ?? '');
                     $chapters = $DB->get_records('book_chapters', ['bookid' => $instanceid], 'pagenum', 'title, content, subchapter');
                     if ($chapters) {
-                        $sections[] = "[Estrutura]\n" . count($chapters) . " capítulos/seções";
+                    $sections[] = '[' . $activitystring('structure') . "]\n" . get_string('activitycontent_chapter_count', 'block_mwa_dashboard', count($chapters));
                         $chap_texts = [];
                         $total_words = 0;
                         foreach (array_slice($chapters, 0, 10) as $c) {
@@ -1742,11 +1749,11 @@ class external extends \external_api {
                             $total_words += $words;
                             $indent = $c->subchapter ? '  ' : '';
                             $text   = mb_substr(strip_tags($c->content ?? ''), 0, 300);
-                            $chap_texts[] = "{$indent}► {$c->title} ({$words} palavras)\n{$indent}  $text";
+                            $chap_texts[] = "{$indent}► {$c->title} (" . get_string('activitycontent_word_count', 'block_mwa_dashboard', $words) . ")\n{$indent}  $text";
                         }
-                        $add_section('Capítulos', implode("\n\n", $chap_texts));
+                        $add_section($activitystring('chapters'), implode("\n\n", $chap_texts));
                         $read_min = ceil($total_words / 200);
-                        $sections[] = "[Métricas de leitura]\nTotal de palavras estimado: $total_words | Tempo: ~{$read_min} min";
+                    $sections[] = '[' . $activitystring('reading_metrics') . "]\n" . get_string('activitycontent_reading_metrics', 'block_mwa_dashboard', (object)['words' => $total_words, 'minutes' => $read_min]);
                     }
                 }
                 break;
@@ -1756,8 +1763,8 @@ class external extends \external_api {
                 $rec = $DB->get_record('h5pactivity', ['id' => $instanceid], 'name, intro, grade');
                 if ($rec) {
                     $activityname = $rec->name ?? $activityname;
-                    $add_section('Descrição', $rec->intro ?? '');
-                    if ($rec->grade > 0) $sections[] = "[Pontuação]\n{$rec->grade} pts";
+                    $add_section($activitystring('description'), $rec->intro ?? '');
+                    if ($rec->grade > 0) $sections[] = '[' . $activitystring('points_label') . "]\n" . get_string('activitycontent_points', 'block_mwa_dashboard', $rec->grade);
                     // Tentar extrair textos do JSON do pacote H5P
                     $h5p_record = $DB->get_record_sql(
                         "SELECT h.json_content, h.mainlibraryid FROM {h5p} h
@@ -1778,7 +1785,7 @@ class external extends \external_api {
                             });
                             if ($texts) {
                                 $unique = array_unique($texts);
-                                $add_section('Conteúdo interativo (H5P)', implode("\n• ", array_slice($unique, 0, 25)));
+                                $add_section($activitystring('h5p_content'), implode("\n• ", array_slice($unique, 0, 25)));
                             }
                         }
                     }
@@ -1790,7 +1797,7 @@ class external extends \external_api {
                 $rec = $DB->get_record('url', ['id' => $instanceid], 'name, intro, externalurl, display');
                 if ($rec) {
                     $activityname = $rec->name ?? $activityname;
-                    $add_section('Descrição', $rec->intro ?? '');
+                    $add_section($activitystring('description'), $rec->intro ?? '');
                     $sections[] = "[Link]\n" . ($rec->externalurl ?? '');
                 }
                 break;
@@ -1800,11 +1807,11 @@ class external extends \external_api {
                 $rec = $DB->get_record('scorm', ['id' => $instanceid], 'name, intro, maxattempt, grademethod, maxgrade');
                 if ($rec) {
                     $activityname = $rec->name ?? $activityname;
-                    $add_section('Descrição', $rec->intro ?? '');
+                    $add_section($activitystring('description'), $rec->intro ?? '');
                     $meta = [];
-                    if ($rec->maxattempt > 0) $meta[] = "Tentativas: {$rec->maxattempt}";
-                    if ($rec->maxgrade > 0)   $meta[] = "Nota máxima: {$rec->maxgrade}";
-                    if ($meta) $sections[] = "[Configurações]\n" . implode("\n", $meta);
+                    if ($rec->maxattempt > 0) $meta[] = get_string('activitycontent_attempts', 'block_mwa_dashboard', $rec->maxattempt);
+                    if ($rec->maxgrade > 0)   $meta[] = get_string('activitycontent_max_grade', 'block_mwa_dashboard', $rec->maxgrade);
+                    if ($meta) $sections[] = '[' . $activitystring('settings') . "]\n" . implode("\n", $meta);
                 }
                 break;
 
@@ -1813,7 +1820,7 @@ class external extends \external_api {
                 $rec = $DB->get_record('label', ['id' => $instanceid], 'name, intro');
                 if ($rec) {
                     $activityname = $rec->name ?? $activityname;
-                    $add_section('Conteúdo do rótulo', $rec->intro ?? '');
+                    $add_section($activitystring('label_content'), $rec->intro ?? '');
                 }
                 break;
 
@@ -1822,7 +1829,7 @@ class external extends \external_api {
                 $rec = $DB->get_record('glossary', ['id' => $instanceid], 'name, intro, allowcomments, usedynalink, allowduplicatedentries');
                 if ($rec) {
                     $activityname = $rec->name ?? $activityname;
-                    $add_section('Descrição', $rec->intro ?? '');
+                    $add_section($activitystring('description'), $rec->intro ?? '');
                     $total_entries = $DB->count_records('glossary_entries', ['glossaryid' => $instanceid]);
                     if ($total_entries > 0) {
                         $sections[] = "[Atividade atual]\nEntradas cadastradas: $total_entries";
@@ -1843,17 +1850,17 @@ class external extends \external_api {
                 $rec = $DB->get_record('wiki', ['id' => $instanceid], 'name, intro, wikimode, firstpagetitle');
                 if ($rec) {
                     $activityname = $rec->name ?? $activityname;
-                    $add_section('Descrição', $rec->intro ?? '');
+                    $add_section($activitystring('description'), $rec->intro ?? '');
                     $meta = [];
                     $meta[] = "Modo: " . ($rec->wikimode === 'collaborative' ? 'Colaborativo' : 'Individual');
-                    if ($rec->firstpagetitle) $meta[] = "Página inicial: {$rec->firstpagetitle}";
-                    $sections[] = "[Configurações]\n" . implode("\n", $meta);
+                    if ($rec->firstpagetitle) $meta[] = get_string('activitycontent_first_page', 'block_mwa_dashboard', $rec->firstpagetitle);
+                    $sections[] = '[' . $activitystring('settings') . "]\n" . implode("\n", $meta);
                     // First page content
                     $page = $DB->get_record_sql(
                         "SELECT wp.cachedcontent FROM {wiki_subwikis} ws
                            JOIN {wiki_pages} wp ON wp.subwikiid = ws.id
                           WHERE ws.wikiid = ? ORDER BY wp.id LIMIT 1", [$instanceid]);
-                    if ($page) $add_section('Conteúdo da wiki', $page->cachedcontent ?? '');
+                    if ($page) $add_section($activitystring('wiki_content'), $page->cachedcontent ?? '');
                 }
                 break;
 
@@ -1862,18 +1869,18 @@ class external extends \external_api {
                 $rec = $DB->get_record('data', ['id' => $instanceid], 'name, intro, maxentries, requiredentries');
                 if ($rec) {
                     $activityname = $rec->name ?? $activityname;
-                    $add_section('Descrição', $rec->intro ?? '');
+                    $add_section($activitystring('description'), $rec->intro ?? '');
                     $meta = [];
-                    if ($rec->requiredentries > 0) $meta[] = "Entradas obrigatórias: {$rec->requiredentries}";
-                    if ($rec->maxentries > 0)      $meta[] = "Máximo de entradas: {$rec->maxentries}";
-                    if ($meta) $sections[] = "[Configurações]\n" . implode("\n", $meta);
+                    if ($rec->requiredentries > 0) $meta[] = get_string('activitycontent_required_entries', 'block_mwa_dashboard', $rec->requiredentries);
+                    if ($rec->maxentries > 0)      $meta[] = get_string('activitycontent_max_entries', 'block_mwa_dashboard', $rec->maxentries);
+                    if ($meta) $sections[] = '[' . $activitystring('settings') . "]\n" . implode("\n", $meta);
                     // Campos do banco de dados
                     $fields = $DB->get_records('data_fields', ['dataid' => $instanceid], 'id', 'name, type, description');
                     if ($fields) {
                         $field_texts = array_map(function($f) {
                             return "• {$f->name} (" . ($f->type) . ")" . ($f->description ? ": " . strip_tags($f->description) : '');
                         }, $fields);
-                        $add_section('Campos do formulário', implode("\n", $field_texts));
+                        $add_section($activitystring('form_fields'), implode("\n", $field_texts));
                     }
                 }
                 break;
@@ -1883,7 +1890,7 @@ class external extends \external_api {
                 $rec = $DB->get_record('resource', ['id' => $instanceid], 'name, intro');
                 if ($rec) {
                     $activityname = $rec->name ?? $activityname;
-                    $add_section('Descrição', $rec->intro ?? '');
+                    $add_section($activitystring('description'), $rec->intro ?? '');
                     // File information
                     $file = $DB->get_record_sql(
                         "SELECT filename, filesize, mimetype FROM {files}
@@ -1902,18 +1909,18 @@ class external extends \external_api {
                 $rec = $DB->get_record('lesson', ['id' => $instanceid], 'name, intro, grade, practice');
                 if ($rec) {
                     $activityname = $rec->name ?? $activityname;
-                    $add_section('Introdução', $rec->intro ?? '');
-                    if ($rec->grade > 0) $sections[] = "[Pontuação]\n{$rec->grade} pts";
+                    $add_section($activitystring('introduction'), $rec->intro ?? '');
+                    if ($rec->grade > 0) $sections[] = '[' . $activitystring('points_label') . "]\n" . get_string('activitycontent_points', 'block_mwa_dashboard', $rec->grade);
                     // Lesson pages with content
                     $pages = $DB->get_records('lesson_pages', ['lessonid' => $instanceid], 'id', 'title, contents, qtype', 0, 15);
                     if ($pages) {
-                        $sections[] = "[Estrutura]\n" . count($pages) . " páginas na lição";
+                    $sections[] = '[' . $activitystring('structure') . "]\n" . get_string('activitycontent_lesson_page_count', 'block_mwa_dashboard', count($pages));
                         $page_texts = [];
                         foreach ($pages as $p) {
                             $ptext = mb_substr(strip_tags($p->contents ?? ''), 0, 300);
                             if (trim($ptext)) $page_texts[] = "► " . ($p->title ?? '') . ": $ptext";
                         }
-                        if ($page_texts) $add_section('Páginas', implode("\n\n", $page_texts));
+                        if ($page_texts) $add_section($activitystring('pages'), implode("\n\n", $page_texts));
                     }
                 }
                 break;
@@ -1927,7 +1934,7 @@ class external extends \external_api {
                     $options = $DB->get_records('choice_options', ['choiceid' => $instanceid], 'id', 'text');
                     if ($options) {
                         $opt_texts = array_map(function($o) { return "• " . strip_tags($o->text ?? ''); }, $options);
-                        $add_section('Opções de resposta', implode("\n", $opt_texts));
+                        $add_section($activitystring('answer_options'), implode("\n", $opt_texts));
                     }
                 }
                 break;
@@ -1937,12 +1944,12 @@ class external extends \external_api {
                 $rec = $DB->get_record('game', ['id' => $instanceid], 'name, intro, gamekind, quizid, glossaryid');
                 if ($rec) {
                     $activityname = $rec->name ?? $activityname;
-                    $add_section('Descrição do jogo', $rec->intro ?? '');
+                    $add_section($activitystring('game_description'), $rec->intro ?? '');
                     $kind_labels = [
-                        'hangman' => 'Forca', 'crossword' => 'Palavras cruzadas',
-                        'cryptex' => 'Criptex', 'millionaire' => 'Show do milhão',
-                        'sudoku' => 'Sudoku', 'snakes' => 'Cobras e escadas',
-                        'hiddenpicture' => 'Imagem oculta', 'bookquiz' => 'Quiz de livro',
+                        'hangman' => $activitystring('hangman'), 'crossword' => $activitystring('crossword'),
+                        'cryptex' => 'Criptex', 'millionaire' => $activitystring('millionaire'),
+                        'sudoku' => 'Sudoku', 'snakes' => $activitystring('snakes_ladders'),
+                        'hiddenpicture' => $activitystring('hidden_picture'), 'bookquiz' => $activitystring('book_quiz'),
                     ];
                     if (!empty($rec->gamekind)) {
                         $sections[] = "[Tipo de jogo]\n" . ($kind_labels[$rec->gamekind] ?? $rec->gamekind);
@@ -1958,7 +1965,7 @@ class external extends \external_api {
                             $entry_texts = array_map(function($e) {
                                 return trim($e->concept) . ': ' . mb_substr(strip_tags($e->definition ?? ''), 0, 150);
                             }, $entries);
-                            $add_section('Termos do jogo (do glossário)', implode("\n", $entry_texts));
+                            $add_section($activitystring('game_glossary_terms'), implode("\n", $entry_texts));
                         }
                     }
                 }
@@ -1970,7 +1977,7 @@ class external extends \external_api {
                     $rec = $DB->get_record($modname, ['id' => $instanceid], 'name, intro');
                     if ($rec) {
                         $activityname = $rec->name ?? $activityname;
-                        $add_section('Descrição', $rec->intro ?? '');
+                        $add_section($activitystring('description'), $rec->intro ?? '');
                     }
                 } catch (\Exception $e) {
                     // modulo sem tabela padrao
@@ -2079,7 +2086,7 @@ class external extends \external_api {
             $seen_urls[] = $found_url;
             // YouTube (embed, watch, youtu.be, nocookie)
             if (content_extractor::youtube_id($found_url)) {
-                $sources[] = ['type' => 'url', 'url' => $found_url, 'label' => 'Vídeo YouTube'];
+                $sources[] = ['type' => 'url', 'url' => $found_url, 'label' => $activitystring('youtube_video')];
                 continue;
             }
             // External URLs that are not from Moodle itself
@@ -2094,11 +2101,11 @@ class external extends \external_api {
             try {
                 $extracted = content_extractor::extract_all(array_slice($sources, 0, 3));
                 if (trim($extracted)) {
-                    $sections[] = "=== CONTEÚDO EXTRAÍDO DE ARQUIVOS/LINKS ===\n$extracted";
+                    $sections[] = '=== ' . $activitystring('extracted_content') . " ===\n$extracted";
                 }
             } catch (\Throwable $e) {
                 // Extraction failure should not prevent base analysis
-                $sections[] = "[Extração de arquivos/links não disponível: " . $e->getMessage() . "]";
+                $sections[] = '[' . get_string('activitycontent_extraction_unavailable', 'block_mwa_dashboard', $e->getMessage()) . ']';
             }
         }
 
@@ -2116,7 +2123,9 @@ class external extends \external_api {
             }
         }
         if ($section_labels) {
-            array_unshift($sections, "[Seções extraídas: " . implode(', ', $section_labels) . "]\nTotal: " . count($sections) . " blocos de conteúdo");
+            array_unshift($sections, '[' . get_string('activitycontent_extracted_sections', 'block_mwa_dashboard', (object)[
+                'sections' => implode(', ', $section_labels), 'count' => count($sections),
+            ]) . ']');
         }
         $content = implode("\n\n", $sections);
 

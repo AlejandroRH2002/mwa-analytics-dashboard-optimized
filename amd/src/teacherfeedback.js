@@ -420,7 +420,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
 
     function headerActionsHtml() {
         return '<div class="fr-header-actions">' +
-            '<button type="button" class="fr-btn fr-export" id="frExport">' + svg('download', 16) + ' Exportar reporte (PDF)</button></div>';
+            '<button type="button" class="fr-btn fr-export" id="frExport">' + svg('download', 16) + ' ' + tr('tf_export_report_pdf', 'Export Report (PDF)') + '</button></div>';
     }
 
     function kpi(icon, label, value, sub, color, help) {

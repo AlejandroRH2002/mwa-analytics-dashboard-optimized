@@ -1176,7 +1176,7 @@ class dashboard_page implements renderable, templatable {
             'tf_cont_select_prompt', 'tf_cont_select_sub', 'tf_cont_window_label',
             'tf_filter_all_teachers', 'tf_filter_all_students', 'tf_filter_all_period',
             'tf_tab_overview', 'tf_tab_engagement', 'tf_tab_learning', 'tf_tab_interaction',
-            'tf_tab_continuity', 'tf_tab_mediation', 'tf_tab_trajectory',
+            'tf_tab_continuity', 'tf_tab_mediation', 'tf_tab_trajectory', 'tf_export_report_pdf',
             'tf_chart_engagement', 'tf_chart_grade', 'tf_chart_approval',
             'tf_funnel_received', 'tf_funnel_responded', 'tf_funnel_active7', 'tf_funnel_sustained',
             'tf_journey_activities', 'tf_journey_resources', 'tf_journey_attempts', 'tf_journey_returned',
