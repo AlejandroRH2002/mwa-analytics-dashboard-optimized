@@ -253,6 +253,7 @@ class dashboard_page implements renderable, templatable {
             'teacherfeedback.css',
             'kpi-polish.css',
             'filter-polish.css',
+            'institutional.css',
         ];
     }
 
