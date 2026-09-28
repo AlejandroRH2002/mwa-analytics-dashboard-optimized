@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for block_mwa_dashboard.
+ * Course navigation callbacks for block_mwa_dashboard.
  *
  * @package    block_mwa_dashboard
  * @copyright  2026 Bruno Porto
@@ -24,9 +24,19 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component    = 'block_mwa_dashboard';
-$plugin->version = 2026092102;
-$plugin->requires     = 2022112800; // Moodle 4.1+
-$plugin->maturity     = MATURITY_STABLE;
-$plugin->release   = '4.3';
-$plugin->dependencies = [];
+/**
+ * Add the dashboard link to course navigation for users who can view it.
+ *
+ * @param navigation_node $navigation The course navigation node.
+ * @param stdClass $course The course record.
+ * @param context_course $context The course context.
+ */
+function block_mwa_dashboard_extend_navigation_course(navigation_node $navigation, stdClass $course, context_course $context): void {
+    if (!has_capability('block/mwa_dashboard:view', $context)) {
+        return;
+    }
+
+    $url = new moodle_url('/blocks/mwa_dashboard/view.php', ['course' => $course->id]);
+    $navigation->add(get_string('pluginname', 'block_mwa_dashboard'), $url,
+        navigation_node::TYPE_CUSTOM, null, 'mwa_dashboard_link', new pix_icon('i/report', ''));
+}
