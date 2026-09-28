@@ -28,6 +28,12 @@ function(Store, EngagementCalc, ActionCenter, Templates, Chart) {
 
     (function () {
       'use strict';
+      function dashboardLocale() {
+        var language = String(((Store.getConfig() || {}).language) || '').toLowerCase().replace('_', '-');
+        return language.indexOf('es') === 0 ? 'es-MX' : 'en-US';
+      }
+
+
     
       function tr(key) {
         var S = Store.getStrings() || {};
@@ -372,7 +378,7 @@ function(Store, EngagementCalc, ActionCenter, Templates, Chart) {
           var student = norm(log.nomecompleto || log.student_name || log.userfullname || log.fullname || log.name);
           if (student) map[key].students[student.toLowerCase()] = 1;
         });
-        return Object.keys(map).map(function (key) { return map[key]; }).sort(function (a, b) { return a.name.localeCompare(b.name, 'pt-BR'); });
+        return Object.keys(map).map(function (key) { return map[key]; }).sort(function (a, b) { return a.name.localeCompare(b.name, dashboardLocale()); });
       }
 
       function buildResourceProgress(name, logs, grades) {
@@ -456,7 +462,7 @@ function(Store, EngagementCalc, ActionCenter, Templates, Chart) {
         weeks.forEach(function (wk, wi) {
           var label = '';
           if (wi === 0 || wk[0].date.getDate() <= 7) {
-            var m = wk[0].date.toLocaleDateString('pt-BR', { month: 'short' });
+            var m = wk[0].date.toLocaleDateString(dashboardLocale(), { month: 'short' });
             if (!monthMarkers.length || monthMarkers[monthMarkers.length-1] !== m) {
               label = m;
               monthMarkers.push(m);
@@ -659,7 +665,7 @@ function(Store, EngagementCalc, ActionCenter, Templates, Chart) {
           rawemail: email,
           firstdate: fmtDate(first),
           lastdate: fmtDate(last),
-          totalinteractions: total.toLocaleString('pt-BR'),
+          totalinteractions: total.toLocaleString(dashboardLocale()),
           interactionslabel: tr('interactions'),
           lastaccesslabel: tr('sp_kpi_last_access'),
           agocolor: ac,
@@ -754,7 +760,7 @@ function(Store, EngagementCalc, ActionCenter, Templates, Chart) {
           var logs  = state.logs || [];
           var grades = state.grades || [];
           var names = getAllStudentNames(logs, grades, state.students || []);
-          names.sort(function(a,b){ return a.localeCompare(b,'pt-BR'); });
+          names.sort(function(a,b){ return a.localeCompare(b,dashboardLocale()); });
           return { names: names, logs: logs, grades: grades, students: state.students || [] };
         }
 

@@ -1176,7 +1176,7 @@ class dashboard_page implements renderable, templatable {
             'tf_cont_select_prompt', 'tf_cont_select_sub', 'tf_cont_window_label',
             'tf_filter_all_teachers', 'tf_filter_all_students', 'tf_filter_all_period',
             'tf_tab_overview', 'tf_tab_engagement', 'tf_tab_learning', 'tf_tab_interaction',
-            'tf_tab_continuity', 'tf_tab_mediation', 'tf_tab_trajectory', 'tf_tab_ai',
+            'tf_tab_continuity', 'tf_tab_mediation', 'tf_tab_trajectory',
             'tf_chart_engagement', 'tf_chart_grade', 'tf_chart_approval',
             'tf_funnel_received', 'tf_funnel_responded', 'tf_funnel_active7', 'tf_funnel_sustained',
             'tf_journey_activities', 'tf_journey_resources', 'tf_journey_attempts', 'tf_journey_returned',
@@ -1190,10 +1190,6 @@ class dashboard_page implements renderable, templatable {
             'tf_no_student_counted', 'tf_no_student_approved', 'tf_no_student_improved',
             'tf_students_approved', 'tf_students_improved',
             'tf_error_load', 'tf_error_load_sub', 'tf_loading_consolidate',
-            'tf_ai_loading', 'tf_ai_not_configured', 'tf_ai_not_configured_sub',
-            'tf_ai_intro_title', 'tf_ai_intro_sub',
-            'tf_ai_topic_before_after', 'tf_ai_topic_progress', 'tf_ai_topic_priority', 'tf_ai_topic_recommend',
-            'tf_ai_generate_btn', 'tf_ai_regen_btn', 'tf_ai_report_title', 'tf_ai_report_notice',
             'tf_linechart_title', 'tf_linechart_aria', 'tf_linechart_marker',
             'tf_linechart_select', 'tf_linechart_select_sub',
             'tf_journey_title', 'tf_journey_aria', 'tf_journey_d0',
@@ -1225,10 +1221,6 @@ class dashboard_page implements renderable, templatable {
             'tf_strategy_col_evolved', 'tf_strategy_col_rate', 'tf_strategy_no_data',
             'tf_strategy_info', 'tf_strategy_unknown',
             // ── AI context ──
-            'tf_ai_motivo', 'tf_ai_intervencao', 'tf_ai_engagement_delta', 'tf_ai_grade_delta',
-            'tf_ai_after_events', 'tf_ai_after_academic', 'tf_ai_first_return', 'tf_ai_no_return',
-            'tf_ai_result', 'tf_ai_result_none', 'tf_ai_result_full', 'tf_ai_result_partial',
-            'tf_ai_continuity', 'tf_ai_continuity_yes', 'tf_ai_continuity_no',
             // ── Donut info ──
             'tf_donut_info',
             // ── Snapshot modal ──

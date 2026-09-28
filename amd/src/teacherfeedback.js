@@ -410,17 +410,17 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
         var reasonOptions = option('all', tr('tf_filter_all_reasons'), filters.reason);
         REASONS.forEach(function(key) { reasonOptions += option(key, REASON_META[key].label(), filters.reason); });
         return '<div class="fr-toolbar open">' +
-            '<div class="fr-filter"><label>Período inicial</label><input id="frFrom" type="date" value="' + esc(filters.from) + '"></div>' +
-            '<div class="fr-filter"><label>Período final</label><input id="frTo" type="date" value="' + esc(filters.to) + '"></div>' +
+            '<div class="fr-filter"><label>Periodo de inicio</label><input id="frFrom" type="date" value="' + esc(filters.from) + '"></div>' +
+            '<div class="fr-filter"><label>Periodo final</label><input id="frTo" type="date" value="' + esc(filters.to) + '"></div>' +
             '<div class="fr-filter"><label>Motivo</label><select id="frReason">' + reasonOptions + '</select></div>' +
-            '<div class="fr-filter"><label>Professor</label><select id="frTeacher">' + teacherOptions + '</select></div>' +
-            '<div class="fr-filter fr-student-filter"><label>Estudante</label><select id="frStudent">' + studentOptions + '</select></div>' +
-            '<button type="button" class="fr-btn fr-clear" id="frClear">⌫ Limpar filtros</button></div>';
+            '<div class="fr-filter"><label>Docente</label><select id="frTeacher">' + teacherOptions + '</select></div>' +
+            '<div class="fr-filter fr-student-filter"><label>Estudiante</label><select id="frStudent">' + studentOptions + '</select></div>' +
+            '<button type="button" class="fr-btn fr-clear" id="frClear">⌫ Limpiar filtros</button></div>';
     }
 
     function headerActionsHtml() {
         return '<div class="fr-header-actions">' +
-            '<button type="button" class="fr-btn fr-export" id="frExport">' + svg('download', 16) + ' Exportar relatório (PDF)</button></div>';
+            '<button type="button" class="fr-btn fr-export" id="frExport">' + svg('download', 16) + ' Exportar reporte (PDF)</button></div>';
     }
 
     function kpi(icon, label, value, sub, color, help) {
@@ -908,7 +908,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
         function rowStudentNames(test) {
             var names = {};
             rows.forEach(function(row) {
-                if (test(row)) { names[row.key] = row.raw.student_name || 'Estudante'; }
+                if (test(row)) { names[row.key] = row.raw.student_name || 'Estudiante'; }
             });
             return Object.keys(names).map(function(key) { return names[key]; });
         }
@@ -1037,7 +1037,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
                 var relativeDay = Math.floor(elapsed / DAY);
                 if (elapsed < 0 || relativeDay < 0 || relativeDay >= dayCount) { return; }
                 buckets[relativeDay].count++;
-                var name = norm(row.raw.student_name || row.raw.student_email || 'Estudante');
+                var name = norm(row.raw.student_name || row.raw.student_email || 'Estudiante');
                 if (name) { buckets[relativeDay].students[name] = true; }
             });
         }
@@ -1235,7 +1235,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
             panel.replaceChildren();
             var title = document.createElement('strong');
             title.textContent = (detail.series || 'Indicador') + ' · ' + (detail.label || '') + ' · ' +
-                (detail.approval ? detail.value + (Number(detail.value) === 1 ? ' estudante' : ' estudantes') : 'valor ' + detail.value);
+                (detail.approval ? detail.value + (Number(detail.value) === 1 ? ' estudiante' : ' estudiantes') : 'valor ' + detail.value);
             var text = document.createElement('span');
             text.textContent = names.length ? (detail.approval ? tr('tf_students_approved') : tr('tf_students_improved')) + ' ' + names.join(', ') :
                 (detail.approval ? tr('tf_no_student_approved') :

@@ -34,6 +34,12 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
 
     (function () {
       'use strict';
+      function dashboardLocale() {
+        var language = String(((Store.getConfig() || {}).language) || '').toLowerCase().replace('_', '-');
+        return language.indexOf('es') === 0 ? 'es-MX' : 'en-US';
+      }
+
+
 
       function icon(name) {
         return '<svg class="mwa-ui-icon" aria-hidden="true"><use href="#mwa-icon-' + esc(name) + '"></use></svg>';
@@ -1510,7 +1516,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
             type: item.type || ''
           };
         }).filter(Boolean).sort(function(a, b) {
-          return a.worst - b.worst || a.name.localeCompare(b.name, 'pt-BR');
+          return a.worst - b.worst || a.name.localeCompare(b.name, dashboardLocale());
         });
       }
 

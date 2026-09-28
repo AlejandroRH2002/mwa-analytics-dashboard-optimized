@@ -45,7 +45,7 @@ class content_extractor {
                 $text = '(' . get_string('ctxextract_error', 'block_mwa_dashboard', $e->getMessage()) . ')';
             }
             if (trim($text)) {
-                $parts[] = "[Conteúdo: $label]\n" . trim($text);
+                $parts[] = "[Contenido: $label]\n" . trim($text);
             }
         }
         return implode("\n\n", $parts);
@@ -238,23 +238,23 @@ class content_extractor {
                 // Publication date
                 if (preg_match('/"publishDate"\s*:\s*"([^"]+)"/', $html, $m)) {
                     $ts = strtotime($m[1]);
-                    if ($ts) $info[] = "Publicado em: " . date('d/m/Y', $ts);
+                    if ($ts) $info[] = "Publicado el: " . date('d/m/Y', $ts);
                 } elseif (preg_match('/itemprop="datePublished"[^>]+content="([^"]+)"/i', $html, $m)) {
                     $ts = strtotime($m[1]);
-                    if ($ts) $info[] = "Publicado em: " . date('d/m/Y', $ts);
+                    if ($ts) $info[] = "Publicado el: " . date('d/m/Y', $ts);
                 }
 
                 // View count
                 if (preg_match('/"viewCount"\s*:\s*"(\d+)"/', $html, $m)) {
-                    $info[] = "Visualizações: " . number_format((int)$m[1], 0, '.', '.');
+                    $info[] = "Visualizaciones: " . number_format((int)$m[1], 0, '.', '.');
                 }
                 // Description
                 if (preg_match('/"shortDescription"\s*:\s*"((?:[^"\\\\]|\\\\.)*)"/s', $html, $m)) {
                     $desc = stripcslashes($m[1]);
                     $desc = mb_substr($desc, 0, 600);
-                    if ($desc) $info[] = "Descrição: $desc";
+                    if ($desc) $info[] = "Descripción: $desc";
                 } elseif (preg_match('/<meta[^>]+property="og:description"[^>]+content="([^"]+)"/i', $html, $m)) {
-                    $info[] = "Descrição: " . html_entity_decode(mb_substr($m[1], 0, 400));
+                    $info[] = "Descripción: " . html_entity_decode(mb_substr($m[1], 0, 400));
                 }
 
             }
@@ -263,9 +263,9 @@ class content_extractor {
         // STRATEGY 3: If insufficient data, instruct AI to search
         if (!$got_title) {
             $info[] = "";
-            $info[] = "INSTRUÇÃO: Não foi possível extrair os metadados do vídeo automaticamente.";
-            $info[] = "Pesquise sobre este vídeo usando a URL acima e inclua no diagnóstico:";
-            $info[] = "- Título do vídeo, nome do canal, data, duração, tema abordado e visualizações.";
+            $info[] = "INSTRUCCIÓN: No fue posible extraer automáticamente los metadatos del video.";
+            $info[] = "Investiga este video con la URL anterior e incluye en el diagnóstico:";
+            $info[] = "- Título del video, nombre del canal, fecha, duración, tema y visualizaciones.";
         }
 
         return implode("\n", $info);
@@ -277,7 +277,7 @@ class content_extractor {
 
     public static function fetch_html(string $url): string {
         $html = self::raw_fetch($url);
-        if (!$html) return '(Não foi possível acessar a URL)';
+        if (!$html) return '(No fue posible acceder a la URL)';
 
         // Extract title
         $title = '';
@@ -306,12 +306,12 @@ class content_extractor {
         $text = preg_replace('/\n{3,}/', "\n\n", $text);
         $text = trim($text);
 
-        $result = $title ? "Título: $title\n\n$text" : $text;
+        $result = $title ? "T?tulo: $title\n\n$text" : $text;
         return self::truncate($result);
     }
 
     private static function fetch_and_note(string $url, string $type): string {
-        return "(Recurso do tipo $type. URL: $url — o conteúdo binário não pode ser extraído diretamente, mas o link foi identificado na atividade.)";
+        return "(Recurso de tipo $type. URL: $url; el contenido binario no se puede extraer directamente, pero se identific? el enlace en la actividad.)";
     }
 
     private static function raw_fetch(string $url): string {

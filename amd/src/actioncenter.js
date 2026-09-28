@@ -32,6 +32,12 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
 
     (function(){
     'use strict';
+      function dashboardLocale() {
+        var language = String(((Store.getConfig() || {}).language) || '').toLowerCase().replace('_', '-');
+        return language.indexOf('es') === 0 ? 'es-MX' : 'en-US';
+      }
+
+
     function ctx(){ return window.MWADashboard || {}; }
     function $(id){ return (ctx().$ || function(x){return document.getElementById(x);})(id); }
     function tr(key, fallback){
@@ -1096,7 +1102,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
             if(!map[key])map[key]=Object.assign({},item,{_key:key});
           });
         });
-        selectedTargetOptions=Object.keys(map).map(function(k){return map[k];}).sort(function(a,b){return String(a.name).localeCompare(String(b.name),'pt-BR');});
+        selectedTargetOptions=Object.keys(map).map(function(k){return map[k];}).sort(function(a,b){return String(a.name).localeCompare(String(b.name),dashboardLocale());});
         if(!selectedTargetOptions.length){
           targetSelectDiv.style.display='block';
           targetSelectList.replaceChildren();
@@ -1230,7 +1236,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
         var requiresTargets=reasonUsesTargetItems(reason);
         var checkedKeys=selectedTargetKeys();
         if(requiresTargets&&!checkedKeys.length){
-          Store.notify(tr('msg_target_required','Selecione pelo menos uma atividade ou conteúdo para acompanhar.'),'warning');
+          Store.notify(tr('msg_target_required','Select at least one activity or content item to track.'),'warning');
           return;
         }
         var preparedTargets=selectedTargets.map(function(t){

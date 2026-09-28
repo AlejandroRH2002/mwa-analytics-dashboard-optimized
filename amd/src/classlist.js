@@ -38,6 +38,12 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
         return '<svg class="mwa-ui-icon" aria-hidden="true"><use href="#mwa-icon-' + name + '"></use></svg>';
       }
       'use strict';
+      function dashboardLocale() {
+        var language = String(((Store.getConfig() || {}).language) || '').toLowerCase().replace('_', '-');
+        return language.indexOf('es') === 0 ? 'es-MX' : 'en-US';
+      }
+
+
     
       
       function tr(key, fallback) {
@@ -592,7 +598,7 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
           if (student) map[key].students[student.toLowerCase()] = 1;
         });
         return Object.keys(map).map(function (key) { return map[key]; })
-          .sort(function (a, b) { return a.name.localeCompare(b.name, 'pt-BR'); });
+          .sort(function (a, b) { return a.name.localeCompare(b.name, dashboardLocale()); });
       }
 
       function buildResourceDots(name, resources) {
@@ -958,16 +964,18 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
         var sizes = [5, 10, 20, 50].map(function(size) {
           return '<option value="' + size + '"' + (size === CL_PAGE_SIZE ? ' selected' : '') + '>' + size + '</option>';
         }).join('');
-        Store.renderHtml(box, '<div class="cl-pag-info">Showing ' + first + '–' + last + ' of ' + totalItems + ' students</div>'
+        var rangeText = tr('gr_showing_range', 'Showing {start} to {end} of {total} students')
+          .replace('{start}', first).replace('{end}', last).replace('{total}', totalItems);
+        Store.renderHtml(box, '<div class="cl-pag-info">' + esc(rangeText) + '</div>'
           + '<div class="cl-pag-pages">' + buttons + '</div>'
-          + '<label class="cl-pag-size">Itens por página: <select onchange="window.MWAClassList.setPageSize(this.value)">' + sizes + '</select></label>');
+          + '<label class="cl-pag-size">' + esc(tr('gr_items_per_page', 'Items per page:')) + ' <select onchange="window.MWAClassList.setPageSize(this.value)">' + sizes + '</select></label>');
       }
 
       function buildStudentDetail(item, activityProgressHtml, resourceProgressHtml, detailId) {
         var calc = item.calc || {};
         var currentGrade = calc.grade === null || calc.grade === undefined ? null : Number(calc.grade);
         if (currentGrade !== null && isNaN(currentGrade)) currentGrade = null;
-        var gradeText = currentGrade === null ? '\u2014' : currentGrade.toLocaleString('pt-BR', {minimumFractionDigits: 1, maximumFractionDigits: 1});
+        var gradeText = currentGrade === null ? '\u2014' : currentGrade.toLocaleString(dashboardLocale(), {minimumFractionDigits: 1, maximumFractionDigits: 1});
         var gradeColor = currentGrade === null ? 'var(--muted)' : currentGrade >= 60 ? 'var(--green)' : 'var(--red)';
         var lastText = calc.last ? fmtDate(calc.last) : '—';
         var daysText = item.status.key === 'never' ? tr('ev_never_access', 'No recorded access') : (calc.daysWithoutAccess || 0) + 'd';
@@ -1110,9 +1118,9 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
         filtered.sort(function (a, b) {
           switch (sortMode) {
             case 'alpha':
-              return a.name.localeCompare(b.name, 'pt-BR');
+              return a.name.localeCompare(b.name, dashboardLocale());
             case 'risk':
-              return a.score - b.score || a.name.localeCompare(b.name, 'pt-BR');
+              return a.score - b.score || a.name.localeCompare(b.name, dashboardLocale());
             case 'participation':
               return b.score - a.score;
             case 'time':
@@ -1150,7 +1158,7 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
           var currentGrade = e.calc && e.calc.grade !== null && e.calc.grade !== undefined
             ? Number(e.calc.grade) : null;
           if (currentGrade !== null && isNaN(currentGrade)) currentGrade = null;
-          var gradeText = currentGrade === null ? '\u2014' : currentGrade.toLocaleString('pt-BR', {
+          var gradeText = currentGrade === null ? '\u2014' : currentGrade.toLocaleString(dashboardLocale(), {
             minimumFractionDigits: 1,
             maximumFractionDigits: 1
           });

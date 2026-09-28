@@ -78,3 +78,6 @@ $string['ai_configuration_incomplete'] = 'La configuración de IA está incomple
 $string['ai_disabled'] = 'La IA está desactivada.';
 $string['ai_provider_request_failed'] = 'El proveedor de IA no respondió correctamente.';
 $string['ai_provider_empty_response'] = 'El proveedor de IA devolvió una respuesta vacía.';
+
+$string['gr_showing_range'] = 'Mostrando del {start} al {end} de {total} estudiantes';
+$string['gr_items_per_page'] = 'Elementos por página:';

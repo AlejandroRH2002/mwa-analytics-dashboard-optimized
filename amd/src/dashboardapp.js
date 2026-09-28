@@ -1000,10 +1000,10 @@ define([
             var page = document.getElementById('page-heatmap');
             if (!page) return;
             [
-              ['day_hour', 'hm_tip_card_day_hour', 'Mostra a distribuicao de acessos por dia e hora.'],
-              ['hm_insights_title', 'hm_tip_card_insights', 'Resume automaticamente os principais padroes do heatmap.'],
-              ['hm_grades_title', 'hm_tip_card_grades', 'Compara horario de acesso com media de notas.'],
-              ['hm_besttime_title', 'hm_tip_card_besttime', 'Sugere a melhor janela para enviar intervencoes.']
+              ['day_hour', 'hm_tip_card_day_hour', 'Shows the distribution of accesses by day and hour.'],
+              ['hm_insights_title', 'hm_tip_card_insights', 'Summarizes the main heatmap patterns.'],
+              ['hm_grades_title', 'hm_tip_card_grades', 'Compares access times with grade averages.'],
+              ['hm_besttime_title', 'hm_tip_card_besttime', 'Suggests the best time window for follow-up messages.']
             ].forEach(function(item) {
               var title = page.querySelector('[data-i18n="' + item[0] + '"]');
               if (!title) return;
@@ -1397,9 +1397,9 @@ define([
 
           if (kpiBox) {
             [
-              ['hm_tip_kpi_peak_hour', 'Hora do dia com maior volume de acessos.'],
-              ['hm_tip_kpi_filtered', 'Quantidade de acessos considerada apos aplicar os filtros.'],
-              ['hm_tip_kpi_total_logs', 'Total de registros carregados do Moodle antes dos filtros.']
+              ['hm_tip_kpi_peak_hour', 'Hour of day with the most access.'],
+              ['hm_tip_kpi_filtered', 'Access count after filters are applied.'],
+              ['hm_tip_kpi_total_logs', 'Total Moodle records loaded before filters.']
             ].forEach(function(item, idx) {
               appendHmTip(kpiBox.querySelectorAll('.hm-kpi-lbl')[idx], item[0], item[1]);
             });
@@ -1567,7 +1567,7 @@ define([
             node.classList.add('mwa-chart-motion');
           });
         }
-        function updateDashboardTimestamp(){var el=document.getElementById('mwaGlobalUpdatedAt');if(!el)return;var locale=config.language&&config.language.indexOf('pt')===0?'pt-BR':'en-US';var formatted=new Date().toLocaleString(locale,{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});el.textContent=tr('dashboard_updated_at','Updated at')+' '+formatted;}
+        function updateDashboardTimestamp(){var el=document.getElementById('mwaGlobalUpdatedAt');if(!el)return;var locale=String(config.language || '').toLowerCase().indexOf('es') === 0 ? 'es-MX' : 'en-US';var formatted=new Date().toLocaleString(locale,{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});el.textContent=tr('dashboard_updated_at','Updated at')+' '+formatted;}
         function renderAll(){buildModel();dashboard.state=state;Store.setDashboard(dashboard);renderKPIs();if(Modules.ActionCenter){Modules.ActionCenter.renderEngagement();Modules.ActionCenter.render();}renderChart();renderTables();renderAlerts();renderHeatmap();renderReport();if(Modules.ClassList)Modules.ClassList.render();if(Modules.Profile)Modules.Profile.render();if(Modules.Activities)Modules.Activities.render();if(Modules.Grades)Modules.Grades.render();if(Modules.Interventions)Modules.Interventions.render();if(!document.querySelector('.page.active')){showPage(config.initialpage||'ac');}updateDashboardTimestamp();loading.style.display='none';setTimeout(function(){animateDashboard();var active=document.getElementById('page-ac');if(active&&active.classList.contains('active')&&Modules.ActionCenter)Modules.ActionCenter.renderEngagement();},120)}
         function esc(v){return String(v===undefined||v===null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
         function showPage(p){updateDashboardTimestamp();try{var currentUrl=new window.URL(window.location.href);currentUrl.searchParams.set('mwa_page',p);window.history.replaceState({},'',currentUrl.toString());}catch(ignore){}document.querySelectorAll('.page').forEach(function(x){x.classList.remove('active')});var page=$('page-'+p);if(page)page.classList.add('active');document.querySelectorAll('.nav-item').forEach(function(x){x.classList.toggle('active',x.getAttribute('data-page')===p)});if(p==='ac'&&Modules.ActionCenter){setTimeout(function(){Modules.ActionCenter.renderEngagement();},120);}if(p==='alerts'&&Modules.Alerts&&state.logs.length){Modules.Alerts.reset();Modules.Alerts.render();}if(p==='classlist'&&Modules.ClassList&&(state.logs.length||state.grades.length)){Modules.ClassList.render();}if(p==='studentprofile'&&Modules.Profile){if(typeof window.MWAReloadData==='function'&&!window.MWAProfileReloading){window.MWAProfileReloading=true;window.MWAReloadData().then(function(){Modules.Profile.render();}).catch(function(){Modules.Profile.render();}).then(function(){window.MWAProfileReloading=false;});}else{Modules.Profile.render();}}if(p==='activities'&&Modules.Activities&&state.logs.length){Modules.Activities.render();}if(p==='grades'&&Modules.Grades){Modules.Grades.render();}if(p==='interventions'&&Modules.Interventions){if(typeof window.MWAReloadData==='function'&&!window.MWAInterventionsReloading){window.MWAInterventionsReloading=true;window.MWAReloadData().then(function(){Modules.Interventions.render();}).catch(function(){Modules.Interventions.render();}).then(function(){window.MWAInterventionsReloading=false;});}else{Modules.Interventions.render();}}if(p==='teacherfeedback'&&Modules.TeacherFeedback){Modules.TeacherFeedback.render();}if(p==='heatmap'&&state.logs.length){renderHeatmap();['heatmapStudentSel','heatmapModSel','heatmapModeSel'].forEach(function(id){var el=document.getElementById(id);if(el&&!el.dataset.hmInit){el.dataset.hmInit='1';el.addEventListener('change',renderHeatmap);}});}}
@@ -1576,7 +1576,7 @@ define([
         var dashboardBrand=document.getElementById('mwaDashboardBrand');
         if(dashboardBrand&&!dashboardBrand.dataset.mwaHomeInit){dashboardBrand.dataset.mwaHomeInit='1';dashboardBrand.addEventListener('click',refreshDashboardHome);dashboardBrand.addEventListener('keydown',function(event){if(event.key==='Enter'||event.key===' '){event.preventDefault();refreshDashboardHome();}});}
         function markSeen(){state.seen=true;alert(tr('actions_marked_seen','Actions marked as seen.'));}
-        $('todayLabel').textContent=new Date().toLocaleDateString((config.language&&config.language.indexOf('pt')===0)?'pt-BR':'en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});$('search').addEventListener('input',renderTables);
+        $('todayLabel').textContent=new Date().toLocaleDateString(String(config.language || '').toLowerCase().indexOf('es') === 0 ? 'es-MX' : 'en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});$('search').addEventListener('input',renderTables);
         function receiveData(data){try{
           // Reloads can arrive in stages (for example, fresh logs before the grade/roster
           // payload). Never erase a dataset that is already valid just because that stage

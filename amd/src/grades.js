@@ -37,6 +37,12 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
         return '<svg class="mwa-ui-icon" aria-hidden="true"><use href="#mwa-icon-' + name + '"></use></svg>';
       }
       'use strict';
+      function dashboardLocale() {
+        var language = String(((Store.getConfig() || {}).language) || '').toLowerCase().replace('_', '-');
+        return language.indexOf('es') === 0 ? 'es-MX' : 'en-US';
+      }
+
+
     
       function tr(key) {
         var S = Store.getStrings() || {};
@@ -523,7 +529,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
           if (order[left.group] !== order[right.group]) return order[left.group] - order[right.group];
           var leftGrade = left.student.total === null ? -1 : Number(left.student.total || 0);
           var rightGrade = right.student.total === null ? -1 : Number(right.student.total || 0);
-          return rightGrade - leftGrade || left.student.name.localeCompare(right.student.name, 'pt-BR');
+          return rightGrade - leftGrade || left.student.name.localeCompare(right.student.name, dashboardLocale());
         });
         var unifiedRows = unifiedStudents.map(function(entry) {
           var g = entry.student;

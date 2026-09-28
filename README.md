@@ -61,7 +61,7 @@ Records pedagogical actions with period, reason, teacher, student, and status fi
 
 ### Follow-up Report
 
-Consolidates intervention and subsequent Moodle evidence in Overview, Engagement, Learning, Interaction, Permanence, Mediation, Trajectory, and AI Report sections.
+Consolidates intervention and subsequent Moodle evidence in Overview, Engagement, Learning, Interaction, Permanence, Mediation, and Trajectory sections.
 
 ### Chat with Class
 
@@ -129,7 +129,7 @@ Version 4.3 delivers the current unified dashboard experience for course monitor
 - Compact accordions use sentence case, close when selected again, and reveal affected learners without expanding the main list.
 - Thin progress bars and compact status labels avoid oversized visual elements.
 - Tracked and untracked items remain separate; hidden tracked items can be restored without changing calculations.
-- Spreadsheet export includes the complete tracked analysis and preserves accented Portuguese text.
+- Spreadsheet export includes the complete tracked analysis and preserves accented text in multiple languages.
 
 ### Grades
 
