@@ -2139,3 +2139,5 @@ $string['yes'] = 'Yes';
 $string['settings_trackallcourses'] = 'Enable tracking in all courses';
 $string['settings_trackallcourses_desc'] = 'When enabled, event tracking is active in every course, regardless of the course block setting.';
 $string['capture_global_enabled'] = 'Event tracking is enabled site-wide by the administrator.';
+$string['capture_activate'] = 'Activate tracking';
+$string['capture_activated'] = 'Event tracking has been activated for this course.';
