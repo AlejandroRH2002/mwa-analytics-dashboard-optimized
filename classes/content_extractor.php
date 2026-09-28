@@ -315,17 +315,92 @@ class content_extractor {
     }
 
     private static function raw_fetch(string $url): string {
+        $parts = parse_url($url);
+        if ($parts === false || empty($parts['host']) || !empty($parts['user']) || !empty($parts['pass'])) {
+            return '';
+        }
+        $scheme = strtolower($parts['scheme'] ?? '');
+        if (!in_array($scheme, ['http', 'https'], true)) {
+            return '';
+        }
+        $host = strtolower(rtrim($parts['host'], '.'));
+        if ($host === '' || preg_match('/(?:^|\.)(localhost|local|internal|test|invalid|example)$/i', $host)) {
+            return '';
+        }
+        $port = (int)($parts['port'] ?? ($scheme === 'https' ? 443 : 80));
+        if ($port < 1 || $port > 65535) {
+            return '';
+        }
+
+        $resolve = [];
+        if (filter_var($host, FILTER_VALIDATE_IP)) {
+            if (!self::is_public_ip($host)) {
+                return '';
+            }
+        } else {
+            $records = @dns_get_record($host, DNS_A | DNS_AAAA);
+            $addresses = [];
+            foreach ($records ?: [] as $record) {
+                $address = $record['ip'] ?? ($record['ipv6'] ?? '');
+                if ($address !== '') {
+                    if (!self::is_public_ip($address)) {
+                        return '';
+                    }
+                    $addresses[] = $address;
+                }
+            }
+            if (!$addresses) {
+                return '';
+            }
+            $address = $addresses[0];
+            $resolve[] = $host . ':' . $port . ':' . (strpos($address, ':') === false ? $address : '[' . $address . ']');
+        }
+
         $curl = new \curl();
-        $curl->setopt([
+        $curl->proxy = false;
+        $options = [
             'CURLOPT_TIMEOUT'         => 10,
             'CURLOPT_RETURNTRANSFER'  => true,
-            'CURLOPT_FOLLOWLOCATION'  => true,
-            'CURLOPT_MAXREDIRS'       => 3,
+            'CURLOPT_FOLLOWLOCATION'  => false,
             'CURLOPT_USERAGENT'       => 'Mozilla/5.0 (compatible; MWA-Dashboard/1.0)',
-        ]);
+        ];
+        if ($resolve) {
+            $options['CURLOPT_RESOLVE'] = $resolve;
+        }
+        $curl->setopt($options);
         $response = $curl->get($url);
-        if ($curl->get_errno()) return '';
+        if ($curl->get_errno()) {
+            return '';
+        }
+        $info = $curl->get_info();
+        if (!is_array($info) || (int)($info['http_code'] ?? 0) < 200 || (int)$info['http_code'] >= 300) {
+            return '';
+        }
         return (string)$response;
+    }
+
+    /** Determine whether an IP is globally routable and not a local/private address. */
+    private static function is_public_ip(string $address): bool {
+        if (!filter_var($address, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+            return false;
+        }
+        $packed = @inet_pton($address);
+        if ($packed === false) {
+            return false;
+        }
+        if (strlen($packed) === 4) {
+            $octets = array_values(unpack('C4', $packed));
+            if ($octets[0] === 100 && $octets[1] >= 64 && $octets[1] <= 127) {
+                return false;
+            }
+        }
+        if (strlen($packed) === 16) {
+            $mappedprefix = str_repeat("\0", 10) . "\xff\xff";
+            if (substr($packed, 0, 12) === $mappedprefix) {
+                return self::is_public_ip(inet_ntop(substr($packed, 12)));
+            }
+        }
+        return true;
     }
 
     private static function truncate(string $text): string {

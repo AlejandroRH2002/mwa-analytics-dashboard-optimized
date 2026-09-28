@@ -134,7 +134,8 @@ class api {
      * @param int $groupid Optional course group id.
         * @return \stdClass[] Database rows keyed by intervention id.
      */
-    public static function get_interventions(int $courseid, int $since = 0, int $groupid = 0): array {
+    public static function get_interventions(int $courseid, int $since = 0, int $groupid = 0,
+                                             ?array $allowedgroupids = null): array {
         global $DB;
         debugging('block_mwa_dashboard api::get_interventions SQL parameters: ' . json_encode([
             'courseid' => $courseid, 'groupid' => $groupid, 'since' => $since,
@@ -146,7 +147,17 @@ class api {
             $conditions[] = 'm.timesent >= :since';
             $params['since'] = $since;
         }
-        if ($groupid > 0) {
+        if ($allowedgroupids !== null) {
+            if (!$allowedgroupids) {
+                return [];
+            }
+            [$groupsql, $groupparams] = $DB->get_in_or_equal($allowedgroupids, SQL_PARAMS_NAMED, 'scopegroup');
+            $conditions[] = 'EXISTS (
+                SELECT 1 FROM {groups_members} gm
+                 WHERE gm.groupid ' . $groupsql . ' AND gm.userid = m.userid
+            )';
+            $params += $groupparams;
+        } else if ($groupid > 0) {
             $conditions[] = 'EXISTS (
                 SELECT 1
                   FROM {groups_members} gm
@@ -429,7 +440,8 @@ class api {
      *                      Defaults to LOG_DEFAULT_DAYS days ago when 0.
      * @return array Array of log records.
      */
-    public static function get_logs(int $courseid, int $since = 0, int $groupid = 0): array {
+    public static function get_logs(int $courseid, int $since = 0, int $groupid = 0,
+                                    ?array $allowedgroupids = null): array {
         global $DB;
         debugging('block_mwa_dashboard api::get_logs SQL parameters: ' . json_encode([
             'courseid' => $courseid, 'groupid' => $groupid, 'since' => $since,
@@ -448,8 +460,16 @@ class api {
         // Always use the plugin's own table â€” populated by event observers.
         // Never query logstore_standard_log to avoid slow full-table scans.
         $groupjoin = '';
+        $groupfilter = '';
         $groupparams = [];
-        if ($groupid > 0) {
+        if ($allowedgroupids !== null) {
+            if (!$allowedgroupids) {
+                return [];
+            }
+            [$groupsql, $groupparams] = $DB->get_in_or_equal($allowedgroupids, SQL_PARAMS_NAMED, 'scopegroup');
+            $groupfilter = "\n              AND EXISTS (SELECT 1 FROM {groups_members} gm"
+                . " WHERE gm.userid = l.userid AND gm.groupid $groupsql)";
+        } else if ($groupid > 0) {
             $groupjoin = "\n            JOIN {groups_members} gm ON gm.userid = l.userid AND gm.groupid = :groupid";
             $groupparams['groupid'] = $groupid;
         }
@@ -473,6 +493,7 @@ class api {
             $groupjoin
             WHERE l.courseid = :courseid
               AND l.timecreated > :since
+              $groupfilter
                AND l.userid IN (
                   SELECT DISTINCT ra.userid
                     FROM {role_assignments} ra
@@ -498,7 +519,7 @@ class api {
             'since'     => $since,
             'now'       => time(),
             'now2'      => time(),
-        ] + $groupparams;
+        ] + ($groupparams ?? []);
         $records = $DB->get_records_sql($sql, $params, 0, self::LOG_LIMIT);
         $logs = [];
         foreach ($records as $r) {
@@ -815,7 +836,7 @@ class api {
      * @param int $groupid Optional course group ID.
      * @return array Student roster with grade data when available.
      */
-    public static function get_grades(int $courseid, int $groupid = 0): array {
+    public static function get_grades(int $courseid, int $groupid = 0, ?array $allowedgroupids = null): array {
         global $DB, $CFG;
         debugging('block_mwa_dashboard api::get_grades SQL parameters: ' . json_encode([
             'courseid' => $courseid, 'groupid' => $groupid,
@@ -823,9 +844,42 @@ class api {
         require_once($CFG->libdir . '/gradelib.php');
         // Keep the participant roster independent from grade items and logs.
         $context = \context_course::instance($courseid);
-        $students = get_enrolled_users($context, '', 0,
-                        'u.id, u.firstname, u.lastname, u.email, u.picture, u.imagealt',
-                        '', 0, 0, true);
+        if ($allowedgroupids !== null) {
+            if (!$allowedgroupids) {
+                return [];
+            }
+            $studentroleids = $DB->get_fieldset_select('role', 'id', 'shortname = :shortname',
+                ['shortname' => 'student']);
+            if (!$studentroleids) {
+                return [];
+            }
+            [$rolesql, $roleparams] = $DB->get_in_or_equal(
+                array_map('intval', $studentroleids), SQL_PARAMS_NAMED, 'studentrole'
+            );
+            [$groupsql, $groupparams] = $DB->get_in_or_equal(
+                $allowedgroupids, SQL_PARAMS_NAMED, 'scopegroup'
+            );
+            [$enrolledsql, $enrolledparams] = get_enrolled_sql($context, '', 0, true);
+            $students = $DB->get_records_sql(
+                "SELECT u.id, u.firstname, u.lastname, u.email, u.picture, u.imagealt
+                   FROM {user} u
+                  WHERE u.id IN ($enrolledsql)
+                    AND EXISTS (
+                        SELECT 1 FROM {role_assignments} ra
+                        WHERE ra.userid = u.id AND ra.contextid = :studentcontextid
+                          AND ra.roleid $rolesql
+                    )
+                    AND EXISTS (
+                        SELECT 1 FROM {groups_members} gm
+                        WHERE gm.userid = u.id AND gm.groupid $groupsql
+                    )",
+                ['studentcontextid' => (int)$context->id] + $roleparams + $groupparams + $enrolledparams
+            );
+        } else {
+            $students = get_enrolled_users($context, '', 0,
+                            'u.id, u.firstname, u.lastname, u.email, u.picture, u.imagealt',
+                            '', 0, 0, true);
+        }
         // Capabilities are not roles: coordinators may also be allowed to submit
         // activities. Keep only active enrolees explicitly assigned the standard
         // student role in this course context.
@@ -846,7 +900,7 @@ class api {
         );
         $students = array_intersect_key($students,
             array_flip(array_map('intval', $assignedstudentids)));
-        if ($groupid > 0) {
+        if ($allowedgroupids === null && $groupid > 0) {
             $members = array_flip(array_map('intval', array_keys(groups_get_members($groupid, 'u.id'))));
             $students = array_intersect_key($students, $members);
         }

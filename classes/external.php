@@ -34,25 +34,41 @@ require_once($CFG->libdir . '/externallib.php');
 class external extends \external_api {
 
     /** Validate a dashboard group against Moodle's course group rules. */
-    private static function validate_group_scope(int $courseid, int $groupid, \context_course $context): int {
+    private static function validate_group_scope(int $courseid, int $groupid, \context_course $context): ?array {
         global $CFG, $USER;
         require_once($CFG->dirroot . '/group/lib.php');
         $course = get_course($courseid);
         $mode = groups_get_course_groupmode($course);
         $accessall = has_capability('moodle/site:accessallgroups', $context);
-        if ($groupid <= 0) {
-            // Zero means the complete course scope. Capability validation is
-            // still enforced by the caller, but no group predicate is added.
-            return 0;
+        if ($groupid > 0) {
+            $group = groups_get_group($groupid, 'id,courseid', MUST_EXIST);
+            if ((int)$group->courseid !== $courseid) {
+                throw new \invalid_parameter_exception('The selected group does not belong to this course.');
+            }
+            if ($mode == SEPARATEGROUPS && !$accessall && !groups_is_member($groupid, $USER->id)) {
+                throw new \required_capability_exception($context, 'moodle/site:accessallgroups', 'nopermissions', '');
+            }
+            return [$groupid];
         }
-        $group = groups_get_group($groupid, 'id,courseid', MUST_EXIST);
-        if ((int)$group->courseid !== $courseid) {
-            throw new \invalid_parameter_exception('The selected group does not belong to this course.');
+        if ($mode != SEPARATEGROUPS || $accessall) {
+            return null;
         }
-        if ($mode == SEPARATEGROUPS && !$accessall && !groups_is_member($groupid, $USER->id)) {
-            throw new \required_capability_exception($context, 'moodle/site:accessallgroups', 'nopermissions', '');
+        $groups = groups_get_user_groups($courseid, $USER->id);
+        return array_values(array_map('intval', $groups[0] ?? []));
+    }
+
+    /** Check whether a user is included in an authorized group scope. */
+    private static function user_in_group_scope(int $userid, ?array $groupscope): bool {
+        global $DB;
+        if ($groupscope === null) {
+            return true;
         }
-        return $groupid;
+        if (!$groupscope) {
+            return false;
+        }
+        [$groupsql, $groupparams] = $DB->get_in_or_equal($groupscope, SQL_PARAMS_NAMED, 'scopegroup');
+        return $DB->record_exists_select('groups_members', "userid = :scopeuserid AND groupid $groupsql",
+            ['scopeuserid' => $userid] + $groupparams);
     }
 
     /** @var array Course-scoped enrolled users reused during the current request. */
@@ -531,12 +547,12 @@ class external extends \external_api {
         $ctx    = \context_course::instance($params['courseid']);
         self::validate_context($ctx);
         require_capability('block/mwa_dashboard:view', $ctx);
-        $groupid = self::validate_group_scope($params['courseid'], $params['groupid'], $ctx);
+        $groupscope = self::validate_group_scope($params['courseid'], $params['groupid'], $ctx);
         debugging('block_mwa_dashboard get_logs SQL scope: ' . json_encode([
-            'courseid' => (int)$params['courseid'], 'groupid' => $groupid,
+            'courseid' => (int)$params['courseid'], 'groupids' => $groupscope,
             'since' => (int)$params['since'],
         ]), DEBUG_DEVELOPER);
-        $logs = api::get_logs($params['courseid'], $params['since'], $groupid);
+        $logs = api::get_logs($params['courseid'], $params['since'], 0, $groupscope);
         return ['logs' => json_encode($logs), 'count' => count($logs)];
     }
 
@@ -599,11 +615,11 @@ class external extends \external_api {
         self::validate_context($ctx);
         require_capability('block/mwa_dashboard:view', $ctx);
 
-        $groupid = self::validate_group_scope($params['courseid'], $params['groupid'], $ctx);
+        $groupscope = self::validate_group_scope($params['courseid'], $params['groupid'], $ctx);
         debugging('block_mwa_dashboard get_grades SQL scope: ' . json_encode([
-            'courseid' => (int)$params['courseid'], 'groupid' => $groupid,
+            'courseid' => (int)$params['courseid'], 'groupids' => $groupscope,
         ]), DEBUG_DEVELOPER);
-        $grades = api::get_grades($params['courseid'], $groupid);
+        $grades = api::get_grades($params['courseid'], 0, $groupscope);
         return ['grades' => json_encode($grades), 'count' => count($grades)];
     }
 
@@ -679,6 +695,10 @@ class external extends \external_api {
         }
         if (!$recipient || !is_enrolled($ctx, $recipient, '', true)) {
             throw new \moodle_exception('invalidrecipient', 'block_mwa_dashboard');
+        }
+        $groupscope = self::validate_group_scope((int)$params['courseid'], 0, $ctx);
+        if (!self::user_in_group_scope((int)$recipient->id, $groupscope)) {
+            throw new \required_capability_exception($ctx, 'moodle/site:accessallgroups', 'nopermissions', '');
         }
 
         $sender = $DB->get_record('user', ['id' => $USER->id], '*', MUST_EXIST);
@@ -854,11 +874,11 @@ class external extends \external_api {
         self::validate_context($ctx);
         require_capability('block/mwa_dashboard:view', $ctx);
         require_capability('block/mwa_dashboard:manageinterventions', $ctx);
-        $groupid = self::validate_group_scope($params['courseid'], $params['groupid'], $ctx);
+        $groupscope = self::validate_group_scope($params['courseid'], $params['groupid'], $ctx);
         debugging('block_mwa_dashboard get_interventions SQL scope: ' . json_encode([
-            'courseid' => (int)$params['courseid'], 'groupid' => $groupid,
+            'courseid' => (int)$params['courseid'], 'groupids' => $groupscope,
         ]), DEBUG_DEVELOPER);
-        $rows = api::get_interventions($params['courseid'], 0, $groupid);
+        $rows = api::get_interventions($params['courseid'], 0, 0, $groupscope);
 
         $records = [];
         foreach ($rows as $r) {
@@ -926,12 +946,15 @@ class external extends \external_api {
         $context = \context_course::instance($params['courseid']);
         self::validate_context($context);
         require_capability('block/mwa_dashboard:view', $context);
-        $groupid = self::validate_group_scope($params['courseid'], $params['groupid'], $context);
+        $groupscope = self::validate_group_scope($params['courseid'], $params['groupid'], $context);
 
         $requested = json_decode($params['userids'], true);
         $requested = is_array($requested) ? array_values(array_unique(array_filter(array_map('intval', $requested)))) : [];
-        if ($groupid > 0 && $requested) {
-            $members = array_flip(array_map('intval', array_keys(groups_get_members($groupid, 'u.id'))));
+        if ($groupscope !== null && $requested) {
+            $members = [];
+            foreach ($groupscope as $allowedgroupid) {
+                $members += array_flip(array_map('intval', array_keys(groups_get_members($allowedgroupid, 'u.id'))));
+            }
             $requested = array_values(array_filter($requested, function(int $userid) use ($members): bool {
                 return isset($members[$userid]);
             }));
@@ -949,8 +972,8 @@ class external extends \external_api {
               WHERE courseid = :courseid AND userid {$insql}",
             $inparams
         );
-        $coursegrades = api::get_grades($params['courseid'], $groupid);
-        $courselogs = api::get_logs($params['courseid'], 0, $groupid);
+        $coursegrades = api::get_grades($params['courseid'], 0, $groupscope);
+        $courselogs = api::get_logs($params['courseid'], 0, $groupscope);
         $result = [];
         foreach ($allowed as $userid) {
             $userid = (int)$userid;
@@ -994,6 +1017,11 @@ class external extends \external_api {
         require_capability('block/mwa_dashboard:view', $ctx);
         require_capability('block/mwa_dashboard:manageinterventions', $ctx);
 
+        $groupscope = self::validate_group_scope((int)$record->courseid, 0, $ctx);
+        if (!self::user_in_group_scope((int)$record->userid, $groupscope)) {
+            return ['success' => false];
+        }
+
         // Only allow deletion of own record (or admin)
         if ($record->teacherid != $USER->id && !has_capability('moodle/site:config', \context_system::instance())) {
             return ['success' => false];
@@ -1036,6 +1064,11 @@ class external extends \external_api {
         self::validate_context($ctx);
         require_capability('block/mwa_dashboard:view', $ctx);
         require_capability('block/mwa_dashboard:manageinterventions', $ctx);
+
+        $groupscope = self::validate_group_scope((int)$record->courseid, 0, $ctx);
+        if (!self::user_in_group_scope((int)$record->userid, $groupscope)) {
+            return ['success' => false, 'note' => '', 'timemodified' => 0];
+        }
 
         $clean = trim(strip_tags($params['note']));
         if (strlen($clean) > 12000) {

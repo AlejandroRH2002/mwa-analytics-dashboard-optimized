@@ -71,12 +71,14 @@ class block_mwa_dashboard extends block_base {
     }
 
     public function instance_config_save($data, $nolongerused = false) {
-        parent::instance_config_save($data, $nolongerused);
+        $saved = parent::instance_config_save($data, $nolongerused);
 
         $courseid = $this->get_instance_courseid();
         if ($courseid > 1 && property_exists($data, 'enablecapture')) {
             \block_mwa_dashboard\api::update_course_capture($courseid, !empty($data->enablecapture));
         }
+
+        return $saved;
     }
 
     public function instance_delete() {
