@@ -278,6 +278,16 @@ class dashboard_page implements renderable, templatable {
      */
     protected function string_keys(): array {
         return [
+            'loading',
+            'msg_ai_generating_short',
+            'msg_bulk_skipped_no_pending',
+            'msg_no_recipients_with_pending_items',
+            'msg_sent',
+            'msg_target_required',
+            'no',
+            'pl_tag_daytime',
+            'retry',
+            'yes',
             'accesses',
             'accesses_label',
             'actions_marked_seen',
