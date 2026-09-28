@@ -67,16 +67,7 @@ class block_mwa_dashboard extends block_base {
      * @return bool Whether capture is enabled.
      */
     private function course_capture_enabled(int $courseid): bool {
-        global $DB;
-
-        if ($courseid <= 1) {
-            return false;
-        }
-
-        return $DB->record_exists('block_mwa_dashboard_course', [
-            'courseid' => $courseid,
-            'enabled' => 1,
-        ]);
+        return \block_mwa_dashboard\api::course_capture_enabled($courseid);
     }
 
     public function instance_config_save($data, $nolongerused = false) {
@@ -117,10 +108,11 @@ class block_mwa_dashboard extends block_base {
             return $this->content;
         }
 
+        $trackallcourses = \block_mwa_dashboard\api::track_all_courses_enabled();
         $canmanagecapture = has_capability('block/mwa_dashboard:managecapture', $context);
         $toggle = optional_param('mwa_capture_toggle', null, PARAM_INT);
         $blockid = optional_param('mwa_capture_blockid', 0, PARAM_INT);
-        if ($canmanagecapture && $blockid === (int)$this->instance->id && $toggle !== null) {
+        if ($canmanagecapture && !$trackallcourses && $blockid === (int)$this->instance->id && $toggle !== null) {
             require_sesskey();
             \block_mwa_dashboard\api::update_course_capture($courseid, !empty($toggle));
             redirect($PAGE->url);
@@ -130,7 +122,12 @@ class block_mwa_dashboard extends block_base {
         $captureenabled = $this->course_capture_enabled($courseid);
 
         $capturecontrol = '';
-        if ($canmanagecapture && $courseid > 1) {
+        if ($trackallcourses && $courseid > 1) {
+            $capturecontrol = html_writer::div(
+                get_string('capture_global_enabled', 'block_mwa_dashboard'),
+                'alert alert-info'
+            );
+        } else if ($canmanagecapture && $courseid > 1) {
             $switchbg = $captureenabled ? '#65c915' : '#ee3216';
             $switchshadow = $captureenabled ? 'rgba(79,160,14,.35)' : 'rgba(196,47,20,.32)';
             $knobstyle = $captureenabled

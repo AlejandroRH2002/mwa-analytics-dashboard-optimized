@@ -31,6 +31,37 @@ class api {
     private static $excludedcmidcache = [];
 
     /**
+     * Check whether capture is enabled globally by the site administrator.
+     *
+     * @return bool
+     */
+    public static function track_all_courses_enabled(): bool {
+        return !empty(get_config('block_mwa_dashboard', 'trackallcourses'));
+    }
+
+    /**
+     * Check whether capture is active for a course.
+     *
+     * @param int $courseid Course ID.
+     * @return bool
+     */
+    public static function course_capture_enabled(int $courseid): bool {
+        global $DB;
+
+        if ($courseid <= 1) {
+            return false;
+        }
+        if (self::track_all_courses_enabled()) {
+            return true;
+        }
+
+        return $DB->record_exists('block_mwa_dashboard_course', [
+            'courseid' => $courseid,
+            'enabled' => 1,
+        ]);
+    }
+
+    /**
      * Update whether event capture is enabled for a course.
      *
      * Existing activity exclusions are preserved.

@@ -2136,3 +2136,6 @@ $string['no'] = 'No';
 $string['pl_tag_daytime'] = 'Daytime';
 $string['retry'] = 'Try again';
 $string['yes'] = 'Yes';
+$string['settings_trackallcourses'] = 'Enable tracking in all courses';
+$string['settings_trackallcourses_desc'] = 'When enabled, event tracking is active in every course, regardless of the course block setting.';
+$string['capture_global_enabled'] = 'Event tracking is enabled site-wide by the administrator.';

@@ -36,6 +36,13 @@ if ($ADMIN->fulltree) {
         get_string('settings_general_heading_desc', 'block_mwa_dashboard')
     ));
 
+    $settings->add(new admin_setting_configcheckbox(
+        'block_mwa_dashboard/trackallcourses',
+        get_string('settings_trackallcourses', 'block_mwa_dashboard'),
+        get_string('settings_trackallcourses_desc', 'block_mwa_dashboard'),
+        0
+    ));
+
     $settings->add(new admin_setting_description(
         'block_mwa_dashboard/admin_page_link',
         get_string('settings_admin_page', 'block_mwa_dashboard'),

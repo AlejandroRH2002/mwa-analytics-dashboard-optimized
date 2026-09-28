@@ -47,6 +47,11 @@ class observer {
     private static function course_is_enabled(int $courseid): bool {
         global $DB;
 
+        // Do not cache the global override, so a settings change takes effect immediately.
+        if (api::track_all_courses_enabled()) {
+            return true;
+        }
+
         if (array_key_exists($courseid, self::$courseenabledcache)) {
             return self::$courseenabledcache[$courseid];
         }

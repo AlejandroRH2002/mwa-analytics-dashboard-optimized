@@ -2139,3 +2139,6 @@ $string['no'] = 'Não';
 $string['pl_tag_daytime'] = 'Diurno';
 $string['retry'] = 'Tentar novamente';
 $string['yes'] = 'Sim';
+$string['settings_trackallcourses'] = 'Habilitar o acompanhamento em todos os cursos';
+$string['settings_trackallcourses_desc'] = 'Quando habilitado, o acompanhamento de eventos fica ativo em todos os cursos, independentemente da configuração do bloco em cada curso.';
+$string['capture_global_enabled'] = 'O administrador habilitou o acompanhamento de eventos em todo o site.';
