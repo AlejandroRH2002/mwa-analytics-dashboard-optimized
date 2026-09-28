@@ -42,7 +42,7 @@ class content_extractor {
                     $text = self::extract_url($src['url']);
                 }
             } catch (\Exception $e) {
-                $text = '(Não foi possível extrair o conteúdo: ' . $e->getMessage() . ')';
+                $text = '(' . get_string('ctxextract_error', 'block_mwa_dashboard', $e->getMessage()) . ')';
             }
             if (trim($text)) {
                 $parts[] = "[Conteúdo: $label]\n" . trim($text);
@@ -84,7 +84,7 @@ class content_extractor {
         if ((substr($name, -strlen('.txt')) === '.txt') || (strpos($mime, 'text/') === 0)) {
             return mb_substr($file->get_content(), 0, self::MAX_CHARS);
         }
-        return '(Tipo de arquivo não suportado para extração de texto: ' . $mime . ')';
+        return '(' . get_string('ctxextract_unsupported_type', 'block_mwa_dashboard', $mime) . ')';
     }
 
     // ─────────────────────────────────────────────────────────────────────────

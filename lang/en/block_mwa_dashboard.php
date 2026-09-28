@@ -2124,3 +2124,5 @@ $string['chat_reload_error'] = 'The class data could not be refreshed';
 $string['chat_reload_data'] = 'Refresh class data';
 $string['chat_reloading_data'] = 'Refreshing class data...';
 $string['chat_load_data_error'] = 'The class data could not be loaded. Check the browser console to identify the service with a problem.';
+$string['ctxextract_error'] = 'Could not extract the content: {$a}';
+$string['ctxextract_unsupported_type'] = 'Unsupported file type for text extraction: {$a}';

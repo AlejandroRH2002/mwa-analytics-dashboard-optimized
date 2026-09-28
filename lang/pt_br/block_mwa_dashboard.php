@@ -2127,3 +2127,5 @@ $string['chat_reload_error'] = 'Não foi possível atualizar os dados da turma';
 $string['chat_reload_data'] = 'Atualizar os dados da turma';
 $string['chat_reloading_data'] = 'Atualizando os dados da turma...';
 $string['chat_load_data_error'] = 'Não foi possível carregar os dados da turma. Consulte o console do navegador para identificar o serviço com problemas.';
+$string['ctxextract_error'] = 'Não foi possível extrair o conteúdo: {$a}';
+$string['ctxextract_unsupported_type'] = 'Tipo de arquivo não suportado para extração de texto: {$a}';

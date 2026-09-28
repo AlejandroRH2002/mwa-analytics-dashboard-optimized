@@ -353,7 +353,7 @@ define([
         function gradeEmail(row){var k=Object.keys(row).find(function(x){return lower(x)==='email'||lower(x).includes('email')});return k?norm(row[k]):''}
         function gradeName(row){var f=Object.keys(row).find(function(x){return lower(x).includes('first')||lower(x).includes('nome')});var l=Object.keys(row).find(function(x){return lower(x).includes('last')||lower(x).includes('sobrenome')});return [f?row[f]:'',l?row[l]:''].join(' ').trim()}
         function gradePicture(row){var k=Object.keys(row).find(function(x){var lx=lower(x);return lx==='picture url'||lx==='pictureurl'||lx.includes('profile image')||lx.includes('foto')});return k?norm(row[k]):''}
-        function gradeUserId(row){var k=Object.keys(row).find(function(x){var lx=lower(x);return lx==='user id'||lx==='userid'||lx==='id do usuario'||lx==='id do usuÃƒÆ’Ã‚Â¡rio'});var n=k?parseInt(row[k],10):0;return isNaN(n)?0:n}
+        function gradeUserId(row){var k=Object.keys(row).find(function(x){var lx=lower(x);return lx==='user id'||lx==='userid'||lx==='id do usuario'||lx==='id do usuÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡rio'});var n=k?parseInt(row[k],10):0;return isNaN(n)?0:n}
         function logPicture(log){return norm(log.pictureurl||log.profileimageurl||log.userpictureurl)}
         function isSubmission(log){var text=lower([log.nomedoevento,log.action,log.componente,log.component].join(' '));return text.includes('submit')||text.includes('submission')||text.includes('submitted')||text.includes('upload')||text.includes('graded')}
         function activityName(log){return norm(log.contextodoevento)||norm(log.context)||norm(log._modtype)||null}
@@ -649,11 +649,11 @@ define([
           var dAvgInt = diff(currentKpis.averageInteractions, beforeAvgInteractions, true);
           var dGrade = avgGrade === null ? 0 : diff(currentKpis.averageGrade, nonLogBaseline.averageGrade, false);
 
-          Store.renderHtml($('kpis'), kpiSmart(tr('students_in_log','Estudantes ativos'),     state.students.length, tr(state.students.length === 1 ? 'student_loaded' : 'students_loaded', state.students.length === 1 ? 'estudante ativo' : 'estudantes ativos'),   dActiveStudents, false, tr('ac_tip_students_in_log','Quantidade de estudantes matriculados carregados do Moodle para este curso.'), participantsUrl ? {url: participantsUrl, newWindow: true, icon:'<svg class="mwa-ui-icon"><use href="#mwa-icon-users"></use></svg>', theme:'blue'} : {icon:'<svg class="mwa-ui-icon"><use href="#mwa-icon-users"></use></svg>', theme:'blue'})
-          + kpiSmart(tr('active_course_students','Estudante/Interação'), activeCourseStudents, tr('with_course_activity','com participação detectada'), dStudents, false, tr('ac_tip_active_course_students','Estudantes com interação coletada ou evidência acadêmica nativa registrada no Moodle.'), {page:'classlist', classFilter:'interactions', icon:'<svg class="mwa-ui-icon"><use href="#mwa-icon-refresh"></use></svg>', theme:'teal', nonDecreasing:true})
-          + kpiSmart(tr('total_interactions','Total de interações'), totalStudentInteractions,     tr('moodle_events','eventos do Moodle'),     dLogs,     false, tr('ac_tip_total_interactions'), {icon:'<svg class="mwa-ui-icon"><use href="#mwa-icon-message"></use></svg>', theme:'green', nonDecreasing:true})
-          + kpiSmart(tr('average_student','Média por estudante'),    avgInt,                tr('interactions','interações'),             dAvgInt,   false, tr('ac_tip_average_student'), {icon:'<svg class="mwa-ui-icon"><use href="#mwa-icon-chart"></use></svg>', theme:'amber'})
-          + kpiSmart(tr('grade_average'), avgGrade!==null ? avgGrade.toFixed(1) : '—', avgGrade!==null ? tr('of_100_points','de 100 pontos') : tr('gr_none_launched','Nenhuma nota lançada ainda'), dGrade, false, tr('ac_tip_grade_average'), {page:'grades', icon:'<svg class="mwa-ui-icon"><use href="#mwa-icon-star"></use></svg>', theme:'purple'}));
+          Store.renderHtml($('kpis'), kpiSmart(tr('students_in_log', 'Active students'),     state.students.length, tr(state.students.length === 1 ? 'student_loaded' : 'students_loaded', state.students.length === 1 ? 'estudante ativo' : 'estudantes ativos'),   dActiveStudents, false, tr('ac_tip_students_in_log', 'Number of enrolled students loaded from Moodle for this course.'), participantsUrl ? {url: participantsUrl, newWindow: true, icon:'<svg class="mwa-ui-icon"><use href="#mwa-icon-users"></use></svg>', theme:'blue'} : {icon:'<svg class="mwa-ui-icon"><use href="#mwa-icon-users"></use></svg>', theme:'blue'})
+          + kpiSmart(tr('active_course_students', 'Student/Interaction'), activeCourseStudents, tr('with_course_activity', 'With detected participation'), dStudents, false, tr('ac_tip_active_course_students', 'Students with a collected interaction or native academic evidence: submission, attempt, forum post, or completion recorded in Moodle.'), {page:'classlist', classFilter:'interactions', icon:'<svg class="mwa-ui-icon"><use href="#mwa-icon-refresh"></use></svg>', theme:'teal', nonDecreasing:true})
+          + kpiSmart(tr('total_interactions', 'Total interactions'), totalStudentInteractions,     tr('moodle_events', 'Moodle events'),     dLogs,     false, tr('ac_tip_total_interactions'), {icon:'<svg class="mwa-ui-icon"><use href="#mwa-icon-message"></use></svg>', theme:'green', nonDecreasing:true})
+          + kpiSmart(tr('average_student', 'Average / student'),    avgInt,                tr('interactions', 'interactions'),             dAvgInt,   false, tr('ac_tip_average_student'), {icon:'<svg class="mwa-ui-icon"><use href="#mwa-icon-chart"></use></svg>', theme:'amber'})
+          + kpiSmart(tr('grade_average'), avgGrade!==null ? avgGrade.toFixed(1) : 'â€”', avgGrade!==null ? tr('of_100_points', 'of 100 points') : tr('gr_none_launched', 'No grade entered yet'), dGrade, false, tr('ac_tip_grade_average'), {page:'grades', icon:'<svg class="mwa-ui-icon"><use href="#mwa-icon-star"></use></svg>', theme:'purple'}));
         }
         
         function mwaChartType(label){
@@ -684,17 +684,17 @@ define([
           var c = String(label || '').toLowerCase().trim();
           var map = {
             assignment: tr('event_type_assignment','Assignment'), assign: tr('event_type_assignment','Assignment'), tarefa: tr('event_type_assignment','Assignment'),
-            forum: tr('event_type_forum','Forum'), 'fórum': tr('event_type_forum','Forum'),
-            page: tr('event_type_page','Page'), 'página': tr('event_type_page','Page'),
-            quiz: tr('event_type_quiz','Quiz'), questionario: tr('event_type_quiz','Quiz'), 'questionário': tr('event_type_quiz','Quiz'),
+            forum: tr('event_type_forum','Forum'), 'fÃ³rum': tr('event_type_forum','Forum'),
+            page: tr('event_type_page','Page'), 'pÃ¡gina': tr('event_type_page','Page'),
+            quiz: tr('event_type_quiz','Quiz'), questionario: tr('event_type_quiz','Quiz'), 'questionÃ¡rio': tr('event_type_quiz','Quiz'),
             book: tr('event_type_book','Book'), livro: tr('event_type_book','Book'),
             file: tr('event_type_file','File'), resource: tr('event_type_file','File'), arquivo: tr('event_type_file','File'),
             folder: tr('event_type_folder','Folder'), pasta: tr('event_type_folder','Folder'),
             url: tr('event_type_url','URL'),
-            glossary: tr('event_type_glossary','Glossary'), 'glossário': tr('event_type_glossary','Glossary'),
+            glossary: tr('event_type_glossary','Glossary'), 'glossÃ¡rio': tr('event_type_glossary','Glossary'),
             data: tr('event_type_database','Database'), database: tr('event_type_database','Database'),
             chat: tr('event_type_chat','Chat'),
-            lesson: tr('event_type_lesson','Lesson'), 'lição': tr('event_type_lesson','Lesson'),
+            lesson: tr('event_type_lesson','Lesson'), 'liÃ§Ã£o': tr('event_type_lesson','Lesson'),
             scorm: tr('event_type_scorm','SCORM'),
             h5p: tr('event_type_h5p','H5P'), h5pactivity: tr('event_type_h5p','H5P'), hvp: tr('event_type_h5p','H5P'),
             imscp: tr('event_type_imscp','IMS package'),
@@ -714,8 +714,8 @@ define([
           return map[c] || label;
         }
         function renderChart(){var SKIP={System:1,Login:1,system:1,login:1,outro:1,Outro:1};var counts={};state.logs.forEach(function(l){var c=componentName(l);if(SKIP[c])return;counts[c]=(counts[c]||0)+1});var labels=Object.keys(counts);var displayLabels=labels.map(chartModuleLabel);var data=labels.map(function(k){return counts[k]});var ctx=$('eventChart');if(!ctx||!Chart)return; if(eventChart)eventChart.destroy();eventChart=new Chart(ctx,{type:'doughnut',data:{labels:displayLabels,datasets:[{data:data,backgroundColor:COLORS,borderWidth:0,hoverOffset:4}]},options:{cutout:'62%',onClick:function(evt,elements){if(!elements||!elements.length)return;goToChartBucket(labels[elements[0].index]);},onHover:function(evt,elements){if(evt&&evt.native&&evt.native.target)evt.native.target.style.cursor=(elements&&elements.length)?'pointer':'default';},plugins:{legend:{position:'bottom',onClick:function(evt,legendItem){if(!legendItem||typeof legendItem.index!=='number')return;goToChartBucket(labels[legendItem.index]);},labels:{usePointStyle:true,pointStyle:'circle',boxWidth:8,boxHeight:8,padding:14,color:'#66708a',font:{size:12}}}},maintainAspectRatio:false}})}
-        function badge(risk){var c=risk==='High'?'low':risk==='Medium'?'medium':'high';return '<span class="badge '+c+'">'+(risk==='High'?tr('risk_high','High'):risk==='Medium'?tr('risk_medium','Medium'):tr('risk_low','Low'))+'</span>'}
-        function renderTables(){var list=state.students;var q=lower($('search').value);if(q){list=list.filter(function(s){return lower(s.name).includes(q)||lower(s.email).includes(q)})}var st=$('studentsTable');if(st)Store.renderHtml(st, '<thead><tr><th>'+tr('student','Student')+'</th><th>'+tr('email','Email')+'</th><th>'+tr('interactions','Interactions')+'</th><th>'+tr('coverage')+'</th><th>'+tr('grade','Grade')+'</th><th>'+tr('score','Score')+'</th><th>'+tr('risk','Risk')+'</th></tr></thead><tbody>'+list.map(function(s){return '<tr><td>'+esc(s.name)+'</td><td>'+esc(s.email)+'</td><td>'+s.interactions+'</td><td>'+s.coverage+'%</td><td>'+(s.grade===null?'-':s.grade)+'</td><td>'+s.score+'%</td><td>'+badge(s.risk)+'</td></tr>'}).join('')+'</tbody>');var at=$('activitiesTable');if(at)Store.renderHtml(at, '<thead><tr><th>'+tr('activity','Activity')+'</th><th>'+tr('type','Type')+'</th><th>'+tr('accesses','Accesses')+'</th><th>'+tr('unique_students','Unique students')+'</th></tr></thead><tbody>'+state.activities.map(function(a){return '<tr><td>'+esc(a.name)+'</td><td>'+esc(a.type)+'</td><td>'+a.accesses+'</td><td>'+a.unique+'</td></tr>'}).join('')+'</tbody>');renderGradesTable()}
+        function badge(risk){var c=risk==='High'?'low':risk==='Medium'?'medium':'high';return '<span class="badge '+c+'">'+(risk==='High'?tr('risk_high', 'High risk'):risk==='Medium'?tr('risk_medium', 'Medium risk'):tr('risk_low', 'Low risk'))+'</span>'}
+        function renderTables(){var list=state.students;var q=lower($('search').value);if(q){list=list.filter(function(s){return lower(s.name).includes(q)||lower(s.email).includes(q)})}var st=$('studentsTable');if(st)Store.renderHtml(st, '<thead><tr><th>'+tr('student','Student')+'</th><th>'+tr('email','Email')+'</th><th>'+tr('interactions', 'interactions')+'</th><th>'+tr('coverage')+'</th><th>'+tr('grade','Grade')+'</th><th>'+tr('score','Score')+'</th><th>'+tr('risk','Risk')+'</th></tr></thead><tbody>'+list.map(function(s){return '<tr><td>'+esc(s.name)+'</td><td>'+esc(s.email)+'</td><td>'+s.interactions+'</td><td>'+s.coverage+'%</td><td>'+(s.grade===null?'-':s.grade)+'</td><td>'+s.score+'%</td><td>'+badge(s.risk)+'</td></tr>'}).join('')+'</tbody>');var at=$('activitiesTable');if(at)Store.renderHtml(at, '<thead><tr><th>'+tr('activity','Activity')+'</th><th>'+tr('type','Type')+'</th><th>'+tr('accesses','Accesses')+'</th><th>'+tr('unique_students','Unique students')+'</th></tr></thead><tbody>'+state.activities.map(function(a){return '<tr><td>'+esc(a.name)+'</td><td>'+esc(a.type)+'</td><td>'+a.accesses+'</td><td>'+a.unique+'</td></tr>'}).join('')+'</tbody>');renderGradesTable()}
         function renderGradesTable(){var gt=$('gradesTable');if(!gt)return;if(!state.grades.length){Store.renderHtml(gt, '<tbody><tr><td class="empty">'+tr('no_grade_data_available','No grade data available.')+'</td></tr></tbody>');return}var keys=Object.keys(state.grades[0]).slice(0,12);Store.renderHtml(gt, '<thead><tr>'+keys.map(function(k){return '<th>'+esc(k)+'</th>'}).join('')+'</tr></thead><tbody>'+state.grades.map(function(r){return '<tr>'+keys.map(function(k){return '<td>'+esc(r[k])+'</td>'}).join('')+'</tr>'}).join('')+'</tbody>')}
         function renderAlerts(){if(Modules.Alerts){Modules.Alerts.reset();Modules.Alerts.render();}}
         function hmLogName(l) {
@@ -740,13 +740,13 @@ define([
           var ev = String((l && l.nomedoevento) || '').toLowerCase();
           return !text ||
             text === 'course module viewed' ||
-            text === 'mÃƒÂ³dulo do curso visualizado' ||
+            text === 'mÃƒÆ’Ã‚Â³dulo do curso visualizado' ||
             text === 'modulo do curso visualizado' ||
             text === 'submission graded' ||
-            text === 'submissÃƒÂ£o avaliada' ||
+            text === 'submissÃƒÆ’Ã‚Â£o avaliada' ||
             text === 'submissao avaliada' ||
             ev === 'course module viewed' ||
-            ev === 'mÃƒÂ³dulo do curso visualizado' ||
+            ev === 'mÃƒÆ’Ã‚Â³dulo do curso visualizado' ||
             ev === 'modulo do curso visualizado';
         }
         function hmResolvedResourceName(l, list) {
@@ -769,9 +769,9 @@ define([
           var source = String((l && (l._modtype || l.componente || l.component || l.contextodoevento || l.nomedoevento)) || '').toLowerCase();
           if (source.indexOf('h5p') >= 0 || source.indexOf('hvp') >= 0 || source.indexOf('interativo') >= 0) return 'h5pactivity';
           if (source.indexOf('quiz') >= 0 || source.indexOf('question') >= 0 || source.indexOf('question') >= 0) return 'quiz';
-          if (source.indexOf('forum') >= 0 || source.indexOf('fÃƒÆ’Ã‚Â³rum') >= 0 || source.indexOf('fÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³rum') >= 0) return 'forum';
+          if (source.indexOf('forum') >= 0 || source.indexOf('fÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³rum') >= 0 || source.indexOf('fÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³rum') >= 0) return 'forum';
           if (source.indexOf('assign') >= 0 || source.indexOf('tarefa') >= 0) return 'assign';
-          if (source.indexOf('page') >= 0 || source.indexOf('pÃƒÆ’Ã‚Â¡gina') >= 0 || source.indexOf('pÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡gina') >= 0) return 'page';
+          if (source.indexOf('page') >= 0 || source.indexOf('pÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡gina') >= 0 || source.indexOf('pÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡gina') >= 0) return 'page';
           if (source.indexOf('resource') >= 0 || source.indexOf('arquivo') >= 0) return 'resource';
           if (source.indexOf('url') >= 0) return 'url';
           if (source.indexOf('scorm') >= 0) return 'scorm';
@@ -792,7 +792,7 @@ define([
           var wantedMod = lower(modType);
           if (!targetLower || !links.length) return null;
           function cleanName(v) {
-            return lower(String(v || '').replace(/^(conteudo interativo|conteÃƒÂºdo interativo|h5p|hvp|quiz|questionario|questionÃƒÂ¡rio|forum|fÃƒÂ³rum|tarefa|assign|pagina|pÃƒÂ¡gina|page)\s*:\s*/i, '').trim());
+            return lower(String(v || '').replace(/^(conteudo interativo|conteÃƒÆ’Ã‚Âºdo interativo|h5p|hvp|quiz|questionario|questionÃƒÆ’Ã‚Â¡rio|forum|fÃƒÆ’Ã‚Â³rum|tarefa|assign|pagina|pÃƒÆ’Ã‚Â¡gina|page)\s*:\s*/i, '').trim());
           }
           var targetClean = cleanName(target);
           var best = null;
@@ -982,8 +982,8 @@ define([
             svg.appendChild(use);
             head.insertBefore(svg, head.firstChild);
           });
-          var DAYS = [tr('sun','Dom'),tr('mon','Seg'),tr('tue','Ter'),tr('wed','Qua'),
-                      tr('thu','Qui'),tr('fri','Sex'),tr('sat','Sab')];
+          var DAYS = [tr('sun', 'Sun'),tr('mon', 'Mon'),tr('tue', 'Tue'),tr('wed', 'Wed'),
+                      tr('thu', 'Thu'),tr('fri', 'Fri'),tr('sat', 'Sat')];
 
           var selStudent = document.getElementById('heatmapStudentSel');
           var selMod     = document.getElementById('heatmapModSel');
@@ -1078,12 +1078,12 @@ define([
           }
           if (selMod && selMod.options.length === 0) {
             [
-              {v:'',  l:tr('hm_filter_all_resources','Todos os recursos')},
-              {v:'quiz',        l:tr('hm_filter_quiz','Questionarios')},
-              {v:'forum',       l:tr('hm_filter_forum','Foruns')},
-              {v:'resource',    l:tr('hm_filter_resource','Arquivos')},
+              {v:'',  l:tr('hm_filter_all_resources', 'All resources')},
+              {v:'quiz',        l:tr('hm_filter_quiz', 'Quizzes')},
+              {v:'forum',       l:tr('hm_filter_forum', 'Forums')},
+              {v:'resource',    l:tr('hm_filter_resource', 'Files')},
               {v:'url',         l:tr('hm_filter_url','URLs')},
-              {v:'page',        l:tr('hm_filter_page','Paginas')},
+              {v:'page',        l:tr('hm_filter_page', 'Pages')},
               {v:'h5pactivity', l:tr('hm_filter_h5p','H5P')},
               {v:'scorm',       l:tr('hm_filter_scorm','SCORM')},
               {v:'video',       l:tr('hm_filter_video','Videos')}
@@ -1095,7 +1095,7 @@ define([
           }
           if (selMode && selMode.options.length === 0) {
             [{v:'access',l:tr('hm_mode_access')},
-             {v:'dropout',l:tr('hm_mode_dropout','Abandono')}]
+             {v:'dropout',l:tr('hm_mode_dropout', 'Dropout')}]
             .forEach(function(o){
               var opt=document.createElement('option');
               opt.value=o.v; opt.textContent=o.l;
@@ -1287,7 +1287,7 @@ define([
               var key = saved.data && saved.data.key;
               if (key) {
                 var parts = key.split(':');
-                renderHmDetail(tr('hm_detail_title','Detalhe do horario') + ': ' + DAYS[Number(parts[0])] + ' ' + parts[1] + 'h', cellBuckets[key] || [], {});
+                renderHmDetail(tr('hm_detail_title', 'Time detail') + ': ' + DAYS[Number(parts[0])] + ' ' + parts[1] + 'h', cellBuckets[key] || [], {});
                 return;
               }
             }
@@ -1296,7 +1296,7 @@ define([
               return;
             }
             if (saved && saved.kind === 'all') {
-              renderHmDetail(tr('hm_all_action','Todos os logs carregados'), state.logs, {});
+              renderHmDetail(tr('hm_all_action', 'All loaded logs'), state.logs, {});
               return;
             }
             if (saved && saved.kind === 'grade') {
@@ -1304,7 +1304,7 @@ define([
               renderHmDetail(tr('hm_grades_title') + ': ' + bucket, hourGradeLogs[bucket] || [], {});
               return;
             }
-            renderHmDetail(tr('hm_filtered_action', 'Acessos filtrados'), visibleLogs, {});
+            renderHmDetail(tr('hm_filtered_action', 'Filtered accesses'), visibleLogs, {});
             hmStoreDetail('filtered', {});
           }
 
@@ -1321,9 +1321,9 @@ define([
               var trend = (prev > 0 && curr > prev*1.3) ? ' +' : (prev > 0 && curr < prev*0.7) ? ' -' : '';
               var deadline = deadlines[d3+':'+h3];
               var label = v3 ? (v3 + trend + (deadline ? '<span class="hm-deadline-dot"></span>' : '')) : '';
-              var tip = DAYS[d3] + ' ' + h3 + 'h: ' + v3 + ' '+(v3===1?tr('hm_access_count','{n} acesso').replace('{n}',''):tr('hm_accesses_count').replace('{n}','')) +
-                        (trend === ' +' ? ' (+'+tr('hm_trend_up','tendencia de alta')+')' : trend === ' -' ? ' (-'+tr('hm_trend_down','tendencia de baixa')+')' : '') +
-                        (deadline ? ' - '+tr('hm_possible_deadline','possivel prazo!') : '');
+              var tip = DAYS[d3] + ' ' + h3 + 'h: ' + v3 + ' '+(v3===1?tr('hm_access_count', '{n} access').replace('{n}',''):tr('hm_accesses_count').replace('{n}','')) +
+                        (trend === ' +' ? ' (+'+tr('hm_trend_up', 'upward trend')+')' : trend === ' -' ? ' (-'+tr('hm_trend_down', 'downward trend')+')' : '') +
+                        (deadline ? ' - '+tr('hm_possible_deadline', 'possible deadline!') : '');
               html += '<div class="hm-cell ' + cls + (deadlines[d3+':'+h3]?' hm-deadline':'') +
                       '" data-hm-cell="' + d3 + ':' + h3 + '" data-tip="' + esc(tip) + '" role="button" tabindex="0">' + label + '</div>';
             }
@@ -1352,7 +1352,7 @@ define([
               cell.classList.add('is-selected');
               var key = cell.getAttribute('data-hm-cell');
               var parts = key.split(':');
-              var title = tr('hm_detail_title','Detalhe do horario') + ': ' + DAYS[Number(parts[0])] + ' ' + parts[1] + 'h';
+              var title = tr('hm_detail_title', 'Time detail') + ': ' + DAYS[Number(parts[0])] + ' ' + parts[1] + 'h';
               hmStoreDetail('cell', {key: key});
               renderHmDetail(title, cellBuckets[key] || [], {
                 suggestion: tr('hm_ai_default_suggestion')
@@ -1391,9 +1391,9 @@ define([
 
           var kpiBox = document.getElementById('heatmapKpis');
           if (kpiBox) {
-            Store.renderHtml(kpiBox, '<button type="button" class="hm-kpi hm-kpi-amber" data-hm-kpi="peak" data-hm-key="' + esc(peakKey) + '"><div class="hm-kpi-head"><span class="hm-kpi-icon" aria-hidden="true"><svg class="mwa-ui-icon"><use href="#mwa-icon-clock"></use></svg></span><div class="hm-kpi-lbl">'+tr('hm_kpi_peak_hour','Horário de pico')+'</div></div><div class="hm-kpi-val">' + bestH + 'h</div></button>'
+            Store.renderHtml(kpiBox, '<button type="button" class="hm-kpi hm-kpi-amber" data-hm-kpi="peak" data-hm-key="' + esc(peakKey) + '"><div class="hm-kpi-head"><span class="hm-kpi-icon" aria-hidden="true"><svg class="mwa-ui-icon"><use href="#mwa-icon-clock"></use></svg></span><div class="hm-kpi-lbl">'+tr('hm_kpi_peak_hour', 'peak hour')+'</div></div><div class="hm-kpi-val">' + bestH + 'h</div></button>'
               + '<button type="button" class="hm-kpi hm-kpi-blue" data-hm-kpi="filtered"><div class="hm-kpi-head"><span class="hm-kpi-icon" aria-hidden="true"><svg class="mwa-ui-icon"><use href="#mwa-icon-search"></use></svg></span><div class="hm-kpi-lbl">'+tr('hm_kpi_filtered')+'</div></div><div class="hm-kpi-val">' + total + '</div></button>'
-              + '<button type="button" class="hm-kpi hm-kpi-teal" data-hm-kpi="all"><div class="hm-kpi-head"><span class="hm-kpi-icon" aria-hidden="true"><svg class="mwa-ui-icon"><use href="#mwa-icon-chart"></use></svg></span><div class="hm-kpi-lbl">'+tr('hm_kpi_total_logs','Total de logs')+'</div></div><div class="hm-kpi-val">' + state.logs.length + '</div></button>');
+              + '<button type="button" class="hm-kpi hm-kpi-teal" data-hm-kpi="all"><div class="hm-kpi-head"><span class="hm-kpi-icon" aria-hidden="true"><svg class="mwa-ui-icon"><use href="#mwa-icon-chart"></use></svg></span><div class="hm-kpi-lbl">'+tr('hm_kpi_total_logs', 'total logs')+'</div></div><div class="hm-kpi-val">' + state.logs.length + '</div></button>');
           }
 
           if (kpiBox) {
@@ -1411,8 +1411,8 @@ define([
               if (kind === 'peak') {
                 var key = btn.getAttribute('data-hm-key') || peakKey;
                 var parts = key.split(':');
-                renderHmDetail(tr('hm_peak_action','Hor?rio de pico') + ': ' + DAYS[Number(parts[0])] + ' ' + parts[1] + 'h', cellBuckets[key] || [], {
-                  suggestion: tr('hm_peak_suggestion','Concentre avisos e lembretes pr?ximos deste hor?rio, quando h? maior chance de leitura.')
+                renderHmDetail(tr('hm_peak_action', 'Peak hour') + ': ' + DAYS[Number(parts[0])] + ' ' + parts[1] + 'h', cellBuckets[key] || [], {
+                  suggestion: tr('hm_peak_suggestion', 'Place announcements and reminders close to this time, when students are more likely to read them.')
                 });
                 hmStoreDetail('cell', {key: key});
               } else if (kind === 'filtered') {
@@ -1422,7 +1422,7 @@ define([
                 });
               } else {
                 hmStoreDetail('all', {});
-                renderHmDetail(tr('hm_all_action','Todos os logs carregados'), state.logs, {
+                renderHmDetail(tr('hm_all_action', 'All loaded logs'), state.logs, {
                   suggestion: tr('hm_all_suggestion')
                 });
               }
@@ -1436,18 +1436,18 @@ define([
             if (ds > peakDaySum) { peakDaySum = ds; peakDay = d6; }
           }
           if (total > 0) {
-            insights.push('- '+tr('hm_peak_insight','Pico de acesso em {day} as {hour}h.').replace('{day}',DAYS[peakDay]).replace('{hour}',String(bestH)));
+            insights.push('- '+tr('hm_peak_insight', 'Peak access on {day} at {hour}h.').replace('{day}',DAYS[peakDay]).replace('{hour}',String(bestH)));
             insights.push('- '+tr('hm_after18_insight').replace('{pct}',String(pctAfter)));
-            insights.push('- '+tr('hm_besttime_insight','Melhor horario para enviar mensagens: {start}h-{end}h.').replace('{start}',String(best2hStart)).replace('{end}',String(best2hStart+2)));
+            insights.push('- '+tr('hm_besttime_insight', 'Best message window: {start}hâ€“{end}h.').replace('{start}',String(best2hStart)).replace('{end}',String(best2hStart+2)));
             var deadlineCount = Object.keys(deadlines).length;
             if (deadlineCount > 0) {
-              insights.push('- '+tr('hm_deadline_insight','Detectados {n} possiveis prazos com pico de acesso.').replace('{n}',String(deadlineCount)));
+              insights.push('- '+tr('hm_deadline_insight', '{n} possible deadline(s) detected with access spikes (ðŸ”´ cells).').replace('{n}',String(deadlineCount)));
             }
             var prevTotal = Object.values(weekTrend[0]).reduce(function(a,b){return a+b;},0);
             var currTotal = Object.values(weekTrend[1]).reduce(function(a,b){return a+b;},0);
             if (prevTotal > 0) {
               var chg = Math.round((currTotal-prevTotal)/prevTotal*100);
-              insights.push((chg>=0?'+':'-')+' '+tr('hm_trend_insight','Tendencia semanal: {pct}% em relacao a semana anterior.').replace('{pct}',(chg>=0?'+':'')+String(chg)));
+              insights.push((chg>=0?'+':'-')+' '+tr('hm_trend_insight', 'Weekly trend: {pct}% compared to last week.').replace('{pct}',(chg>=0?'+':'')+String(chg)));
             }
           } else {
             insights.push(tr('hm_no_data'));
@@ -1464,7 +1464,7 @@ define([
             uLogs
               .forEach(function(l){ var d=parseDate(l); if(d) uHours[d.getHours()]++; });
             var uBest = uHours.indexOf(Math.max.apply(null,uHours));
-            var bucket = uBest<12?tr('hm_morning','Manha (6h-12h)'):uBest<18?tr('hm_afternoon','Tarde (12h-18h)'):tr('hm_evening','Noite (18h-24h)');
+            var bucket = uBest<12?tr('hm_morning', 'Morning (6amâ€“12pm)'):uBest<18?tr('hm_afternoon', 'Afternoon (12pmâ€“6pm)'):tr('hm_evening', 'Evening (6pmâ€“12am)');
             if (!hourGrades[bucket]) hourGrades[bucket] = [];
             if (!hourGradeLogs[bucket]) hourGradeLogs[bucket] = [];
             hourGrades[bucket].push(s.grade);
@@ -1478,10 +1478,10 @@ define([
               + 'padding:7px 0;border-bottom:1px solid var(--line);font-size:.82rem;">'
               + '<span>' + bucket + '</span>'
               + '<strong style="color:' + (avg>=70?'var(--green)':avg>=50?'var(--amber)':'var(--red)') + ';">'
-              + tr('hm_grade_avg','Media') + ' ' + avg + '</strong></button>';
+              + tr('hm_grade_avg', 'Average') + ' ' + avg + '</strong></button>';
           });
           var gcBox = document.getElementById('heatmapGradeCorr');
-          if (gcBox) Store.renderHtml(gcBox, gcHTML || '<p style="color:var(--muted);font-size:.82rem;">'+tr('hm_insufficient_data','Dados insuficientes.')+'</p>');
+          if (gcBox) Store.renderHtml(gcBox, gcHTML || '<p style="color:var(--muted);font-size:.82rem;">'+tr('hm_insufficient_data', 'Insufficient data.')+'</p>');
           if (gcBox) {
             gcBox.onclick = function(ev) {
               var row = ev.target.closest('[data-hm-grade-bucket]');
@@ -1501,12 +1501,12 @@ define([
               + best2hStart + 'h-' + (best2hStart+2) + 'h</div>'
               + '<p style="margin:6px 0 0;font-size:.82rem;color:var(--muted);">'
               + '<strong>' + pct2h + '%</strong> '+tr('hm_besttime_desc')+'<br>'
-              + tr('hm_besttime_tip','Envie mensagens antes desse horario para maior chance de leitura.')+'</p></button>');
+              + tr('hm_besttime_tip', 'Send messages before this window for higher read rates.')+'</p></button>');
             btBox.onclick = function(ev) {
               if (!ev.target.closest('[data-hm-besttime]')) return;
               var bestLogs = visibleLogs.filter(function(l){ var d=parseDate(l); return d && d.getHours() >= best2hStart && d.getHours() < best2hStart + 2; });
               hmStoreDetail('besttime', {});
-              renderHmDetail(tr('hm_besttime_title','Melhor horario para intervir') + ': ' + best2hStart + 'h-' + (best2hStart+2) + 'h', bestLogs, {
+              renderHmDetail(tr('hm_besttime_title', 'Best time to intervene') + ': ' + best2hStart + 'h-' + (best2hStart+2) + 'h', bestLogs, {
                 suggestion: tr('hm_besttime_action_suggestion')
               });
             };
@@ -1526,7 +1526,7 @@ define([
           hmRestoreDetail();
         }
 
-        function renderReport(){var el=$('reportBody');if(!el)return;var risk=state.students.filter(function(s){return s.score<=40}).length;var medium=state.students.filter(function(s){return s.score>40&&s.score<70}).length;var high=state.students.filter(function(s){return s.score>=70}).length;Store.renderHtml(el, '<p><strong>'+tr('total_students','Total students')+':</strong> '+state.students.length+'</p><p><strong>'+tr('total_interactions','Total interactions')+':</strong> '+state.logs.length+'</p><p><strong>'+tr('activities_detected','Activities detected')+':</strong> '+state.activities.length+'</p><p><strong>'+tr('engagement_groups','Engagement groups')+':</strong> '+risk+' '+tr('low','low')+', '+medium+' '+tr('average')+', '+high+' '+tr('high','high')+'.</p><p class=\"muted\">'+tr('report_note','This report uses stable Moodle data fields.')+'</p>');}
+        function renderReport(){var el=$('reportBody');if(!el)return;var risk=state.students.filter(function(s){return s.score<=40}).length;var medium=state.students.filter(function(s){return s.score>40&&s.score<70}).length;var high=state.students.filter(function(s){return s.score>=70}).length;Store.renderHtml(el, '<p><strong>'+tr('total_students','Total students')+':</strong> '+state.students.length+'</p><p><strong>'+tr('total_interactions','Total interactions')+':</strong> '+state.logs.length+'</p><p><strong>'+tr('activities_detected','Activities detected')+':</strong> '+state.activities.length+'</p><p><strong>'+tr('engagement_groups','Engagement groups')+':</strong> '+risk+' '+tr('low', 'Low')+', '+medium+' '+tr('average')+', '+high+' '+tr('high', 'High')+'.</p><p class=\"muted\">'+tr('report_note', 'This report is generated from Moodle logs and gradebook data.')+'</p>');}
         function animateDashboard(){
           var root=document.querySelector('.page.active')||document.getElementById('block-mwa-dashboard-app');
           if(!root)return;
@@ -1622,7 +1622,7 @@ define([
           }else if(!Array.isArray(state.grades)){
             state.grades=[];
           }
-        }catch(err){$('loadStatus').textContent=tr('could_not_parse','Could not parse Moodle data.');return}renderAll()}function receiveError(message){$('loadStatus').textContent=message||tr('data_load_failed','Data load failed.')}dashboard.receiveData=receiveData;dashboard.receiveError=receiveError;Store.setDashboard(dashboard);
+        }catch(err){$('loadStatus').textContent=tr('could_not_parse', 'Could not parse the uploaded file.');return}renderAll()}function receiveError(message){$('loadStatus').textContent=message||tr('data_load_failed', 'Could not load Moodle data.')}dashboard.receiveData=receiveData;dashboard.receiveError=receiveError;Store.setDashboard(dashboard);
         Store.setHandler('showPage', function(page) {
           var actionCenterPage = document.getElementById('page-ac');
           var refreshActionCenter = page === 'ac' && actionCenterPage && actionCenterPage.classList.contains('active');

@@ -33,18 +33,18 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
         if(String(language||'').indexOf('pt')!==0||!label)return label;
         var translations={
             'Submission graded':'Entrega avaliada',
-            'Course module viewed':'Módulo do curso visualizado',
+            'Course module viewed':'MÃ³dulo do curso visualizado',
             'Submission submitted':'Entrega enviada',
             'File uploaded':'Arquivo enviado',
-            'Quiz attempt submitted':'Tentativa do questionário enviada',
-            'Quiz attempt started':'Tentativa do questionário iniciada',
+            'Quiz attempt submitted':'Tentativa do questionÃ¡rio enviada',
+            'Quiz attempt started':'Tentativa do questionÃ¡rio iniciada',
             'Course viewed':'Curso visualizado',
-            'Forum post created':'Publicação no fórum criada',
-            'Discussion created':'Discussão criada',
-            'Discussion viewed':'Discussão visualizada',
-            'User logged in':'Usuário entrou no Moodle',
-            'User logged out':'Usuário saiu do Moodle',
-            'Content created':'Conteúdo criado'
+            'Forum post created':'PublicaÃ§Ã£o no fÃ³rum criada',
+            'Discussion created':'DiscussÃ£o criada',
+            'Discussion viewed':'DiscussÃ£o visualizada',
+            'User logged in':'UsuÃ¡rio entrou no Moodle',
+            'User logged out':'UsuÃ¡rio saiu do Moodle',
+            'Content created':'ConteÃºdo criado'
         };
         Object.keys(translations).forEach(function(english){
             label=label.replace(new RegExp(english,'gi'),translations[english]);
@@ -130,11 +130,11 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
 
     function newConv(){
         var id='conv_'+Date.now();
-        CONVS.unshift({id:id,title:tr('chat_new_conv','Nova conversa'),createdAt:Date.now(),messages:[]});
+        CONVS.unshift({id:id,title:tr('chat_new_conv', 'New conversation'),createdAt:Date.now(),messages:[]});
         CUR_ID=id;
         renderSidebar();
         showWelcome();
-        var ti=$('chatConvTitle');if(ti)ti.textContent=tr('chat_assistant_name','Assistente da turma');
+        var ti=$('chatConvTitle');if(ti)ti.textContent=tr('chat_assistant_name', 'Class assistant');
     }
 
     function deleteConv(id){
@@ -223,9 +223,9 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
                 nome:n,
                 diasSemAcesso:ago==null?'never accessed':ago,
                 interacoes:interactions,
-                engScore:score!=null?score+'%':'—',
-                notaTotal:grade!=null?grade.toFixed(1):'—',
-                notasPorAtividade:actGradeStr||'—',
+                engScore:score!=null?score+'%':'â€”',
+                notaTotal:grade!=null?grade.toFixed(1):'â€”',
+                notasPorAtividade:actGradeStr||'â€”',
             };
         });
 
@@ -236,18 +236,18 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
             if(!isPortuguese||!label)return label;
             var translations={
                 'Submission graded':'Entrega avaliada',
-                'Course module viewed':'Módulo do curso visualizado',
+                'Course module viewed':'MÃ³dulo do curso visualizado',
                 'Submission submitted':'Entrega enviada',
                 'File uploaded':'Arquivo enviado',
-                'Quiz attempt submitted':'Tentativa do questionário enviada',
-                'Quiz attempt started':'Tentativa do questionário iniciada',
+                'Quiz attempt submitted':'Tentativa do questionÃ¡rio enviada',
+                'Quiz attempt started':'Tentativa do questionÃ¡rio iniciada',
                 'Course viewed':'Curso visualizado',
-                'Forum post created':'Publicação no fórum criada',
-                'Discussion created':'Discussão criada',
-                'Discussion viewed':'Discussão visualizada',
-                'User logged in':'Usuário entrou no Moodle',
-                'User logged out':'Usuário saiu do Moodle',
-                'Content created':'Conteúdo criado'
+                'Forum post created':'PublicaÃ§Ã£o no fÃ³rum criada',
+                'Discussion created':'DiscussÃ£o criada',
+                'Discussion viewed':'DiscussÃ£o visualizada',
+                'User logged in':'UsuÃ¡rio entrou no Moodle',
+                'User logged out':'UsuÃ¡rio saiu do Moodle',
+                'Content created':'ConteÃºdo criado'
             };
             Object.keys(translations).forEach(function(english){
                 label=label.replace(new RegExp(english,'gi'),translations[english]);
@@ -465,7 +465,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
                 atividadesAvaliativas:gradedActivities.length,
                 pendenciasAvaliativas:gradedPendingTotal,
                 recursosBaixaCobertura:lowCoverageActivities.length,
-                horarioPico:peakHour?peakHour+'h':'—',
+                horarioPico:peakHour?peakHour+'h':'â€”',
                 atividadesComNota:gradedActivities.slice(0,ACTIVITY_CAP),
                 atividadesAvaliativasDetalhes:gradedMeta.slice(0,ACTIVITY_CAP),
                 baixaCobertura:lowCoverageActivities.slice(0,ACTIVITY_CAP),
@@ -505,18 +505,18 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
 
         renderTemplate(messagesEl, 'chat_welcome', {
             message: hasData
-                ? tr('chat_welcome_data','Ola! Recebo somente indicadores agregados da turma e nao identifico estudantes para a IA externa.')
-                : tr('chat_welcome_nodata',tr('chat_welcome_nodata','Ola! Carregue os dados da turma para que eu possa analisar e responder perguntas sobre os alunos.'))
+                ? tr('chat_welcome_data', 'Hello! I receive aggregate indicators and privacy-safe pseudonymised educational profiles. Real student identities remain inside Moodle and are restored locally in the response.')
+                : tr('chat_welcome_nodata',tr('chat_welcome_nodata', 'Hello! Load class data so I can analyse and answer questions about students.'))
         });
 
         if(sugEl&&hasData){
             var sugs=[
-                tr('chat_sug1','Quem esta em risco de evadir esta semana?'),
-                tr('chat_sug2','Quais alunos devo priorizar hoje?'),
-                tr('chat_sug3','Como esta o engajamento geral da turma?'),
-                tr('chat_sug4','Escreva um email para alunos com nota abaixo de 60'),
-                tr('chat_sug5','Quem melhorou mais nos ultimos dias?'),
-                tr('chat_sug6','Faca um resumo executivo da turma'),
+                tr('chat_sug1', 'How large is the at-risk group this week?'),
+                tr('chat_sug2', 'Which collective patterns need attention today?'),
+                tr('chat_sug3', 'How is the overall class engagement?'),
+                tr('chat_sug4', 'Write a general message for the low-performing group'),
+                tr('chat_sug5', 'How have the class indicators changed recently?'),
+                tr('chat_sug6', 'Make an executive summary of the class'),
             ];
             renderTemplate(sugEl, 'chat_suggestions', {
                 suggestions: sugs.map(function(s){return {text:s};})
@@ -633,7 +633,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
     }
 
     function showDataLoadError(error){
-        var message=tr('chat_load_data_error','No se pudieron cargar los datos de la clase. Revise la consola del navegador para identificar el endpoint con problemas.');
+        var message=tr('chat_load_data_error', 'The class data could not be loaded. Check the browser console to identify the service with a problem.');
         console.error('[MWA Chat] '+message,error);
         var conv=getCur();
         if(conv){
@@ -653,7 +653,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
 
         var cfg_s=Store.getConfig?Store.getConfig():{};
         if(!cfg_s.ia_enabled){
-            alert(tr('ai_unavailable_message','🔒 Os recursos de Inteligência Artificial estão indisponíveis. Configure uma chave de API válida na administração do MWA.'));
+            alert(tr('ai_unavailable_message', 'ðŸ”’ Artificial Intelligence features are unavailable. Configure a valid API key in MWA administration.'));
             return;
         }
         if(!hasClassData()){
@@ -673,7 +673,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
         if(!CUR_ID)newConv();
         var conv=getCur();if(!conv)return;
         conv.messages.push({role:'user',content:text});
-        if(conv.messages.length===1)conv.title=text.slice(0,35)+(text.length>35?'…':'');
+        if(conv.messages.length===1)conv.title=text.slice(0,35)+(text.length>35?'â€¦':'');
         if(input){input.value='';input.style.height='auto';}
         var sugEl=$('chatSuggestions');if(sugEl)sugEl.replaceChildren();
         renderMessages();
@@ -690,12 +690,12 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
         var ctx=buildContext();
         var cfg=Store.getConfig?Store.getConfig():{};
         var courseid=parseInt(cfg.courseid||0,10);
-        var courseName=(ctx&&ctx.curso&&ctx.curso.nomeCurso)||tr('chat_unknown_course','não identificado');
+        var courseName=(ctx&&ctx.curso&&ctx.curso.nomeCurso)||tr('chat_unknown_course', 'not identified');
         var lang=cfg.language||'pt_br';
         var langInstr=lang.indexOf('pt')===0
-            ?tr('chat_lang_instr_pt','Responda sempre em português brasileiro, de forma direta e prática.')
+            ?tr('chat_lang_instr_pt','Responda sempre em portuguÃªs brasileiro, de forma direta e prÃ¡tica.')
             :lang.indexOf('es')===0
-            ?tr('chat_lang_instr_es','Responda siempre en español, de forma directa y práctica.')
+            ?tr('chat_lang_instr_es','Responda siempre en espaÃ±ol, de forma directa y prÃ¡ctica.')
             :'Always respond in English, in a direct and practical way.';
         var langLabel=lang.indexOf('pt')===0?'portuguese-br':lang.indexOf('es')===0?'spanish':'english';
 
@@ -716,15 +716,15 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
         }).then(function(res){
             var reply=(res&&res.reply)||'';
             reply=localizeMoodleTerms(reply,lang);
-            conv.messages.push({role:'assistant',content:reply||tr('chat_no_reply','Não consegui gerar uma resposta. Tente novamente.')});
+            conv.messages.push({role:'assistant',content:reply||tr('chat_no_reply', 'Could not generate a response. Please try again.')});
             _chatDone();
         }).catch(function(e){
             Log.error(e);
             var details=String(e&&e.message||e||'').toLowerCase();
             var friendly=details.indexOf('configuration')>=0 || details.indexOf('configura')>=0 ||
                 details.indexOf('disabled')>=0 || details.indexOf('desabil')>=0
-                ? tr('chat_ia_not_configured_alert','La IA no está configurada. Configure el proveedor y la clave API en Administración.')
-                : tr('chat_error','Error al conectar con la IA');
+                ? tr('chat_ia_not_configured_alert', 'AI is not configured. Select a provider, enter its API key, choose a model and save the settings.')
+                : tr('chat_error', 'Error connecting to AI');
             conv.messages.push({role:'assistant',content:friendly});
             _chatDone();
         });
@@ -757,8 +757,8 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
         var rendered=renderTemplate(el, 'chat_chips', {chips:chips});
         var sub=$('chatConvSub');
         if(sub)sub.textContent=(logs.length || grades.length || (state.students||[]).length)
-            ?tr('chat_data_ready','Dados carregados — pronto para analisar')
-            :tr('chat_no_data_sub','Carregue dados para ativar o chat');
+            ?tr('chat_data_ready', 'Data loaded â€” ready to analyse')
+            :tr('chat_no_data_sub', 'Load data to activate chat');
         return rendered;
     }
 
@@ -768,15 +768,15 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
             var loader=directChatDataLoad;
             if(typeof loader!=='function')return;
             if(button){button.disabled=true;button.setAttribute('aria-busy','true');}
-            if(label)label.textContent=tr('chat_reloading_data','Actualizando datos de clase...');
+            if(label)label.textContent=tr('chat_reloading_data', 'Refreshing class data...');
             Promise.resolve(loader()).then(function(){
                 updateContextChips();
                 render();
             }).catch(function(){
-                if(label)label.textContent=tr('chat_reload_error','No se pudieron actualizar los datos');
+                if(label)label.textContent=tr('chat_reload_error', 'The class data could not be refreshed');
             }).then(function(){
                 if(button){button.disabled=false;button.removeAttribute('aria-busy');}
-                if(label&&!button.disabled)label.textContent=tr('chat_reload_data','Actualizar datos de clase');
+                if(label&&!button.disabled)label.textContent=tr('chat_reload_data', 'Refresh class data');
             });
         }
 
@@ -787,7 +787,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
             button.type='button';
             button.id='chatReloadBtn';
             button.className='btn-ghost';
-            button.title=tr('chat_reload_data','Actualizar datos de clase');
+            button.title=tr('chat_reload_data', 'Refresh class data');
             button.setAttribute('aria-label',button.title);
             button.style.cssText='font-size:.72rem;white-space:nowrap;';
             button.innerHTML='<svg class="mwa-ui-icon" aria-hidden="true"><use href="#mwa-icon-refresh"></use></svg>'+
@@ -807,7 +807,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
         updateContextChips().then(ensureReloadButton);
         renderSidebar();
         var inp=$('chatInput')||$('chatInputEl');
-        if(inp)inp.placeholder=tr('chat_input_placeholder','Pergunte sobre a turma, peça análises ou relatórios...');
+        if(inp)inp.placeholder=tr('chat_input_placeholder', 'Ask about the class, request analyses or reports...');
         if(getCur())renderMessages();
         else showWelcome();
     }

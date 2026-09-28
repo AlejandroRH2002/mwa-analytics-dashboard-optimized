@@ -21,7 +21,7 @@
 
 /**
  * Note: This module generates HTML markup directly in JavaScript strings for
- * performance reasons — the dashboard renders large dynamic datasets (student lists,
+ * performance reasons â€” the dashboard renders large dynamic datasets (student lists,
  * heatmaps, charts) that require frequent partial updates. All user-supplied data is
  * escaped via the esc() helper before insertion into the DOM.
  * See: https://docs.moodle.org/dev/JavaScript_Modules#HTML_generation
@@ -77,7 +77,7 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
         return '<span style="background:' + bg + ';color:' + color + ';font-size:.65rem;font-weight:800;padding:2px 7px;border-radius:99px;">' + label + '</span>';
       }
     
-      /* ── module state ── */
+      /* â”€â”€ module state â”€â”€ */
       var CL_VIEW = 'participation';
       var CL_FILTER = 'all';
       var CL_SEARCH = '';
@@ -89,10 +89,10 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
       var CL_EXPORT_GRADES = [];
       var CL_EXPORT_RESOURCES = [];
     
-      /* ── avatar colours (cycling by name) ── */
+      /* â”€â”€ avatar colours (cycling by name) â”€â”€ */
       var AV_COLORS = ['#5b9bd5','#8b72d4','#3aab7a','#c98a2a','#d95f5f','#2aafaa','#e07ba0'];
     
-      /* ── helpers de data ── */
+      /* â”€â”€ helpers de data â”€â”€ */
       function parseDate(log) {
         if (log._ts) return new Date(Number(log._ts) * 1000);
         if (log.timecreated) return new Date(Number(log.timecreated) * 1000);
@@ -103,7 +103,7 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
       }
     
       function fmtDate(d) {
-        if (!d) return '—';
+        if (!d) return 'â€”';
         var dd = String(d.getDate()).padStart(2, '0');
         var mm = String(d.getMonth() + 1).padStart(2, '0');
         return dd + '/' + mm + '/' + d.getFullYear();
@@ -114,12 +114,12 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
           return {tone: 'offline', label: tr('presence_offline', 'Offline')};
         }
         var minutes = Math.max(0, Math.floor((Date.now() - last.getTime()) / 60000));
-        if (minutes <= 5) return {tone: 'online', label: tr('presence_online_now', 'Online agora')};
-        if (minutes <= 15) return {tone: 'recent', label: tr('presence_recent', 'Ativo recentemente')};
+        if (minutes <= 5) return {tone: 'online', label: tr('presence_online_now', 'Online now')};
+        if (minutes <= 15) return {tone: 'recent', label: tr('presence_recent', 'Recently active')};
         return {tone: 'offline', label: tr('presence_offline', 'Offline')};
       }
     
-      /* ── session time calculation ── */
+      /* â”€â”€ session time calculation â”€â”€ */
       var SESSION_GAP = 10 * 60 * 1000;
       var ACTIVE_GAP_CAP = 5 * 60 * 1000;
     
@@ -220,7 +220,7 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
 
       function exportActivityGrade(row, seq) {
         var raw = row['act_' + seq];
-        if (raw === null || raw === undefined || String(raw).trim() === '' || String(raw).trim() === '-' || String(raw).trim() === '—') {
+        if (raw === null || raw === undefined || String(raw).trim() === '' || String(raw).trim() === '-' || String(raw).trim() === 'â€”') {
           return '';
         }
         var parsed = Number(String(raw).trim().replace(',', '.'));
@@ -229,23 +229,23 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
 
       function exportClassSpreadsheet() {
         if (!CL_EXPORT_ITEMS.length) {
-          Store.notify(tr('cl_export_empty', 'Não há estudantes para exportar com os filtros atuais.'), 'warning');
+          Store.notify(tr('cl_export_empty', 'There are no students to export with the current filters.'), 'warning');
           return;
         }
         var gradeActivities = exportGradeActivities(CL_EXPORT_GRADES);
         var headers = [
-          tr('student', 'Estudante'), tr('email', 'E-mail'), tr('cl_th_participation', 'Participação (%)'),
-          tr('cl_th_situation', 'Situação'), tr('attention', 'Em acompanhamento'),
-          tr('cl_th_days_without', 'Dias sem acesso'), tr('cl_th_last_access', 'Último acesso'),
-          tr('interactions', 'Interações'), tr('ev_active_days', 'Dias ativos'),
-          tr('cl_th_total_time', 'Tempo total'), tr('sp_kpi_grade', 'Nota atual'),
-          tr('cl_export_activities_done', 'Atividades concluídas'),
-          tr('cl_export_activities_missing', 'Atividades pendentes'),
-          tr('cl_export_activities_overdue', 'Atividades atrasadas'),
-          tr('cl_export_resources_accessed', 'Conteúdos acessados'),
-          tr('cl_export_resources_missing', 'Conteúdos não acessados')
+          tr('student', 'Student'), tr('email', 'Email'), tr('cl_th_participation', 'Engagement'),
+          tr('cl_th_situation', 'Status'), tr('attention', 'In follow-up'),
+          tr('cl_th_days_without', 'Days without access'), tr('cl_th_last_access', 'Last access'),
+          tr('interactions', 'interactions'), tr('ev_active_days', 'Active days'),
+          tr('cl_th_total_time', 'Total time'), tr('sp_kpi_grade', 'Grade'),
+          tr('cl_export_activities_done', 'Completed activities'),
+          tr('cl_export_activities_missing', 'Pending activities'),
+          tr('cl_export_activities_overdue', 'Overdue activities'),
+          tr('cl_export_resources_accessed', 'Accessed content'),
+          tr('cl_export_resources_missing', 'Content not accessed')
         ].concat(gradeActivities.map(function(activity) {
-          return tr('sp_kpi_grade', 'Nota') + ' — ' + activity.name;
+          return tr('sp_kpi_grade', 'Grade') + ' â€” ' + activity.name;
         }));
         var rows = CL_EXPORT_ITEMS.map(function(item) {
           var calc = item.calc || {};
@@ -256,8 +256,8 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
           var gradeRow = exportGradeRow(item.name, CL_EXPORT_GRADES);
           return [
             item.name, item.email || '', item.score,
-            item.followup ? tr('attention', 'Em acompanhamento') : item.status.label,
-            item.followup ? tr('yes', 'Sim') : tr('no', 'Não'), daysWithout,
+            item.followup ? tr('attention', 'In follow-up') : item.status.label,
+            item.followup ? tr('yes', 'Sim') : tr('no', 'NÃ£o'), daysWithout,
             calc.last ? fmtDate(calc.last) : '', item.count, Number(calc.activeDays || 0),
             fmtTime(CL_EXPORT_SESSION_TIMES[item.name] || 0), grade,
             activity.done, activity.missing, activity.overdue,
@@ -281,14 +281,14 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
         window.URL.revokeObjectURL(url);
       }
     
-      /* ── cor do tempo ── */
+      /* â”€â”€ cor do tempo â”€â”€ */
       function timeColor(ms) {
         if (ms >= 3600000) return 'var(--green)';
         if (ms >= 900000)  return 'var(--blue)';
         return 'var(--muted)';
       }
     
-      /* ── getLastAccess: date of last log entry per student ── */
+      /* â”€â”€ getLastAccess: date of last log entry per student â”€â”€ */
       function getLastAccess(logs) {
         var m = {};
         logs.forEach(function (r) {
@@ -300,7 +300,7 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
         return m;
       }
     
-      /* ── email do aluno ── */
+      /* â”€â”€ email do aluno â”€â”€ */
       function getEmailForStudent(name, logs, grades) {
         var found = null;
         logs.some(function (r) {
@@ -379,18 +379,18 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
         return found || 0;
       }
     
-      /* ── activity coverage calculation ── */
+      /* â”€â”€ activity coverage calculation â”€â”€ */
       function isCourseGeneral(name) {
         var n = norm(name);
         if (!n) return true;
         if (/^curso\s*:/i.test(n)) return true;
         if (/^sistema$/i.test(n)) return true;
-        if (/^área de texto/i.test(n)) return true;
-        if (/^mídia/i.test(n)) return true;
+        if (/^Ã¡rea de texto/i.test(n)) return true;
+        if (/^mÃ­dia/i.test(n)) return true;
         return false;
       }
     
-      /* ── dots de atividade por aluno (modo "Ver atividades") ── */
+      /* â”€â”€ dots de atividade por aluno (modo "Ver atividades") â”€â”€ */
       function buildActDots(name, grades) {
         if (!grades || !grades.length) {
           return '<span class="cl-no-grades-hint">' + esc(tr('cl_no_grades_hint')) + '</span>';
@@ -482,7 +482,7 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
           var actName = actNames[Number(seq)] || ('Atividade ' + seq);
           var tooltip = esc(actName) + (hasCurrentState && modname === 'forum'
             ? ' (' + currentCount + ' post' + (currentCount === 1 ? '' : 's') + ')'
-            : (done && hasGradeValue ? ' (' + num.toFixed(1) + ' pts)' : done ? ' (concluida)' : overdue ? ' (' + esc(tr('cl_activity_overdue', 'vencida sem entrega')) + ')' : missing ? ' (-)' : ''));
+            : (done && hasGradeValue ? ' (' + num.toFixed(1) + ' pts)' : done ? ' (concluida)' : overdue ? ' (' + esc(tr('cl_activity_overdue', 'overdue without submission')) + ')' : missing ? ' (-)' : ''));
           var cmid = actCmids[Number(seq)] || 0;
           var url = (cmid && modname && wwwroot)
             ? wwwroot + '/mod/' + modname + '/view.php?id=' + cmid
@@ -501,12 +501,12 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
         if (mod === 'hvp') mod = 'h5pactivity';
         if (mod === 'assignsubmission') mod = 'assign';
         if (!mod || mod === 'core' || mod === 'system') {
-          if (comp === 'página' || comp === 'page') mod = 'page';
+          if (comp === 'pÃ¡gina' || comp === 'page') mod = 'page';
           else if (comp === 'livro' || comp === 'book') mod = 'book';
           else if (comp === 'url') mod = 'url';
           else if (comp === 'arquivo' || comp === 'file' || comp === 'recurso' || comp === 'resource') mod = 'resource';
           else if (comp === 'pasta' || comp === 'folder') mod = 'folder';
-          else if (comp === 'pacote de conteúdo ims' || comp === 'ims content package' || comp === 'imscp') mod = 'imscp';
+          else if (comp === 'pacote de conteÃºdo ims' || comp === 'ims content package' || comp === 'imscp') mod = 'imscp';
         }
         return mod;
       }
@@ -515,8 +515,8 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
         var ctx = norm(log.contextodoevento || log.eventcontext || log.context || '');
         var ev = norm(log.nomedoevento || log.eventname || log.action || '');
         var lowerCtx = ctx.toLowerCase();
-        if (ctx && !isCourseGeneral(ctx) && lowerCtx !== 'course module viewed' && lowerCtx !== 'módulo do curso visualizado') {
-          return ctx.replace(/^(page|página|book|livro|url|resource|recurso|file|arquivo|folder|pasta)\s*:\s*/i, '');
+        if (ctx && !isCourseGeneral(ctx) && lowerCtx !== 'course module viewed' && lowerCtx !== 'mÃ³dulo do curso visualizado') {
+          return ctx.replace(/^(page|pÃ¡gina|book|livro|url|resource|recurso|file|arquivo|folder|pasta)\s*:\s*/i, '');
         }
         if (ev && !isCourseGeneral(ev) && ev.toLowerCase() !== 'course module viewed') {
           return ev;
@@ -527,12 +527,12 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
       function isResourceModule(log) {
         var mod = moduleOf(log);
         var comp = norm(log.component || log.componente || '').toLowerCase();
-        if (mod === 'label' || comp.indexOf('área de mídia e texto') >= 0 ||
+        if (mod === 'label' || comp.indexOf('Ã¡rea de mÃ­dia e texto') >= 0 ||
             comp.indexOf('area de midia e texto') >= 0 || comp.indexOf('text and media area') >= 0) {
           return false;
         }
         return mod === 'page' || mod === 'book' || mod === 'url' || mod === 'resource' ||
-          mod === 'folder' || mod === 'imscp' || comp === 'página' || comp === 'page' ||
+          mod === 'folder' || mod === 'imscp' || comp === 'pÃ¡gina' || comp === 'page' ||
           comp === 'livro' || comp === 'book' || comp === 'url' || comp === 'arquivo' ||
           comp === 'file' || comp === 'pasta' || comp === 'folder';
       }
@@ -641,12 +641,12 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
 
       function statusInfo(score, confirmedNever) {
         if (score === 0 && confirmedNever) {
-          return {key: 'never', cls: 'never', color: '#7b8496', label: tr('ev_never_access', 'Nunca acessou o Moodle')};
+          return {key: 'never', cls: 'never', color: '#7b8496', label: tr('ev_never_access', 'No recorded access')};
         }
         if (score >= 70) {
-          return {key: 'high', cls: 'high', color: '#3aab7a', label: tr('ev_high_part', 'Alta participação')};
+          return {key: 'high', cls: 'high', color: '#3aab7a', label: tr('ev_high_part', 'Consistent pathway')};
         }
-        return {key: 'medium', cls: 'medium', color: '#8b72d4', label: tr('ev_med_part', 'Em progressão')};
+        return {key: 'medium', cls: 'medium', color: '#8b72d4', label: tr('ev_med_part', 'Progressing')};
       }
 
       function hasNoReleasedGrade(item) {
@@ -656,7 +656,7 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
           raw = item && item.calc && item.calc.grade;
         }
         var text = raw === null || raw === undefined ? '' : String(raw).trim().toLowerCase();
-        return text === '' || text === '-' || text === '—' || text === 'null' || text === 'n/a';
+        return text === '' || text === '-' || text === 'â€”' || text === 'null' || text === 'n/a';
       }
 
       function totalGradeBelowCourseThreshold(item) {
@@ -771,13 +771,13 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
         if (hasTotalGradeAtOrAboveThreshold(item)) return [];
         var reasons = [];
         if (hasOverdueDelivery(item, grades)) {
-          reasons.push({icon: 'clipboard', tone: 'overdue', label: tr('cl_followup_overdue', 'Entrega vencida')});
+          reasons.push({icon: 'clipboard', tone: 'overdue', label: tr('cl_followup_overdue', 'Overdue submission')});
         }
         if (Number(item.daysWithoutAccess || 0) >= 7 && availableCourseContent(grades)) {
-          reasons.push({icon: 'clock', tone: 'inactive', label: tr('cl_followup_inactive', 'Sem participação há 7 dias ou mais')});
+          reasons.push({icon: 'clock', tone: 'inactive', label: tr('cl_followup_inactive', '7 days or more without participation')});
         }
         if (totalGradeBelowCourseThreshold(item)) {
-          reasons.push({icon: 'trend-down', tone: 'grade', label: tr('cl_followup_grade', 'Aproveitamento parcial abaixo de 60%')});
+          reasons.push({icon: 'trend-down', tone: 'grade', label: tr('cl_followup_grade', 'Partial achievement below 60%')});
         }
         return reasons;
       }
@@ -798,28 +798,28 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
         var calc = item.calc || {};
         var chips = [];
         if (item.status.key === 'never') {
-          chips.push(detChip('&#128683;', tr('ev_never_access', 'Nunca acessou o Moodle'), 'red'));
-          chips.push(detChip(icon('warning'), tr('ev_det_at_risk', 'Em risco'), 'red'));
-          chips.push(detChip(icon('clock'), tr('ev_det_no_access_recorded', 'Sem acesso registrado'), 'red'));
+          chips.push(detChip('&#128683;', tr('ev_never_access', 'No recorded access'), 'red'));
+          chips.push(detChip(icon('warning'), tr('ev_det_at_risk', 'At risk'), 'red'));
+          chips.push(detChip(icon('clock'), tr('ev_det_no_access_recorded', 'No access recorded'), 'red'));
           return chips.join('');
         }
         if (calc.daysWithoutAccess > 7 && calc.daysWithoutAccess < 99999) {
-          chips.push(detChip(icon('clock'), calc.daysWithoutAccess + ' ' + tr('ev_reason_days_no_access', 'dias sem acesso'), calc.daysWithoutAccess > 14 ? 'red' : 'amber'));
+          chips.push(detChip(icon('clock'), calc.daysWithoutAccess + ' ' + tr('ev_reason_days_no_access', 'days without access'), calc.daysWithoutAccess > 14 ? 'red' : 'amber'));
         }
         if (calc.interactions > 0 && calc.interactions < 3) {
-          chips.push(detChip(icon('bolt'), tr('ev_det_low_activity', 'Poucas interações'), 'amber'));
+          chips.push(detChip(icon('bolt'), tr('ev_det_low_activity', 'Few interactions'), 'amber'));
         }
         if (item.hasOpenPending) {
-          chips.push(detChip('&#128221;', tr('ev_det_pending_activities', 'Atividades pendentes'), 'blue'));
+          chips.push(detChip('&#128221;', tr('ev_det_pending_activities', 'Pending activities'), 'blue'));
         }
         if (item.hasOverdue) {
-          chips.push(detChip(icon('warning'), tr('ev_det_overdue_activities', 'Atividades vencidas'), 'red'));
+          chips.push(detChip(icon('warning'), tr('ev_det_overdue_activities', 'Overdue activities'), 'red'));
         }
         return chips.join('');
       }
 
       function tagChip(icon, label, cls) {
-        label = String(label || '').replace(/^[^\wÀ-ÿ]+/u, '').trim();
+        label = String(label || '').replace(/^[^\wÃ€-Ã¿]+/u, '').trim();
         return '<span class="cl-study-chip ' + esc(cls || 'slate') + '"><span class="cl-study-icon">' + icon + '</span><span>' + esc(label) + '</span></span>';
       }
 
@@ -851,10 +851,10 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
           else if (buckets.afternoon === peakCount) peak = 'vespertino';
         }
         if (peak === 'noturno') {
-          return tagChip('&#127769;', tr('pl_tag_night', 'Noturno'), 'noturno');
+          return tagChip('&#127769;', tr('pl_tag_night', 'ðŸŒ™ Night owl'), 'noturno');
         }
         if (peak === 'vespertino') {
-          return tagChip('&#127780;', tr('pl_tag_afternoon', 'Vespertino'), 'vespertino');
+          return tagChip('&#127780;', tr('pl_tag_afternoon', 'ðŸŒ¤ Afternoon learner'), 'vespertino');
         }
         return tagChip(icon('sun'), tr('pl_tag_daytime', 'Diurno'), 'diurno');
       }
@@ -886,10 +886,10 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
           }
         });
         var cards = [
-          ['never', '&#128683;', tr('ev_never_access', 'Nunca acessou o Moodle'), counts.never, 'never', tr('cl_kpi_tip_never', 'Alunos com 0% de participação, sem acesso registrado no Moodle.'), true],
-          ['followup', '<span class="cl-stage-dot" aria-hidden="true"></span>', tr('attention', 'Em acompanhamento'), counts.followup, 'followup', tr('ac_tip_students_attention', 'Alunos com acesso registrado e aproveitamento de até 10%.'), true],
-          ['medium', '<span class="cl-stage-dot" aria-hidden="true"></span>', tr('ev_med_part', 'Em progressão'), counts.medium, 'medium', tr('cl_kpi_tip_medium', 'Alunos que iniciaram o curso e avançam normalmente, sem motivos ativos de acompanhamento.'), false],
-          ['high', '<span class="cl-stage-dot" aria-hidden="true"></span>', tr('ev_high_part', 'Alta participação'), counts.high, 'high', tr('cl_kpi_tip_high', 'Alunos com participação igual ou superior a 70% no curso.'), false]
+          ['never', '&#128683;', tr('ev_never_access', 'No recorded access'), counts.never, 'never', tr('cl_kpi_tip_never', 'Students at 0%, with no access recorded in Moodle.'), true],
+          ['followup', '<span class="cl-stage-dot" aria-hidden="true"></span>', tr('attention', 'In follow-up'), counts.followup, 'followup', tr('ac_tip_students_attention', 'Priority status for students with an overdue submission, 7 days without participation or a partial grade below 60%. While under follow-up, they are not counted in pathway stages.'), true],
+          ['medium', '<span class="cl-stage-dot" aria-hidden="true"></span>', tr('ev_med_part', 'Progressing'), counts.medium, 'medium', tr('cl_kpi_tip_medium', 'Students who have started the course and are progressing normally, with no active follow-up reasons.'), false],
+          ['high', '<span class="cl-stage-dot" aria-hidden="true"></span>', tr('ev_high_part', 'Consistent pathway'), counts.high, 'high', tr('cl_kpi_tip_high', 'Students at 70% or above, with a consistent pathway.'), false]
         ];
         /* First visit for this course: compare against an empty class, so each
            card reports its starting population (e.g. 1 student in "high" -> +1).
@@ -902,7 +902,7 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
             + '<span class="cl-kpi-trend-wrap">' + chip + '</span>'
             + '<span class="cl-kpi-head"><span class="cl-kpi-icon" aria-hidden="true">' + c[1] + '</span><span class="cl-kpi-title">' + esc(c[2]) + helpTip(c[5]) + '</span></span>'
             + '<strong>' + pct + '%</strong>'
-            + '<span class="cl-kpi-pct">' + c[3] + ' ' + esc(c[3] === 1 ? tr('student', 'estudante') : tr('students', 'estudantes')) + '</span>'
+            + '<span class="cl-kpi-pct">' + c[3] + ' ' + esc(c[3] === 1 ? tr('student', 'Student') : tr('students', 'students')) + '</span>'
             + '</button>';
         }).join(''));
         /* Only refresh the baseline once per day, so the chip means "change since
@@ -918,14 +918,14 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
         var box = document.getElementById('clFilterBar');
         if (!box) return;
         var filters = [
-          ['all', tr('ev_all', 'Todos')],
-          ['never', tr('ev_never_access', 'Nunca acessou o Moodle')],
-          ['engaged', tr('cl_filter_engaged', 'Com engajamento')],
-          ['interactions', tr('with_course_activity', 'Com Interações')],
-          ['followup', tr('attention', 'Em acompanhamento')],
-          ['below60', tr('cl_filter_below_60_percent', 'Aproveitamento parcial abaixo de 60%')],
-          ['medium', tr('ev_med_part', 'Em progressão')],
-          ['high', tr('ev_high_part', 'Alta participação')]
+          ['all', tr('ev_all', 'All')],
+          ['never', tr('ev_never_access', 'No recorded access')],
+          ['engaged', tr('cl_filter_engaged', 'With engagement')],
+          ['interactions', tr('with_course_activity', 'With detected participation')],
+          ['followup', tr('attention', 'In follow-up')],
+          ['below60', tr('cl_filter_below_60_percent', 'Partial achievement below 60%')],
+          ['medium', tr('ev_med_part', 'Progressing')],
+          ['high', tr('ev_high_part', 'Consistent pathway')]
         ];
         Store.renderHtml(box, filters.map(function (f) {
             return '<option value="' + f[0] + '"' + (CL_FILTER === f[0] ? ' selected' : '') + '>' + esc(f[1]) + '</option>';
@@ -960,7 +960,7 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
         }).join('');
         Store.renderHtml(box, '<div class="cl-pag-info">Mostrando ' + first + ' a ' + last + ' de ' + totalItems + ' estudantes</div>'
           + '<div class="cl-pag-pages">' + buttons + '</div>'
-          + '<label class="cl-pag-size">Itens por página: <select onchange="window.MWAClassList.setPageSize(this.value)">' + sizes + '</select></label>');
+          + '<label class="cl-pag-size">Itens por pÃ¡gina: <select onchange="window.MWAClassList.setPageSize(this.value)">' + sizes + '</select></label>');
       }
 
       function buildStudentDetail(item, activityProgressHtml, resourceProgressHtml, detailId) {
@@ -969,8 +969,8 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
         if (currentGrade !== null && isNaN(currentGrade)) currentGrade = null;
         var gradeText = currentGrade === null ? '\u2014' : currentGrade.toLocaleString('pt-BR', {minimumFractionDigits: 1, maximumFractionDigits: 1});
         var gradeColor = currentGrade === null ? 'var(--muted)' : currentGrade >= 60 ? 'var(--green)' : 'var(--red)';
-        var lastText = calc.last ? fmtDate(calc.last) : '—';
-        var daysText = item.status.key === 'never' ? tr('ev_never_access', 'Nunca acessou o Moodle') : (calc.daysWithoutAccess || 0) + 'd';
+        var lastText = calc.last ? fmtDate(calc.last) : 'â€”';
+        var daysText = item.status.key === 'never' ? tr('ev_never_access', 'No recorded access') : (calc.daysWithoutAccess || 0) + 'd';
         var interventionData = window.MWAInterventions && window.MWAInterventions.getData ? window.MWAInterventions.getData() : [];
         var hasIntervention = interventionData.some(function(record) { return norm(record.student_name).toLowerCase() === norm(item.name).toLowerCase(); });
         var picture = norm(item.picture || '');
@@ -985,41 +985,41 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
             + avatarHtml
             + '<div class="cl-detail-main">'
               + '<strong>' + esc(item.name) + '</strong>'
-              + '<span>' + esc(item.email || tr('no_email', 'Sem e-mail')) + '</span>'
+              + '<span>' + esc(item.email || tr('no_email', 'No email')) + '</span>'
               + '<div class="cl-detail-chips">' + (item.studyTags || '') + determinantHtml(item) + '</div>'
             + '</div>'
             + '<div class="cl-detail-top-actions">'
               + '<button class="btn-ghost cl-report-btn" data-student="' + esc(item.name) + '" type="button"' + (hasIntervention ? '' : ' hidden') + ' onclick="window.MWATeacherFeedback&&window.MWATeacherFeedback.openIndividualReport(\'' + esc(item.name) + '\');event.stopPropagation()">' + icon('chart') + ' ' + esc(tr('tf_ir_open', 'Evolution report')) + '</button>'
-              + '<button class="btn-ghost cl-profile-detail-btn" data-student="' + esc(item.name) + '" type="button" onclick="event.stopPropagation();window.MWAClassList&&window.MWAClassList.openProfile(this)">' + icon('user') + ' ' + esc(tr('cl_view_individual_profile', 'Ver perfil individual')) + '</button>'
+              + '<button class="btn-ghost cl-profile-detail-btn" data-student="' + esc(item.name) + '" type="button" onclick="event.stopPropagation();window.MWAClassList&&window.MWAClassList.openProfile(this)">' + icon('user') + ' ' + esc(tr('cl_view_individual_profile', 'View individual profile')) + '</button>'
             + '</div>'
           + '</div>'
           + '<div class="cl-detail-grid">'
             + '<div><span>' + esc(tr('cl_th_days_without', 'Days without access')) + '</span><strong>' + esc(daysText) + '</strong></div>'
-            + '<div><span>' + esc(tr('ev_active_days', 'Dias ativos')) + '</span><strong>' + (calc.activeDays || 0) + '</strong></div>'
-            + '<div><span>' + esc(tr('cl_th_last_access', 'Último acesso')) + '</span><strong>' + esc(lastText) + '</strong></div>'
-            + '<div><span>' + esc(tr('interactions', 'Interações')) + '</span><strong>' + item.count + '</strong></div>'
-            + '<div><span>' + esc(tr('sp_kpi_grade', 'Nota atual')) + '</span><strong style="color:' + gradeColor + ';">' + esc(gradeText) + '</strong></div>'
+            + '<div><span>' + esc(tr('ev_active_days', 'Active days')) + '</span><strong>' + (calc.activeDays || 0) + '</strong></div>'
+            + '<div><span>' + esc(tr('cl_th_last_access', 'Last access')) + '</span><strong>' + esc(lastText) + '</strong></div>'
+            + '<div><span>' + esc(tr('interactions', 'interactions')) + '</span><strong>' + item.count + '</strong></div>'
+            + '<div><span>' + esc(tr('sp_kpi_grade', 'Grade')) + '</span><strong style="color:' + gradeColor + ';">' + esc(gradeText) + '</strong></div>'
           + '</div>'
           + '<div class="cl-detail-progress-grid">'
-            + '<div><h4>' + esc(tr('cl_th_activity_progress', 'Progresso por atividade com nota')) + '</h4>' + activityProgressHtml + '</div>'
-            + '<div><h4>' + esc(tr('cl_th_resource_progress', 'Progresso por conteúdo')) + '</h4>' + resourceProgressHtml + '</div>'
+            + '<div><h4>' + esc(tr('cl_th_activity_progress', 'Graded activities')) + '</h4>' + activityProgressHtml + '</div>'
+            + '<div><h4>' + esc(tr('cl_th_resource_progress', 'Content/Resources')) + '</h4>' + resourceProgressHtml + '</div>'
           + '</div>'
           + '<div class="ai-box cl-ai-box" id="clai' + esc(detailId) + '">'
-            + '<div class="ai-box-title">&#10022; ' + esc(tr('ev_ai_title', 'Análise & Recomendação IA')) + '</div>'
+            + '<div class="ai-box-title">&#10022; ' + esc(tr('ev_ai_title', 'AI Analysis & Recommendation')) + '</div>'
             + '<div class="ai-loading"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div>'
-            + '<span style="margin-left:.5rem;font-size:.78rem;color:var(--muted);">' + esc(tr('ev_ai_hint', 'Clique em "Gerar Recomendação IA" para analisar este aluno.')) + '</span></div>'
+            + '<span style="margin-left:.5rem;font-size:.78rem;color:var(--muted);">' + esc(tr('ev_ai_hint', 'Click "Generate AI Recommendation" to analyze this student.')) + '</span></div>'
           + '</div>'
           + '<div class="cl-detail-actions">'
-            + '<button class="btn-accent cl-ai-generate-btn" type="button" onclick="window.MWAClassList&&window.MWAClassList.genAI(\'' + esc(detailId) + '\');event.stopPropagation()">&#10022; ' + esc(tr('ev_gen_ai', 'Gerar Recomendação IA')) + '</button>'
+            + '<button class="btn-accent cl-ai-generate-btn" type="button" onclick="window.MWAClassList&&window.MWAClassList.genAI(\'' + esc(detailId) + '\');event.stopPropagation()">&#10022; ' + esc(tr('ev_gen_ai', 'Generate AI Recommendation')) + '</button>'
             + '<button class="btn-ghost" type="button" onclick="window.MWAInterventions&&window.MWAInterventions.quickMessage(\'' + esc(item.name) + '\',\'' + esc(item.email || '') + '\',' + (item.userid || 0) + ',\'\');event.stopPropagation()">' + icon('mail') + ' ' + esc(tr('message')) + '</button>'
-            + '<button class="btn-ghost cl-detail-inline-close" type="button">' + esc(tr('close', 'Fechar')) + '</button>'
+            + '<button class="btn-ghost cl-detail-inline-close" type="button">' + esc(tr('close', 'Close')) + '</button>'
           + '</div>'
         + '</div>';
       }
     
-      /* ════════════════════════════════════════════
+      /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
          RENDER PRINCIPAL
-      ════════════════════════════════════════════ */
+      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
       function toggleClassListView() {
         CL_VIEW = CL_VIEW === 'participation' ? 'activities' : 'participation';
         var btn = document.getElementById('clToggleBtn');
@@ -1032,7 +1032,7 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
         renderClassListUnified();
       }
     
-      /* ── Filtro de busca (cliente, sem re-render) ── */
+      /* â”€â”€ Filtro de busca (cliente, sem re-render) â”€â”€ */
       function renderClassListUnified() {
         var dash = window.MWADashboard || {};
         var state = dash.state || {};
@@ -1169,7 +1169,7 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
             + '</div>';
           var statusHtml = e.followup
             ? '<div class="cl-status-stack cl-status-followup-only">'
-              + '<span class="cl-part-chip followup">' + esc(tr('attention', 'Em acompanhamento')) + '</span>'
+              + '<span class="cl-part-chip followup">' + esc(tr('attention', 'In follow-up')) + '</span>'
               + followUpReasonHtml(e.followupReasons)
               + '</div>'
             : '<div class="cl-status-stack">'
@@ -1184,8 +1184,8 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
                 + '<div class="cl-student-summary-text">'
                   + '<span class="cl-student-name">' + esc(n) + '</span>'
                   + '<span class="mwa-presence ' + presence.tone + '"><i aria-hidden="true"></i>' + esc(presence.label)
-                    + '<span class="cl-presence-last"><span>' + esc(tr('cl_th_last_access', 'Último acesso')) + ':</span>'
-                      + '<time>' + esc(e.calc && e.calc.last ? fmtDate(e.calc.last) : '—') + '</time></span>'
+                    + '<span class="cl-presence-last"><span>' + esc(tr('cl_th_last_access', 'Last access')) + ':</span>'
+                      + '<time>' + esc(e.calc && e.calc.last ? fmtDate(e.calc.last) : 'â€”') + '</time></span>'
                   + '</span>'
                 + '</div>'
               + '</div>'
@@ -1205,16 +1205,16 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
         var cnt = document.getElementById('clCount');
         if (cnt) {
           var labelMap = {
-            all: tr('ev_all', 'Todos'),
-            engaged: tr('cl_filter_engaged', 'Com engajamento'),
-            interactions: tr('with_course_activity', 'Com interações'),
-            followup: tr('attention', 'Em acompanhamento'),
-            below60: tr('cl_filter_below_60_percent', 'Aproveitamento parcial abaixo de 60%'),
-            never: tr('ev_never_access', 'Nunca acessou o Moodle'),
-            medium: tr('ev_med_part', 'Em progressão'),
-            high: tr('ev_high_part', 'Alta participação')
+            all: tr('ev_all', 'All'),
+            engaged: tr('cl_filter_engaged', 'With engagement'),
+            interactions: tr('with_course_activity', 'With detected participation'),
+            followup: tr('attention', 'In follow-up'),
+            below60: tr('cl_filter_below_60_percent', 'Partial achievement below 60%'),
+            never: tr('ev_never_access', 'No recorded access'),
+            medium: tr('ev_med_part', 'Progressing'),
+            high: tr('ev_high_part', 'Consistent pathway')
           };
-          cnt.textContent = filtered.length + ' ' + tr('students', 'estudantes') + ' · ' + (labelMap[CL_FILTER] || labelMap.all);
+          cnt.textContent = filtered.length + ' ' + tr('students', 'students') + ' Â· ' + (labelMap[CL_FILTER] || labelMap.all);
         }
         document.querySelectorAll('#clKpiRow [data-cl-filter]').forEach(function (btn) {
           btn.addEventListener('click', function () {
@@ -1281,13 +1281,13 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
         var modalInitials = norm(student.name).split(/\s+/).filter(Boolean).slice(0, 2).map(function (word) { return word[0]; }).join('').toUpperCase();
         var modalColorIndex = Math.abs(((student.name || '').charCodeAt(0) || 0) + ((student.name || '').charCodeAt(1) || 0)) % AV_COLORS.length;
         var modalAvatar = '<span class="cl-detail-head-avatar' + (modalPicture ? ' has-img' : '') + '" style="background:' + AV_COLORS[modalColorIndex] + ';">'
-          + (modalPicture ? '<img src="' + esc(modalPicture) + '" alt="' + esc(student.name || tr('student', 'Estudante')) + '" loading="lazy">' : esc(modalInitials || '?'))
+          + (modalPicture ? '<img src="' + esc(modalPicture) + '" alt="' + esc(student.name || tr('student', 'Student')) + '" loading="lazy">' : esc(modalInitials || '?'))
           + '</span>';
         document.body.appendChild(overlay);
         document.body.classList.add('mwa-detail-modal-open');
         Templates.render('block_mwa_dashboard/classlist_detail_modal', {
-          title: tr('student', 'Estudante'),
-          close: tr('snapshot_close', 'Fechar')
+          title: tr('student', 'Student'),
+          close: tr('snapshot_close', 'Close')
         }).then(function(html, js) {
           if (!document.body.contains(overlay)) return;
           Templates.replaceNodeContents(overlay, html, js);
@@ -1348,15 +1348,15 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
         if (aiButton) aiButton.disabled = true;
         if (!cfg.ia_enabled) {
           Store.renderHtml(box,
-            '<div class="ai-box-title">&#10022; ' + esc(tr('ev_ai_title', 'Análise & Recomendação IA')) + '</div>'
-            + '<div class="ai-box-text">' + esc(tr('ai_unavailable_message', '🔒 Os recursos de Inteligência Artificial estão indisponíveis. Configure uma chave de API válida na administração do MWA.')) + '</div>'
+            '<div class="ai-box-title">&#10022; ' + esc(tr('ev_ai_title', 'AI Analysis & Recommendation')) + '</div>'
+            + '<div class="ai-box-text">' + esc(tr('ai_unavailable_message', 'ðŸ”’ Artificial Intelligence features are unavailable. Configure a valid API key in MWA administration.')) + '</div>'
           );
           if (aiButton) aiButton.disabled = false;
           return;
         }
         calc = item.calc || {};
         Store.renderHtml(box,
-          '<div class="ai-box-title">&#10022; ' + esc(tr('ev_ai_title', 'Análise & Recomendação IA')) + '</div>'
+          '<div class="ai-box-title">&#10022; ' + esc(tr('ev_ai_title', 'AI Analysis & Recommendation')) + '</div>'
           + '<div class="ai-loading"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div>'
           + '<span style="margin-left:.5rem;font-size:.78rem;color:var(--muted);">' + esc(tr('loading', 'Carregando...')) + '</span></div>'
         );
@@ -1380,7 +1380,7 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
           prompt: prompt
         }).then(function (res) {
           var text = (res && (res.recommendation || res.response || res.content)) || '';
-          if (!text) throw new Error(tr('err_ajax_bridge', 'Resposta vazia'));
+          if (!text) throw new Error(tr('err_ajax_bridge', 'Dashboard AJAX bridge is not available.'));
           if (/^\s*User Safety\s*:\s*(?:safe|unsafe)\s*$/i.test(text)) throw new Error('invalid_ai_response');
           text = text
             .replace(/^#{1,6}\s*/gm, '')
@@ -1390,13 +1390,13 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
             .trim();
           text = esc(text).replace(/\n/g, '<br>');
           Store.renderHtml(box,
-            '<div class="ai-box-title">&#10022; ' + esc(tr('ev_ai_title', 'Análise & Recomendação IA')) + '</div>'
+            '<div class="ai-box-title">&#10022; ' + esc(tr('ev_ai_title', 'AI Analysis & Recommendation')) + '</div>'
             + '<div class="ai-box-text">' + text + '</div>'
           );
         }).catch(function () {
           Store.renderHtml(box,
-            '<div class="ai-box-title">&#10022; ' + esc(tr('ev_ai_title', 'Análise & Recomendação IA')) + '</div>'
-            + '<div class="ai-box-text">' + esc(tr('ev_ai_conn_error', 'Não foi possível gerar a recomendação agora.')) + '</div>'
+            '<div class="ai-box-title">&#10022; ' + esc(tr('ev_ai_title', 'AI Analysis & Recommendation')) + '</div>'
+            + '<div class="ai-box-text">' + esc(tr('ev_ai_conn_error', 'Error connecting to AI. Check module configuration.')) + '</div>'
             + '<button type="button" class="btn-ghost cl-ai-retry-btn" onclick="window.MWAClassList&&window.MWAClassList.genAI(\'' + esc(id) + '\')">&#8635; ' + esc(tr('retry', 'Tentar novamente')) + '</button>'
           );
         }).then(function () {

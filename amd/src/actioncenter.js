@@ -104,14 +104,14 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
       var ctxName=norm(log&& (log.contextodoevento||log.eventcontext||log.context||''));
       var ev=norm(log&& (log.nomedoevento||log.eventname||log.action||''));
       var low=lower(ctxName);
-      if(ctxName&&low!=='course module viewed'&&low!=='mÃƒÆ’Ã‚Â³dulo do curso visualizado')return ctxName.replace(/^(page|pÃƒÆ’Ã‚Â¡gina|book|livro|url|resource|recurso|file|arquivo|folder|pasta)\s*:\s*/i,'');
+      if(ctxName&&low!=='course module viewed'&&low!=='mÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³dulo do curso visualizado')return ctxName.replace(/^(page|pÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡gina|book|livro|url|resource|recurso|file|arquivo|folder|pasta)\s*:\s*/i,'');
       return ev&&lower(ev)!=='course module viewed'?ev:'';
     }
     function isResourceLog(log){
       var mod=moduleOfLog(log);
       var comp=lower(log&& (log.component||log.componente||''));
-      if(mod==='label'||comp.indexOf('ÃƒÆ’Ã‚Â¡rea de mÃƒÆ’Ã‚Â­dia e texto')>=0||comp.indexOf('text and media area')>=0)return false;
-      return ['page','book','url','resource','folder','imscp'].indexOf(mod)>=0||['pÃƒÆ’Ã‚Â¡gina','page','livro','book','url','arquivo','file','pasta','folder'].indexOf(comp)>=0;
+      if(mod==='label'||comp.indexOf('ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡rea de mÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­dia e texto')>=0||comp.indexOf('text and media area')>=0)return false;
+      return ['page','book','url','resource','folder','imscp'].indexOf(mod)>=0||['pÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡gina','page','livro','book','url','arquivo','file','pasta','folder'].indexOf(comp)>=0;
     }
     function studentAccessedCatalogItem(student,item){
       var studentName=lower(student&&student.name);
@@ -259,8 +259,8 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
       }).filter(function(item){return item.name&&item.available&&!item.done;});
     }
     function targetsForReason(reason, target){
-      if(reason==='Pendência acadêmica')return buildActivityTargetsForStudent(target);
-      if(reason==='Baixa participação')return buildResourceTargetsForStudent(target);
+      if(reason==='PendÃªncia acadÃªmica')return buildActivityTargetsForStudent(target);
+      if(reason==='Baixa participaÃ§Ã£o')return buildResourceTargetsForStudent(target);
       return [];
     }
     function helpTip(text){
@@ -344,7 +344,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
       var rows=[
         {count:counts.never,label:tr('ac_summary_never')},
         {count:counts.inactive,label:tr('ac_summary_inactive')},
-        {count:counts.low,label:tr('ac_summary_low','com baixa participação')}
+        {count:counts.low,label:tr('ac_summary_low', 'with an overdue submission or low partial grade')}
       ].filter(function(r){return r.count>0;});
       if(!rows.length)return '';
       return '<div class="ac-urgent-summary">'+rows.map(function(r){return '<span><strong>'+r.count+'</strong> '+esc(r.label)+'</span>';}).join('')+'</div>';
@@ -357,9 +357,9 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
         if(releasedGradeBelowThreshold(s))counts.grade++;
       });
       var rows=[
-        {count:counts.overdue,label:tr('cl_followup_overdue','Entrega vencida')},
-        {count:counts.inactive,label:tr('cl_followup_inactive','Sem participação há 7 dias ou mais')},
-        {count:counts.grade,label:tr('cl_followup_grade','Aproveitamento parcial abaixo de 60%')}
+        {count:counts.overdue,label:tr('cl_followup_overdue', 'Overdue submission')},
+        {count:counts.inactive,label:tr('cl_followup_inactive', '7 days or more without participation')},
+        {count:counts.grade,label:tr('cl_followup_grade', 'Partial achievement below 60%')}
       ].filter(function(r){return r.count>0;});
       if(!rows.length)return '';
       return '<div class="ac-urgent-summary">'+rows.map(function(r){return '<span><strong>'+r.count+'</strong> '+esc(r.label)+'</span>';}).join('')+'</div>';
@@ -383,8 +383,8 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
         if(it.lowDelivery)counts.delivery++;
       });
       var rows=[
-        {count:counts.reach,label:tr('ac_summary_low_reach_activities','com baixo alcance')},
-        {count:counts.delivery,label:tr('ac_summary_low_delivery','com baixa entrega')}
+        {count:counts.reach,label:tr('ac_summary_low_reach_activities', 'with low reach')},
+        {count:counts.delivery,label:tr('ac_summary_low_delivery', 'with low delivery')}
       ].filter(function(r){return r.count>0;});
       if(!rows.length)return '';
       return '<div class="ac-compact-summary attention">'+rows.map(function(r){return '<span><strong>'+r.count+'</strong> '+esc(r.label)+'</span>';}).join('')+'</div>';
@@ -397,7 +397,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
       if(!list.length)return '';
       function shortName(n){
         n=String(n||'');
-        return n.length>32?n.slice(0,31).replace(/[\s\-–—:,.]+$/,'')+'\u2026':n;
+        return n.length>32?n.slice(0,31).replace(/[\s\-â€“â€”:,.]+$/,'')+'\u2026':n;
       }
       var html='<div class="ac-items ac-items-compact">'+shown.map(function(it){
         var full=String(it.name||'');
@@ -408,7 +408,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
         return '<div class="ac-item-row">'+label+'</div>';
       }).join('');
       if(extra>0){
-        html+='<div class="ac-item-row ac-item-more-row"><button type="button" class="ac-item-more" data-action-page="activities" data-act-low="1">+'+extra+' '+esc(tr('ac_more_activities','mais'))+'</button></div>';
+        html+='<div class="ac-item-row ac-item-more-row"><button type="button" class="ac-item-more" data-action-page="activities" data-act-low="1">+'+extra+' '+esc(tr('ac_more_activities', 'more'))+'</button></div>';
       }
       html+='</div>';
       return html+attentionSummaryHtml(list);
@@ -552,16 +552,16 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
       maxW=Math.min(maxW,11);
       function weekLabel(week){
         if(week===0)return tr('this_week');
-        return (week===1?tr('ret_one_week_ago','1 semana atrás'):tr('ret_weeks_ago','{n} semanas atrás').replace('{n}',week));
+        return (week===1?tr('ret_one_week_ago', '1 week ago'):tr('ret_weeks_ago', '{n} weeks ago').replace('{n}',week));
       }
       function activeStudentsLabel(count){
-        return (count===1?tr('ret_drill_active_student','{n} aluno ativo'):tr('ret_drill_active_students','{n} alunos ativos')).replace('{n}',count);
+        return (count===1?tr('ret_drill_active_student', '{n} active student'):tr('ret_drill_active_students', '{n} active students')).replace('{n}',count);
       }
       function retentionChangeLabel(diff){
-        if(diff===null||diff===0)return tr('ret_tooltip_stable','estável');
-        if(diff>0)return (diff===1?tr('ret_tooltip_returned_one','{n} voltou'):tr('ret_tooltip_returned_many','{n} voltaram')).replace('{n}',diff);
+        if(diff===null||diff===0)return tr('ret_tooltip_stable', 'stable');
+        if(diff>0)return (diff===1?tr('ret_tooltip_returned_one', '{n} returned'):tr('ret_tooltip_returned_many', '{n} returned')).replace('{n}',diff);
         var left=Math.abs(diff);
-        return (left===1?tr('ret_tooltip_left_one','{n} saiu'):tr('ret_tooltip_left_many','{n} saíram')).replace('{n}',left);
+        return (left===1?tr('ret_tooltip_left_one', '{n} left'):tr('ret_tooltip_left_many', '{n} left')).replace('{n}',left);
       }
       var labels=[],values=[],weekIndexMap=[];
       for(var w=maxW;w>=0;w--){
@@ -622,11 +622,11 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
         var wLabel=weekLabel(w);
         var html='<div style="padding:.25rem 0;">';
         html+='<div style=\"font-size:.8rem;font-weight:700;margin-bottom:.6rem;\">'+esc(wLabel)+' - '+esc(activeStudentsLabel(Object.keys(cur).length))+'</div>';
-        if(left.length)html+='<div class=\"mwa-ret-left\">'+esc(tr('ret_drill_left','Não voltaram ({n}): ').replace('{n}',left.length))+left.map(function(n){var p=n.trim().split(/\s+/);return esc((p[0]||'')+' '+(p[p.length-1]||''));}).join(', ')+'</div>';
-        if(came.length)html+='<div class=\"mwa-ret-came\">'+esc(tr('ret_drill_came','Voltaram/novos ({n}): ').replace('{n}',came.length))+came.map(function(n){var p=n.trim().split(/\s+/);return esc((p[0]||'')+' '+(p[p.length-1]||''));}).join(', ')+'</div>';
-        if(stayed.length)html+='<div class="mwa-ret-stayed">'+tr('ret_drill_stayed','&#10003; Continuaram ({n})').replace('{n}',stayed.length)+'</div>';
+        if(left.length)html+='<div class=\"mwa-ret-left\">'+esc(tr('ret_drill_left', 'Did not return ({n}): ').replace('{n}',left.length))+left.map(function(n){var p=n.trim().split(/\s+/);return esc((p[0]||'')+' '+(p[p.length-1]||''));}).join(', ')+'</div>';
+        if(came.length)html+='<div class=\"mwa-ret-came\">'+esc(tr('ret_drill_came', 'Returned/new ({n}): ').replace('{n}',came.length))+came.map(function(n){var p=n.trim().split(/\s+/);return esc((p[0]||'')+' '+(p[p.length-1]||''));}).join(', ')+'</div>';
+        if(stayed.length)html+='<div class="mwa-ret-stayed">'+tr('ret_drill_stayed', 'âœ“ Continued ({n})').replace('{n}',stayed.length)+'</div>';
         html+='</div>';
-        showRetentionDrill(wLabel+' - '+tr('ret_drill_retention','Retenção'),html);
+        showRetentionDrill(wLabel+' - '+tr('ret_drill_retention', 'Retention'),html);
       };
     }
     function firstName(name){return (norm(name).split(/\s+/)[0]||norm(name)||'aluno');}
@@ -774,7 +774,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
       var targetDiv=document.createElement('div');
       var targetLabelEl=document.createElement('div');
       targetLabelEl.className='mwa-msg-label';
-      targetLabelEl.textContent=tr('msg_recipients_label','Destinatários');
+      targetLabelEl.textContent=tr('msg_recipients_label', 'Recipients');
       targetDiv.className='mwa-recipient-dropdown';
       var targetBtn=document.createElement('button');
       targetBtn.type='button';
@@ -835,7 +835,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
           ? tr('msg_recipients_all')+' ('+targets.length+')'
           : selectedTargets.length===1
             ? selectedTargets[0].name
-            : selectedTargets.length+' '+tr('students','estudantes');
+            : selectedTargets.length+' '+tr('students', 'students');
         if(targetSelectList){
           renderTargetOptions();
           updateTargetMessage();
@@ -914,9 +914,9 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
       var reasonOpts=[
         {v:'',l:tr('msg_reason_select')},
         {v:'Nunca acessou',l:'\uD83D\uDEAB ' + tr('msg_reason_never')},
-        {v:'Baixa participação',l:'\uD83D\uDCC9 ' + tr('msg_reason_low_participation')},
-        {v:'Pendência acadêmica',l:'\uD83D\uDCCB ' + tr('msg_reason_academic_pending')},
-        {v:'Dificuldade acadêmica',l:'\uD83D\uDCCA ' + tr('msg_reason_difficulty')},
+        {v:'Baixa participaÃ§Ã£o',l:'\uD83D\uDCC9 ' + tr('msg_reason_low_participation')},
+        {v:'PendÃªncia acadÃªmica',l:'\uD83D\uDCCB ' + tr('msg_reason_academic_pending')},
+        {v:'Dificuldade acadÃªmica',l:'\uD83D\uDCCA ' + tr('msg_reason_difficulty')},
         {v:'Outro',l:'\uD83D\uDCAC ' + tr('msg_reason_other')}
       ];      reasonOpts.forEach(function(o){
         var opt=document.createElement('option');
@@ -931,27 +931,27 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
       snapshotSituationDiv.style.display='none';
       var snapshotSituationLabel=document.createElement('div');
       snapshotSituationLabel.className='mwa-msg-label';
-      snapshotSituationLabel.textContent=tr('snapshot_situation_label','Situação identificada');
+      snapshotSituationLabel.textContent=tr('snapshot_situation_label', 'Situation identified');
       var snapshotSituationInput=document.createElement('textarea');
       snapshotSituationInput.className='mwa-msg-textarea mwa-snapshot-short';
-      snapshotSituationInput.placeholder=tr('snapshot_situation_placeholder','Descreva a situação observada.');
+      snapshotSituationInput.placeholder=tr('snapshot_situation_placeholder', 'Describe the observed situation.');
       snapshotSituationDiv.appendChild(snapshotSituationLabel);
       snapshotSituationDiv.appendChild(snapshotSituationInput);
       body.appendChild(snapshotSituationDiv);
       var snapshotObjectiveDiv=document.createElement('div');
       var snapshotObjectiveLabel=document.createElement('div');
       snapshotObjectiveLabel.className='mwa-msg-label';
-      snapshotObjectiveLabel.textContent=tr('snapshot_objective_label','Objetivo da intervenção');
+      snapshotObjectiveLabel.textContent=tr('snapshot_objective_label', 'Intervention objective');
       var snapshotObjectiveInput=document.createElement('input');
       snapshotObjectiveInput.className='mwa-msg-input';
       snapshotObjectiveDiv.appendChild(snapshotObjectiveLabel);
       snapshotObjectiveDiv.appendChild(snapshotObjectiveInput);
       body.appendChild(snapshotObjectiveDiv);
       var suggestedObjectives={
-        'Nunca acessou':tr('snapshot_objective_never','Realizar o primeiro acesso ao curso.'),
-        'Baixa participação':tr('snapshot_objective_low','Retomar e ampliar a participação no curso.'),
-        'Pendência acadêmica':tr('snapshot_objective_pending','Regularizar as atividades pendentes.'),
-        'Dificuldade acadêmica':tr('snapshot_objective_difficult','Favorecer a evolução dos resultados de aprendizagem.'),
+        'Nunca acessou':tr('snapshot_objective_never', 'Complete the first course access.'),
+        'Baixa participaÃ§Ã£o':tr('snapshot_objective_low', 'Resume and increase course participation.'),
+        'PendÃªncia acadÃªmica':tr('snapshot_objective_pending', 'Complete pending academic activities.'),
+        'Dificuldade acadÃªmica':tr('snapshot_objective_difficult', 'Support improvement in learning outcomes.'),
         'Outro':''
       };
       function updateSnapshotFields(){
@@ -963,7 +963,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
       targetSelectDiv.style.display='none';
       var targetSelectLabel=document.createElement('div');
       targetSelectLabel.className='mwa-msg-label';
-      targetSelectLabel.textContent=tr('msg_target_items_label','Itens para acompanhar');
+      targetSelectLabel.textContent=tr('msg_target_items_label', 'Items to track');
       var targetSelectList=document.createElement('div');
       targetSelectList.className='mwa-recipient-list mwa-target-list';
       targetSelectList.style.cssText='position:static;display:block;max-height:220px;margin-top:8px;border-radius:12px;';
@@ -999,9 +999,9 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
       body.appendChild(msgDiv);
       var reasonTemplates={
         'Nunca acessou':{subject:tr('tpl_never_subject'),body:tr('tpl_never_body')},
-        'Baixa participação':{subject:tr('tpl_eng_subject'),body:tr('tpl_eng_body')},
-        'Pendência acadêmica':{subject:tr('tpl_task_subject'),body:tr('tpl_task_body')},
-        'Dificuldade acadêmica':{subject:tr('tpl_difficulty_subject'),body:tr('tpl_difficulty_body')},
+        'Baixa participaÃ§Ã£o':{subject:tr('tpl_eng_subject'),body:tr('tpl_eng_body')},
+        'PendÃªncia acadÃªmica':{subject:tr('tpl_task_subject'),body:tr('tpl_task_body')},
+        'Dificuldade acadÃªmica':{subject:tr('tpl_difficulty_subject'),body:tr('tpl_difficulty_body')},
         'Outro':{subject:tr('tpl_other_subject'),body:tr('tpl_other_body')}
       };
       var selectedTargetOptions=[];
@@ -1036,13 +1036,13 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
         });
       }
       function targetTypeForReason(reason){
-        if(reason==='Pendência acadêmica')return 'activity_completion';
-        if(reason==='Baixa participação')return 'resource_access';
+        if(reason==='PendÃªncia acadÃªmica')return 'activity_completion';
+        if(reason==='Baixa participaÃ§Ã£o')return 'resource_access';
         if(reason==='Nunca acessou')return 'access_after_message';
         return '';
       }
       function reasonUsesTargetItems(reason){
-        return reason==='Pendência acadêmica'||reason==='Baixa participação';
+        return reason==='PendÃªncia acadÃªmica'||reason==='Baixa participaÃ§Ã£o';
       }
       function updateTargetMessage(){
         var tpl=reasonTemplates[reasonSel.value];
@@ -1050,7 +1050,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
         msgArea.value=appendSelectedTargetText(previewMessageText(tpl.body||''));
       }
       function stripTargetTextBlock(text){
-        var intro=tr('msg_target_items_intro','Itens indicados:');
+        var intro=tr('msg_target_items_intro', 'Recommended items:');
         var idx=String(text||'').indexOf(intro);
         return idx>=0?String(text||'').slice(0,idx).replace(/\s+$/,''):String(text||'');
       }
@@ -1060,13 +1060,13 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
       function ensureFirstNameToken(text){
         var value=String(text||'').trim().replace(/\{\{\s*firstname\s*\}\}/gi,'{firstname}');
         if(/\{firstname\}/i.test(value))return value;
-        value=value.replace(/^\s*(olá|ola|oi)\s*,?\s*(pessoal|turma|estudantes|alunos)\s*[!,.:–—-]*\s*/i,'');
-        return 'Olá, {firstname}!\n\n'+value;
+        value=value.replace(/^\s*(olÃ¡|ola|oi)\s*,?\s*(pessoal|turma|estudantes|alunos)\s*[!,.:â€“â€”-]*\s*/i,'');
+        return 'OlÃ¡, {firstname}!\n\n'+value;
       }
       function targetItemsHtml(items){
         items=(items||[]).filter(function(item){return item&&item.name;});
         if(!items.length)return '';
-        return '<div class="mwa-message-targets"><p><strong>'+esc(tr('tf_detail_targets','Itens acompanhados'))+'</strong></p><ul>'
+        return '<div class="mwa-message-targets"><p><strong>'+esc(tr('tf_detail_targets', 'Tracked items'))+'</strong></p><ul>'
           + items.map(function(item){
             var name=esc(item.name||'');
             var url=norm(item.url||'');
@@ -1084,7 +1084,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
       function renderTargetOptions(){
         var reason=reasonSel.value;
         selectedTargetOptions=[];
-        if(reason!=='Pendência acadêmica'&&reason!=='Baixa participação'){
+        if(reason!=='PendÃªncia acadÃªmica'&&reason!=='Baixa participaÃ§Ã£o'){
           targetSelectDiv.style.display='none';
           targetSelectList.replaceChildren();
           return;
@@ -1102,7 +1102,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
           targetSelectList.replaceChildren();
           var emptyMsg=document.createElement('div');
           emptyMsg.className='mwa-target-empty';
-          emptyMsg.textContent=tr('msg_no_open_pending_items','Nenhum item aberto e pendente para os alunos selecionados.');
+          emptyMsg.textContent=tr('msg_no_open_pending_items', 'No open pending item for the selected students.');
           targetSelectList.appendChild(emptyMsg);
           return;
         }
@@ -1120,7 +1120,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
           var strong=document.createElement('strong');
           strong.textContent=item.name;
           var small=document.createElement('small');
-          small.textContent=item.type==='activity'?tr('msg_target_activity','Atividade'):tr('msg_target_resource','Conteúdo');
+          small.textContent=item.type==='activity'?tr('msg_target_activity', 'Activity'):tr('msg_target_resource', 'Content');
           wrap.appendChild(strong);
           wrap.appendChild(small);
           label.appendChild(cb);
@@ -1172,19 +1172,19 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
       footer.className='mwa-msg-footer mwa-msg-footer-bulk';
       var cancelBtn=document.createElement('button');
       cancelBtn.className='mwa-msg-cancel-btn';
-      cancelBtn.textContent=tr('msg_close','Fechar');
+      cancelBtn.textContent=tr('msg_close', 'Close');
       cancelBtn.onclick=function(){ov.remove();};
       var sendBtn=document.createElement('button');
       sendBtn.className='mwa-msg-send-btn';
       sendBtn.id='mwaBulkSendBtn';
-      sendBtn.textContent='\u2709\uFE0F '+tr('msg_send_btn','Enviar');
+      sendBtn.textContent='\u2709\uFE0F '+tr('msg_send_btn', 'Send');
       var sendingGifUrl=((Store.getConfig?Store.getConfig():{}).wwwroot||'').replace(/\/$/,'')+
         '/blocks/mwa_dashboard/pix/enviando-email.gif';
       function resetSendButton(){
         if(!sendBtn)return;
         sendBtn.disabled=false;
         sendBtn.classList.remove('is-sending','is-sent');
-        sendBtn.textContent='\u2709\uFE0F '+tr('msg_send_btn','Enviar');
+        sendBtn.textContent='\u2709\uFE0F '+tr('msg_send_btn', 'Send');
       }
       function showSendingButton(){
         sendBtn.disabled=true;
@@ -1222,15 +1222,15 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
         var reason=reasonSel.value||'';
         if(!subject.trim()||!message.trim()){Store.notify(tr('msg_required_subject_body'),'warning');return;}
         if(reason==='Outro'&&(!snapshotSituationInput.value.trim()||!snapshotObjectiveInput.value.trim())){
-          Store.notify(tr('snapshot_other_required','Informe a situação identificada e o objetivo da intervenção.'),'warning');return;
+          Store.notify(tr('snapshot_other_required', 'Enter the situation identified and the intervention objective.'),'warning');return;
         }
-        if(!selectedTargets.length){Store.notify(tr('msg_recipients_required','Selecione pelo menos um destinatário.'),'warning');return;}
+        if(!selectedTargets.length){Store.notify(tr('msg_recipients_required', 'Select at least one recipient.'),'warning');return;}
         var sendType=selectedBulkType();
         if(!sendType){Store.notify(tr('msg_send_type_label'),'warning');return;}
         var requiresTargets=reasonUsesTargetItems(reason);
         var checkedKeys=selectedTargetKeys();
         if(requiresTargets&&!checkedKeys.length){
-          Store.notify(tr('msg_target_required','Selecione pelo menos uma atividade ou conteúdo para acompanhar.'),'warning');
+          Store.notify(tr('msg_target_required','Selecione pelo menos uma atividade ou conteÃºdo para acompanhar.'),'warning');
           return;
         }
         var preparedTargets=selectedTargets.map(function(t){
@@ -1328,7 +1328,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
         return {subject:subject, message:body};
       }
       aiBtn.onclick=function(){
-        if(!selectedTargets.length){Store.notify(tr('msg_recipients_required','Selecione pelo menos um destinatário.'),'warning');return;}
+        if(!selectedTargets.length){Store.notify(tr('msg_recipients_required', 'Select at least one recipient.'),'warning');return;}
         aiBtn.disabled=true;
         aiBtn.textContent='\u23F3 '+tr('msg_ai_generating_short','Gerando...');
         var reason=(reasonSel.options[reasonSel.selectedIndex]?reasonSel.options[reasonSel.selectedIndex].textContent:'')||tr('msg_reason_low_eng');
@@ -1364,7 +1364,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
         }).catch(function(e){
           aiBtn.disabled=false;
           aiBtn.textContent='\u2728 '+tr('msg_ai_generate');
-          Store.notify('Atenção: '+e.message,'error');
+          Store.notify('AtenÃ§Ã£o: '+e.message,'error');
         });
       };
 
