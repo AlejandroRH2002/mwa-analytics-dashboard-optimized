@@ -342,3 +342,19 @@
   outline-offset: 2px;
   box-shadow: 0 0 0 3px rgba(0, 33, 71, .14);
 }
+
+#block-mwa-dashboard-app[data-theme="uady"] [style*="linear-gradient"],
+#block-mwa-dashboard-app[data-theme="uady"] [style*="radial-gradient"] {
+  background-image: none !important;
+}
+
+#block-mwa-dashboard-app[data-theme="uady"] .mwa-bulk-progress-bar.is-sending::after {
+  animation: none;
+  display: none;
+}
+
+#block-mwa-dashboard-app[data-theme="uady"] button,
+#block-mwa-dashboard-app[data-theme="uady"] a,
+#block-mwa-dashboard-app[data-theme="uady"] [role="button"] {
+  transition-property: color, background-color, border-color, box-shadow;
+}

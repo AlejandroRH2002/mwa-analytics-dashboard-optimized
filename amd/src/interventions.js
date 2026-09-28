@@ -370,7 +370,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
     
             + '</div>'
             + '<div class="mwa-msg-footer">'
-              + '<button class="mwa-msg-cancel-btn" onclick="document.getElementById(\'mwaMsgOverlay\').remove()">'+tr('msg_cancel')+'</button>'
+              + '<button class="mwa-msg-cancel-btn" onclick="document.getElementById(\'mwaMsgOverlay\').remove()">'+tr('msg_close', 'Close')+'</button>'
               + '<button class="mwa-msg-send-btn" id="mwaMsgSendBtn" '
                 + 'data-userid="' + (studentId || 0) + '" '
                 + 'data-sname="' + esc(studentName) + '" '
@@ -518,9 +518,9 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
           snapshot_situation:  situation,
           snapshot_objective:  objective
         }, function (res) {
-          var overlay = document.getElementById('mwaMsgOverlay');
-          if (overlay) overlay.remove();
           if (res.success) {
+            var overlay = document.getElementById('mwaMsgOverlay');
+            if (overlay) overlay.remove();
             var channel = sendChannelLabel(sendType);
             var sentMsg = tr('msg_sent_success').replace('{name}', sname).replace('{channel}', channel);
             toast(sentMsg, 'success');
@@ -529,6 +529,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
               window.MWAInterventions._afterSend();
             }
           } else {
+            if (btn) { btn.disabled = false; btn.textContent = tr('msg_send_btn'); }
             toast(tr('msg_send_error').replace('{status}', (res.status || tr('msg_unknown_status'))), 'error');
           }
         }, function (err) {

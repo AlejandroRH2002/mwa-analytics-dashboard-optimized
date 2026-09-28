@@ -1233,7 +1233,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
         if(!selectedTargets.length){Store.notify(tr('msg_recipients_required', 'Select at least one recipient.'),'warning');return;}
         var sendType=selectedBulkType();
         if(!sendType){Store.notify(tr('msg_send_type_label'),'warning');return;}
-        var requiresTargets=reasonUsesTargetItems(reason);
+        var requiresTargets=reasonUsesTargetItems(reason)&&selectedTargetOptions.length>0;
         var checkedKeys=selectedTargetKeys();
         if(requiresTargets&&!checkedKeys.length){
           Store.notify(tr('msg_target_required','Select at least one activity or content item to track.'),'warning');
@@ -1268,8 +1268,13 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
             if(errors)msg+=' '+tr('msg_bulk_error_suffix').replace('{errors}',String(errors));
             if(skipped)msg+=' '+tr('msg_bulk_skipped_no_pending','{skipped} students without pending items did not receive a message.').replace('{skipped}',String(skipped));
             if(statusEl)statusEl.textContent=msg;
-            showSentButton();
-            clearMessageFieldsAfterSend();
+            if(sent>0&&errors===0){
+              clearMessageFieldsAfterSend();
+              Store.notify(msg,'success');
+              ov.remove();
+            }else{
+              showSentButton();
+            }
             if(window.MWAInterventions&&window.MWAInterventions.loadInterventions)
               window.MWAInterventions.loadInterventions();
             return;
@@ -1277,7 +1282,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
           var t=preparedTargets[i];
           var subjectForStudent=personalizeMessageText(subject,t);
           var targetItems=t._targetItems||[];
-          var targetType=targetTypeForReason(reason);
+          var targetType=requiresTargets?targetTypeForReason(reason):'';
           var msgHtml=messageHtmlForStudent(message,t,targetItems);
           if(statusEl)statusEl.textContent=tr('msg_sending_to')+' '+t.name+'... ('+(i+1)+'/'+total+')';
           if(bar)bar.style.width=Math.round((i/total)*100)+'%';
@@ -1307,7 +1312,6 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
       };
 
       footer.appendChild(sendBtn);
-      footer.appendChild(aiBtn);
       footer.appendChild(cancelBtn);
       modal.appendChild(footer);
       ov.appendChild(modal);
