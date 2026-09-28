@@ -2120,3 +2120,7 @@ $string['tf_ir_still_not_approved'] = 'The student has not passed yet.';
 $string['tf_ir_remains_approved'] = 'The student had already passed and remains approved.';
 $string['dashboard_updated_at'] = 'Updated at';
 $string['return_to_course'] = 'Return to course';
+$string['chat_reload_error'] = 'The class data could not be refreshed';
+$string['chat_reload_data'] = 'Refresh class data';
+$string['chat_reloading_data'] = 'Refreshing class data...';
+$string['chat_load_data_error'] = 'The class data could not be loaded. Check the browser console to identify the service with a problem.';

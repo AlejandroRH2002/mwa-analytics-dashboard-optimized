@@ -2123,3 +2123,7 @@ $string['tf_ir_still_not_approved'] = 'O aluno ainda não foi aprovado.';
 $string['tf_ir_remains_approved'] = 'O aluno já estava aprovado e permanece aprovado.';
 $string['dashboard_updated_at'] = 'Atualizado em';
 $string['return_to_course'] = 'Voltar ao curso';
+$string['chat_reload_error'] = 'Não foi possível atualizar os dados da turma';
+$string['chat_reload_data'] = 'Atualizar os dados da turma';
+$string['chat_reloading_data'] = 'Atualizando os dados da turma...';
+$string['chat_load_data_error'] = 'Não foi possível carregar os dados da turma. Consulte o console do navegador para identificar o serviço com problemas.';
