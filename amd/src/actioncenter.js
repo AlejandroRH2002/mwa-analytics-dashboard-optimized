@@ -629,7 +629,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
         showRetentionDrill(wLabel+' - '+tr('ret_drill_retention', 'Retention'),html);
       };
     }
-    function firstName(name){return (norm(name).split(/\s+/)[0]||norm(name)||'aluno');}
+    function firstName(name){return (norm(name).split(/\s+/)[0]||norm(name)||'student');}
     function isCurrentlyOpenItem(it){
       if(!it)return false;
       var availability=lower(it.availability||'');
@@ -1241,7 +1241,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
         });
         var skipped=selectedTargets.length-preparedTargets.length;
         if(!preparedTargets.length){
-          Store.notify(tr('msg_no_recipients_with_pending_items','Nenhum aluno selecionado deve os itens marcados.'),'warning');
+          Store.notify(tr('msg_no_recipients_with_pending_items','None of the selected students have the marked pending items.'),'warning');
           return;
         }
         showSendingButton();
@@ -1260,7 +1260,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
             if(bar)bar.classList.remove('is-sending');
             var msg=tr('msg_bulk_sent_success').replace('{sent}',String(sent)).replace('{student}',sent===1?tr('student'):tr('students'));
             if(errors)msg+=' '+tr('msg_bulk_error_suffix').replace('{errors}',String(errors));
-            if(skipped)msg+=' '+tr('msg_bulk_skipped_no_pending','{skipped} aluno(s) sem pendencia nao receberam mensagem.').replace('{skipped}',String(skipped));
+            if(skipped)msg+=' '+tr('msg_bulk_skipped_no_pending','{skipped} students without pending items did not receive a message.').replace('{skipped}',String(skipped));
             if(statusEl)statusEl.textContent=msg;
             showSentButton();
             clearMessageFieldsAfterSend();
@@ -1450,7 +1450,7 @@ window.toggleSelectPriority=toggleSelectPriority;window.openBulkEmail=openBulkEm
           return {name:s.name||'',email:s.email||'',userid:Number(s.userid||0)};
         }).filter(function(t){return t.name;});
       }
-      if (!targets.length) { toast(tr('no_priority_students')||'Nenhum aluno encontrado.','error'); return; }
+      if (!targets.length) { toast(tr('no_priority_students')||'No students found.','error'); return; }
       openBulkModal(targets);
     }
     window.MWAActionCenter = {

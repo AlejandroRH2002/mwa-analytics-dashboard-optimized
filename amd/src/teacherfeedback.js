@@ -591,7 +591,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
             svgStyle + '<g class="grid">' + grid + '</g>' + zeroLine + bars +
             '</svg>' +
             '<div class="fr-legend">' + legend + '</div></div>' +
-            '<div class="fr-chart-detail" id="frReasonDetail"><strong>Clique em uma barra</strong><span>Veja os estudantes contabilizados neste indicador.</span></div>' +
+            '<div class="fr-chart-detail" id="frReasonDetail"><strong>Selecciona una barra</strong><span>Consulta los estudiantes incluidos en este indicador.</span></div>' +
             '<div class="fr-reason-info-gap" aria-hidden="true"></div>' +
             info(tr('tf_reason_engage_note'));
     }
@@ -700,14 +700,14 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
                 if (name) { unique[name] = true; }
             });
             var list = Object.keys(unique);
-            return list.length ? list.slice(0, 12).join(', ') + (list.length > 12 ? ' e mais ' + (list.length - 12) : '') : 'nenhum estudante identificado';
+            return list.length ? list.slice(0, 12).join(', ') + (list.length > 12 ? ' y ' + (list.length - 12) + ' más' : '') : 'No se identificaron estudiantes';
         }
         function metricSentence(label, summary) {
-            if (!summary.count) { return 'Não há pares comparáveis suficientes para avaliar ' + label + ' no recorte.'; }
-            var direction = summary.average > 0.05 ? 'aumentou' : summary.average < -0.05 ? 'diminuiu' : 'permaneceu estável';
-            return 'Na comparação antes × depois, ' + label + ' ' + direction + ' em média ' +
-                formatNumber(Math.abs(summary.average), ' pontos') + '. ' + summary.improved.length + ' de ' + summary.count +
-                ' estudantes melhoraram e ' + summary.declined.length + ' apresentaram queda.';
+            if (!summary.count) { return 'No hay suficientes pares comparables para evaluar ' + label + ' en este periodo.'; }
+            var direction = summary.average > 0.05 ? 'aumentó' : summary.average < -0.05 ? 'disminuyó' : 'se mantuvo estable';
+            return 'En la comparación antes y después, ' + label + ' ' + direction + ' en promedio ' +
+                formatNumber(Math.abs(summary.average), ' puntos') + '. ' + summary.improved.length + ' de ' + summary.count +
+                ' estudiantes mejoraron y ' + summary.declined.length + ' mostraron una disminución.';
         }
         var total = groups.length;
         var responded = groups.filter(function(group) { return group.responded; });
@@ -723,50 +723,50 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
         reasonResults.sort(function(a, b) { return (b.responded / b.total) - (a.responded / a.total); });
         var sustained = sustainedAfterSeven(groups);
         var findings = [
-            'Foram acompanhados ' + total + ' estudantes. ' + responded.length + ' (' + pctText(responded.length, total) +
-                ') retornaram ao Moodle após a intervenção; ' + evolved.length + ' (' + pctText(evolved.length, total) +
-                ') atingiram integralmente o objetivo observado.',
-            metricSentence('o engajamento', engagement),
-            metricSentence('a nota', grade)
+            'Se dio seguimiento a ' + total + ' estudiantes. ' + responded.length + ' (' + pctText(responded.length, total) +
+                ') volvieron a Moodle después de la intervención; ' + evolved.length + ' (' + pctText(evolved.length, total) +
+                ') alcanzaron por completo el objetivo observado.',
+            metricSentence('el engagement', engagement),
+            metricSentence('la calificación', grade)
         ];
         if (sustained.eligible) {
-            findings.push(sustained.count + ' de ' + sustained.eligible + ' estudantes elegíveis (' +
-                pctText(sustained.count, sustained.eligible) + ') mantiveram atividade após sete dias.');
+            findings.push(sustained.count + ' de ' + sustained.eligible + ' estudiantes elegibles (' +
+                pctText(sustained.count, sustained.eligible) + ') mantuvieron actividad después de siete días.');
         }
         if (reasonResults.length) {
             var best = reasonResults[0], weakest = reasonResults.length > 1 ? reasonResults[reasonResults.length - 1] : null;
-            findings.push('O maior retorno foi observado em “' + best.label + '”: ' + best.responded + ' de ' + best.total +
-                ' (' + pctText(best.responded, best.total) + ').' + (weakest ? ' O menor ocorreu em “' + weakest.label + '”: ' +
+            findings.push('El mayor retorno se observó para el motivo ' + best.label + ': ' + best.responded + ' de ' + best.total +
+                ' (' + pctText(best.responded, best.total) + ').' + (weakest ? ' El menor se observó para el motivo ' + weakest.label + ': ' +
                     weakest.responded + ' de ' + weakest.total + ' (' + pctText(weakest.responded, weakest.total) + ').' : ''));
         }
         var recommendations = [];
-        if (noResponse.length) { recommendations.push('Priorizar novo contato com ' + names(noResponse) + ', que ainda não retornaram após a intervenção.'); }
-        if (partial.length) { recommendations.push('Reavaliar a estratégia de ' + names(partial) + ', que retornaram, mas ainda não alcançaram o resultado integral.'); }
-        if (grade.declined.length || engagement.declined.length) { recommendations.push('Revisar individualmente os casos com queda: ' + names(grade.declined.concat(engagement.declined)) + '.'); }
-        if (!recommendations.length) { recommendations.push('Manter o acompanhamento periódico para confirmar a continuidade dos avanços observados.'); }
+        if (noResponse.length) { recommendations.push('Priorizar un nuevo contacto con ' + names(noResponse) + ', quienes aún no regresan después de la intervención.'); }
+        if (partial.length) { recommendations.push('Revisar la estrategia para ' + names(partial) + ', quienes regresaron, pero aún no alcanzan el resultado esperado.'); }
+        if (grade.declined.length || engagement.declined.length) { recommendations.push('Revisar individualmente los casos con disminución: ' + names(grade.declined.concat(engagement.declined)) + '.'); }
+        if (!recommendations.length) { recommendations.push('Mantener el seguimiento periódico para confirmar la continuidad de los avances observados.'); }
         var improved = engagement.improved.concat(grade.improved);
         var issuedAt = new Date().toLocaleString([], {dateStyle: 'long', timeStyle: 'short'});
-        var period = filters.from || filters.to ? (filters.from ? new Date(filters.from + 'T00:00:00').toLocaleDateString() : 'início') +
-            ' a ' + (filters.to ? new Date(filters.to + 'T00:00:00').toLocaleDateString() : 'hoje') : 'Todo o período disponível';
+        var period = filters.from || filters.to ? (filters.from ? new Date(filters.from + 'T00:00:00').toLocaleDateString() : 'inicio') +
+            ' a ' + (filters.to ? new Date(filters.to + 'T00:00:00').toLocaleDateString() : 'hoy') : 'Todo el periodo disponible';
         var interventionRows = rows.slice().sort(function(a, b) { return b.captured - a.captured; }).map(function(row) {
-            var status = !row.response ? 'Sem retorno' : row.reached === true ? 'Objetivo alcançado' : 'Em acompanhamento';
-            return '<tr><td>' + esc(formatDateTime(row.captured)) + '</td><td>' + esc(row.raw.student_name || row.raw.student_email || 'Não identificado') +
+            var status = !row.response ? 'Sin respuesta' : row.reached === true ? 'Objetivo alcanzado' : 'En seguimiento';
+            return '<tr><td>' + esc(formatDateTime(row.captured)) + '</td><td>' + esc(row.raw.student_name || row.raw.student_email || 'Sin identificar') +
                 '</td><td>' + esc(REASON_META[row.reason].label()) + '</td><td>' + esc(row.raw.teacher_name || row.raw.teachername || row.raw.sender_name || '—') +
-                '</td><td>' + esc(status) + '</td><td>' + esc(row.firstResponse ? duration(row.firstResponse - row.captured) : 'Sem retorno') + '</td></tr>';
+                '</td><td>' + esc(status) + '</td><td>' + esc(row.firstResponse ? duration(row.firstResponse - row.captured) : 'Sin respuesta') + '</td></tr>';
         }).join('');
         return '<section class="fr-card fr-analytical-summary fr-export-only" data-fr-scope="overview"><header class="fr-export-report-head">' +
-            '<div><small>MWA DASHBOARD · RELATÓRIO ANALÍTICO</small><h1>Relatório de Acompanhamento e Evolução da Aprendizagem</h1></div>' +
-            '<dl><div><dt>Data de expedição</dt><dd>' + esc(issuedAt) + '</dd></div><div><dt>Período analisado</dt><dd>' + esc(period) +
-            '</dd></div><div><dt>Intervenções analisadas</dt><dd>' + rows.length + '</dd></div><div><dt>Estudantes acompanhados</dt><dd>' + total + '</dd></div></dl></header>' +
-            '<div class="fr-analytical-title">' + svg('sparkles', 20) + '<div><h2>Análise pedagógica do período</h2><p>Leitura automática dos dados antes e depois das intervenções.</p></div></div>' +
-            '<div class="fr-analytical-grid"><div><h3>O que está acontecendo</h3><ul>' + findings.map(function(item) { return '<li>' + esc(item) + '</li>'; }).join('') +
-            '</ul></div><div><h3>O que melhorou</h3><p>' + (improved.length ? 'Houve melhora mensurável para: ' + esc(names(improved)) + '.' :
-                'Ainda não há melhora mensurável nos pares comparáveis deste recorte.') + '</p><h3>Pontos de atenção e próximos passos</h3><ul>' +
+            '<div><small>MWA DASHBOARD · REPORTE ANALÍTICO</small><h1>Reporte de seguimiento y evolución del aprendizaje</h1></div>' +
+            '<dl><div><dt>Fecha de emisión</dt><dd>' + esc(issuedAt) + '</dd></div><div><dt>Periodo analizado</dt><dd>' + esc(period) +
+            '</dd></div><div><dt>Intervenciones analizadas</dt><dd>' + rows.length + '</dd></div><div><dt>Estudiantes en seguimiento</dt><dd>' + total + '</dd></div></dl></header>' +
+            '<div class="fr-analytical-title">' + svg('sparkles', 20) + '<div><h2>Análisis pedagógico del periodo</h2><p>Resumen de los datos antes y después de las intervenciones.</p></div></div>' +
+            '<div class="fr-analytical-grid"><div><h3>Resultados observados</h3><ul>' + findings.map(function(item) { return '<li>' + esc(item) + '</li>'; }).join('') +
+            '</ul></div><div><h3>Aspectos con mejora</h3><p>' + (improved.length ? 'Se observó una mejora medible en: ' + esc(names(improved)) + '.' :
+                'Aún no hay una mejora medible en los pares comparables de este periodo.') + '</p><h3>Puntos de atención y siguientes pasos</h3><ul>' +
             recommendations.map(function(item) { return '<li>' + esc(item) + '</li>'; }).join('') + '</ul></div></div>' +
-            '<section class="fr-export-interventions"><h2>Intervenções incluídas no relatório</h2><p>Relação cronológica das ações do recorte e do retorno observado posteriormente no Moodle.</p>' +
-            '<table><thead><tr><th>Data da intervenção</th><th>Estudante</th><th>Motivo</th><th>Responsável</th><th>Situação observada</th><th>Tempo até o retorno</th></tr></thead><tbody>' +
+            '<section class="fr-export-interventions"><h2>Intervenciones incluidas en el reporte</h2><p>Relación cronológica de las acciones del periodo y de las respuestas observadas posteriormente en Moodle.</p>' +
+            '<table><thead><tr><th>Fecha de intervención</th><th>Estudiante</th><th>Motivo</th><th>Responsable</th><th>Situación observada</th><th>Tiempo hasta la respuesta</th></tr></thead><tbody>' +
             interventionRows + '</tbody></table></section>' +
-            '<p class="fr-analytical-note">As variações mostram associação temporal após as intervenções e não comprovam causalidade. A leitura depende da disponibilidade de dados comparáveis.</p></section>';
+            '<p class="fr-analytical-note">Las variaciones muestran una asociación temporal posterior a las intervenciones y no prueban causalidad. El análisis depende de que haya datos comparables disponibles.</p></section>';
     }
 
     function deltaCard(label, pairs, suffix, invert, mode, detail) {
@@ -875,7 +875,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
                     students: point.students, approval: !!item.approval});
                 return '<circle class="fr-chart-point" tabindex="0" role="button" cx="' + point.x + '" cy="' + point.y +
                     '" r="4.2" fill="' + item.color + '" data-fr-chart-detail="' + esc(detail) +
-                    '" aria-label="Ver estudantes que melhoraram em ' + esc(item.label) + ', ' + esc(point.label) + '"/>';
+                    '" aria-label="Ver estudiantes que mejoraron en ' + esc(item.label) + ', ' + esc(point.label) + '"/>';
             }).join('');
         }).join('');
         var labels = [];
@@ -1047,8 +1047,8 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
         });
         var hasEvents = access.some(function(item) { return item.count > 0; });
         if (!hasEvents) {
-            return '<div class="fr-no-data">Ainda não existem acessos posteriores às intervenções selecionadas.</div>' +
-                info('O gráfico começa no momento da intervenção e utiliza somente logs reais posteriores do Moodle, até o 15º dia.');
+            return '<div class="fr-no-data">A?n no hay accesos posteriores a las intervenciones seleccionadas.</div>' +
+                info('El gráfico comienza en el momento de la intervención y usa únicamente registros reales posteriores de Moodle, hasta el día 15.');
         }
 
         var maxValue = Math.max.apply(null, access.concat(academic).map(function(item) { return item.count; }).concat([1]));
@@ -1154,7 +1154,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
 
         if (!rows.length) {
             html += '<div class="fr-empty"><span>▥</span><h2>' + tr('tf_empty_eligible') + '</h2><p>' + tr('tf_empty_eligible_desc') + '</p></div>';
-            if (ignored) { html += info(ignored + ' intervenção(ões) anterior(es) ao snapshot foram preservadas, mas não entram em comparações antes × depois.'); }
+            if (ignored) { html += info(ignored + ' intervención(es) anterior(es) al registro histórico se conservaron, pero no se incluyen en las comparaciones antes y después.'); }
             Store.renderHtml(box, html);
             bind(allRows);
             return;
@@ -1172,12 +1172,12 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
             card(tr('tf_card_synthesis'), donutHtml(groups), 'overview', 'fr-span-7 fr-summary-card') +
             card(tr('tf_card_continuity'), continuityHtml(groups), 'overview continuity', 'fr-span-7 fr-continuity-card') + '</div>';
         html += '<div class="fr-grid fr-grid-bottom">' +
-            card('Interação do estudante após a intervenção', interactionHtml(rows, groups), 'overview interaction', 'fr-span-7 fr-interaction-card') +
+            card('Actividad del estudiante después de la intervención', interactionHtml(rows, groups), 'overview interaction', 'fr-span-7 fr-interaction-card') +
             card(tr('tf_card_mediation_time'), mediationHtml(rows), 'overview mediation', 'fr-span-7 fr-mediation-card') +
             card(tr('tf_progress_by_strategy'), strategyTable(rows), 'mediation', 'fr-span-8') +
             card(tr('tf_card_journey'), accessJourneyHtml(rows, groups), 'trajectory', 'fr-span-14 fr-journey-card') +
             card(tr('tf_card_trajectory'), trajectoryTable(rows), 'trajectory', 'fr-span-14') + '</div>';
-        if (ignored) { html += info(ignored + ' intervenção(ões) sem snapshot foram excluídas das métricas comparativas.'); }
+        if (ignored) { html += info(ignored + ' intervención(es) sin registro histórico se excluyeron de las métricas comparativas.'); }
         Store.renderHtml(box, html);
         applyTab();
         bind(allRows);

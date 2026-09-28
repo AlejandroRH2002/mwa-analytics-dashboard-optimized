@@ -762,7 +762,7 @@ function(Store, EngagementCalc, ActionCenter, Templates, Chart) {
           var current = norm(selectedName) || norm(sel.value);
           var d = getNames();
           var query = norm(searchTerm).toLowerCase();
-          var placeholder = tr('sp_select_placeholder') || 'Escolha um aluno';
+          var placeholder = tr('sp_select_placeholder') || 'Select a student';
           // Updating filtered options is not a new selection. Ignore the synthetic
           // change emitted by the shared custom-select observer during this rebuild.
           sel.dataset.spFillingOptions = '1';

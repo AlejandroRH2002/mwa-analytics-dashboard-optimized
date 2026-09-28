@@ -274,7 +274,7 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
         var link = document.createElement('a');
         var courseId = (Store.getConfig() || {}).courseid || 'curso';
         link.href = url;
-        link.download = 'relatorio_turma_' + courseId + '_' + new Date().toISOString().slice(0, 10) + '.csv';
+        link.download = 'course_report_' + courseId + '_' + new Date().toISOString().slice(0, 10) + '.csv';
         document.body.appendChild(link);
         link.click();
         link.remove();
@@ -958,7 +958,7 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
         var sizes = [5, 10, 20, 50].map(function(size) {
           return '<option value="' + size + '"' + (size === CL_PAGE_SIZE ? ' selected' : '') + '>' + size + '</option>';
         }).join('');
-        Store.renderHtml(box, '<div class="cl-pag-info">Mostrando ' + first + ' a ' + last + ' de ' + totalItems + ' estudantes</div>'
+        Store.renderHtml(box, '<div class="cl-pag-info">Showing ' + first + '–' + last + ' of ' + totalItems + ' students</div>'
           + '<div class="cl-pag-pages">' + buttons + '</div>'
           + '<label class="cl-pag-size">Itens por página: <select onchange="window.MWAClassList.setPageSize(this.value)">' + sizes + '</select></label>');
       }

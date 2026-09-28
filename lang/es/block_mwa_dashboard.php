@@ -30,7 +30,6 @@ $string['could_not_parse'] = 'No se pudo interpretar la respuesta de Moodle.';
 $string['ctxextract_error'] = 'No fue posible extraer el contenido: {$a}';
 $string['ctxextract_unsupported_type'] = 'Tipo de archivo no compatible con la extracción de texto: {$a}';
 $string['loading'] = 'Cargando...';
-$string['msg_ai_generating_short'] = 'Generando...';
 $string['msg_bulk_skipped_no_pending'] = '{skipped} estudiantes sin actividades pendientes no recibieron un mensaje.';
 $string['msg_no_recipients_with_pending_items'] = 'Ninguno de los estudiantes seleccionados tiene pendientes los elementos marcados.';
 $string['msg_sent'] = 'Enviado';

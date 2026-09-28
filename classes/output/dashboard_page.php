@@ -283,7 +283,6 @@ class dashboard_page implements renderable, templatable {
     protected function string_keys(): array {
         return [
             'loading',
-            'msg_ai_generating_short',
             'msg_bulk_skipped_no_pending',
             'msg_no_recipients_with_pending_items',
             'msg_sent',
@@ -426,7 +425,7 @@ class dashboard_page implements renderable, templatable {
             'msg_send_error', 'msg_unknown_status', 'msg_select_student_required',
             'msg_modal_title', 'msg_send_type_label', 'msg_type_moodle_btn', 'msg_type_email_btn',
             'msg_subject_label', 'msg_subject_placeholder', 'msg_body_label', 'msg_templates_label',
-            'msg_body_placeholder', 'msg_ai_soon', 'msg_ai_generate', 'msg_ai_done', 'msg_cancel', 'msg_close', 'msg_send_btn',
+            'msg_body_placeholder', 'msg_cancel', 'msg_close', 'msg_send_btn',
             'msg_send_all_btn', 'msg_bulk_sent_success', 'msg_bulk_error_suffix', 'msg_detail_reason',
             'msg_send_selected_btn', 'msg_recipients_label', 'msg_recipients_all',
             'msg_recipients_select_all', 'msg_recipients_required', 'msg_target_items_label',

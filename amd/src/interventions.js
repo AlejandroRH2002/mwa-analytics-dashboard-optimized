@@ -47,7 +47,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
       function snapshotTitle() {
         var config = Store.getConfig ? Store.getConfig() : {};
         var language = String(config.language || '').toLowerCase();
-        return language.indexOf('pt') === 0 ? 'Situação no momento da intervenção' : tr('snapshot_title');
+        return tr('snapshot_title');
       }
       function esc(v) {
         return String(v === undefined || v === null ? '' : v)
@@ -1405,7 +1405,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
           ? '<table class="int2-table">'
             + '<thead><tr class="int2-thead-row">'
             + '<th class="int2-th">DATA</th>'
-            + '<th class="int2-th">ALUNO</th>'
+            + '<th class="int2-th">STUDENT</th>'
             + '<th class="int2-th">MOTIVO</th>'
             + '<th class="int2-th">SITUA\u00c7\u00c3O IDENTIFICADA</th>'
             + '<th class="int2-th">INTERVEN\u00c7\u00c3O REALIZADA</th>'

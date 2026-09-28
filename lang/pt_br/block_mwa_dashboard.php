@@ -770,7 +770,6 @@ $string['msg_subject_placeholder']= 'Assunto da mensagem...';
 $string['msg_body_label']         = 'Mensagem';
 $string['msg_templates_label']    = 'Templates:';
 $string['msg_body_placeholder']   = 'Digite sua mensagem...';
-$string['msg_ai_soon']            = 'Com IA em breve';
 $string['msg_cancel']             = 'Cancelar';
 $string['msg_close']              = 'Fechar';
 $string['msg_send_btn']           = 'Enviar';
@@ -1385,9 +1384,6 @@ $string['ev_trend']               = 'Tendência';
 $string['open_btn'] = 'Detalhes';
 
 // ── Botão IA no modal de mensagem ──
-$string['msg_ai_generate'] = 'Gerar com IA';
-$string['msg_ai_generating'] = 'Gerando mensagem...';
-$string['msg_ai_done']     = 'Mensagem gerada pela IA!';
 
 // ── Template strings fix (reviewer) ──
 $string['msg_select_student']  = '— Selecionar aluno —';
@@ -2076,7 +2072,6 @@ $string['return_to_course'] = 'Voltar ao curso';
 $string['ctxextract_error'] = 'Não foi possível extrair o conteúdo: {$a}';
 $string['ctxextract_unsupported_type'] = 'Tipo de arquivo não suportado para extração de texto: {$a}';
 $string['loading'] = 'Carregando...';
-$string['msg_ai_generating_short'] = 'Gerando...';
 $string['msg_bulk_skipped_no_pending'] = '{skipped} estudante(s) sem itens pendentes não receberam uma mensagem.';
 $string['msg_no_recipients_with_pending_items'] = 'Nenhum estudante selecionado tem os itens marcados pendentes.';
 $string['msg_sent'] = 'Enviado';
