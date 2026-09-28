@@ -1006,11 +1006,6 @@
   background:transparent;
   color:var(--blue);
 }
-.block-mwa-dashboard-app .cl-ai-box{
-  margin-top:14px;
-}
-.block-mwa-dashboard-app .cl-ai-generate-btn:disabled{cursor:wait;opacity:.62;}
-.block-mwa-dashboard-app .cl-ai-retry-btn{margin-top:10px;}
 .block-mwa-dashboard-app .cl-detail-actions{
   display:flex;
   align-items:center;

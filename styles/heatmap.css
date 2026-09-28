@@ -524,27 +524,6 @@
   }
 }
 
-.block-mwa-dashboard-app #page-heatmap .hm-ai-box {
-  background: var(--blue-dim);
-  border: 1px solid rgba(91, 155, 213, .2);
-  border-radius: 14px;
-  margin-top: 14px;
-  padding: 12px;
-}
-
-.block-mwa-dashboard-app #page-heatmap .hm-ai-box strong {
-  color: var(--blue);
-  font-size: .78rem;
-  letter-spacing: .04em;
-  text-transform: uppercase;
-}
-
-.block-mwa-dashboard-app #page-heatmap .hm-ai-box p {
-  color: var(--text);
-  font-size: .82rem;
-  line-height: 1.5;
-  margin: 6px 0 0;
-}
 
 .block-mwa-dashboard-app #page-heatmap .hm-detail-actions {
   display: flex;

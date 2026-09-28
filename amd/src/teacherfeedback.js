@@ -70,7 +70,6 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
             exclamation: '<circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 17h.01"/>',
             stopwatch: '<circle cx="12" cy="13" r="8"/><path d="M12 9v5l3-2M9 2h6M12 2v3M18 6l2-2"/>',
             login: '<path d="M10 5H5v14h5M14 8l4 4-4 4M8 12h10"/>',
-            sparkles: '<path d="M12 3l1.4 3.6L17 8l-3.6 1.4L12 13l-1.4-3.6L7 8l3.6-1.4L12 3zM19 14l.8 2.2L22 17l-2.2.8L19 20l-.8-2.2L16 17l2.2-.8L19 14zM5 13l.8 2.2L8 16l-2.2.8L5 19l-.8-2.2L2 16l2.2-.8L5 13z"/>'
         };
         return '<svg class="fr-svg fr-svg-' + esc(name) + '" width="' + (size || 20) + '" height="' + (size || 20) +
             '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
@@ -758,7 +757,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
             '<div><small>MWA DASHBOARD · REPORTE ANALÍTICO</small><h1>Reporte de seguimiento y evolución del aprendizaje</h1></div>' +
             '<dl><div><dt>Fecha de emisión</dt><dd>' + esc(issuedAt) + '</dd></div><div><dt>Periodo analizado</dt><dd>' + esc(period) +
             '</dd></div><div><dt>Intervenciones analizadas</dt><dd>' + rows.length + '</dd></div><div><dt>Estudiantes en seguimiento</dt><dd>' + total + '</dd></div></dl></header>' +
-            '<div class="fr-analytical-title">' + svg('sparkles', 20) + '<div><h2>Análisis pedagógico del periodo</h2><p>Resumen de los datos antes y después de las intervenciones.</p></div></div>' +
+            '<div class="fr-analytical-title">' + svg('chart', 20) + '<div><h2>Análisis pedagógico del periodo</h2><p>Resumen de los datos antes y después de las intervenciones.</p></div></div>' +
             '<div class="fr-analytical-grid"><div><h3>Resultados observados</h3><ul>' + findings.map(function(item) { return '<li>' + esc(item) + '</li>'; }).join('') +
             '</ul></div><div><h3>Aspectos con mejora</h3><p>' + (improved.length ? 'Se observó una mejora medible en: ' + esc(names(improved)) + '.' :
                 'Aún no hay una mejora medible en los pares comparables de este periodo.') + '</p><h3>Puntos de atención y siguientes pasos</h3><ul>' +

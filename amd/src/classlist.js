@@ -1012,8 +1012,6 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
             + '<div><h4>' + esc(tr('cl_th_activity_progress', 'Graded activities')) + '</h4>' + activityProgressHtml + '</div>'
             + '<div><h4>' + esc(tr('cl_th_resource_progress', 'Content/Resources')) + '</h4>' + resourceProgressHtml + '</div>'
           + '</div>'
-            + '<div class="ai-loading"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div>'
-          + '</div>'
           + '<div class="cl-detail-actions">'
             + '<button class="btn-ghost" type="button" onclick="window.MWAInterventions&&window.MWAInterventions.quickMessage(\'' + esc(item.name) + '\',\'' + esc(item.email || '') + '\',' + (item.userid || 0) + ',\'\');event.stopPropagation()">' + icon('mail') + ' ' + esc(tr('message')) + '</button>'
             + '<button class="btn-ghost cl-detail-inline-close" type="button">' + esc(tr('close', 'Close')) + '</button>'

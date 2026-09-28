@@ -708,8 +708,8 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
       var actionsEl=$('actionsCount');if(actionsEl)actionsEl.textContent=latestActionCount;
       if($('navActionBadge'))$('navActionBadge').textContent=latestActionCount;
       renderTemplate($('actionCardsRow'),'content_inline_html',{bodyhtml:
-        actionCard('urgent',tr('urgent'),neverAccessed.length,neverAccessed.length?tr('ac_never_desc'):tr('ac_no_never_students'),neverAccessed,[],tr('send_email_ai'),tr('view_list'),'alerts',tr('ac_never_insight'),'','classlist',tr('ac_tip_card_never'))
-        +actionCard('attention',tr('attention'),high.length,high.length?tr('urgent_desc'):tr('no_critical_students'),high,high.slice(0,3).map(function(s){return {name:s.name,value:s.score+'%'}}),tr('send_email_ai'),tr('view_list'),'alerts',tr('urgent_insight'),'','classlist',tr('ac_tip_card_urgent'))
+        actionCard('urgent',tr('urgent'),neverAccessed.length,neverAccessed.length?tr('ac_never_desc'):tr('ac_no_never_students'),neverAccessed,[],tr('message'),tr('view_list'),'alerts',tr('ac_never_insight'),'','classlist',tr('ac_tip_card_never'))
+        +actionCard('attention',tr('attention'),high.length,high.length?tr('urgent_desc'):tr('no_critical_students'),high,high.slice(0,3).map(function(s){return {name:s.name,value:s.score+'%'}}),tr('message'),tr('view_list'),'alerts',tr('urgent_insight'),'','classlist',tr('ac_tip_card_urgent'))
         +actionCard('review',tr('ac_review'),lowCoverage.length,lowCoverage.length?tr('attention_desc'):tr('good_engagement'),med,lowCoverage,tr('analyse_activities'),tr('view_list'),'activities',lowCoverage.length?tr('attention_insight'):'','','activities',tr('ac_tip_card_attention'))
         +actionCard('opportunity',tr('opportunity'),peakLabel,peakDesc,[],[],tr('view_heatmap'),tr('view_profiles'),'heatmap',tr('opportunity_insight'),miniHourChart(peak),'classlist',tr('ac_tip_card_opportunity'))});
       renderRetentionCurve();

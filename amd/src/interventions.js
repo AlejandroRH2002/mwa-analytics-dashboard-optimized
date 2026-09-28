@@ -781,11 +781,11 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
             return false;
           });
           parts.push(tr('int_motivo_never_desc').split('.')[0]);
-          if (enroll !== null) parts.push(enroll === 1 ? tr('int_ai_enrolled').replace('{n}', enroll) : tr('int_ai_enrolled_pl').replace('{n}', enroll));
+          if (enroll !== null) parts.push(enroll === 1 ? tr('int_context_enrolled').replace('{n}', enroll) : tr('int_context_enrolled_pl').replace('{n}', enroll));
         } else if (bucket === 'low') {
           if (lastAccess) {
             var daysAgo = Math.round((Date.now() / 1000 - lastAccess) / 86400);
-            parts.push(tr('int_ai_last_access').replace('{n}', daysAgo));
+            parts.push(tr('int_context_last_access').replace('{n}', daysAgo));
           }
           // Engagement score
           var sc = null;
@@ -798,7 +798,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
             }
             return false;
           });
-          if (sc !== null) parts.push(tr('int_ai_engagement').replace('{n}', sc));
+          if (sc !== null) parts.push(tr('int_context_engagement').replace('{n}', sc));
         } else if (bucket === 'pending') {
           var targetsAtSend = trackedTargets(d);
           var snapshotPending = null;
@@ -807,10 +807,10 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
             snapshotPending = Number(snapshotData.pendingActivities);
           } catch (ignore) {}
           var pendingAtSend = targetsAtSend.length || (isNaN(snapshotPending) ? 0 : snapshotPending);
-          parts.push(pendingAtSend === 1 ? tr('int_ai_pending_one').replace('{n}', pendingAtSend) : tr('int_ai_pending_pl').replace('{n}', pendingAtSend));
+          parts.push(pendingAtSend === 1 ? tr('int_context_pending_one').replace('{n}', pendingAtSend) : tr('int_context_pending_pl').replace('{n}', pendingAtSend));
           if (lastAccess) {
             var daysLast = Math.round((Date.now() / 1000 - lastAccess) / 86400);
-            parts.push(daysLast === 1 ? tr('int_ai_last_day').replace('{n}', daysLast) : tr('int_ai_last_day_pl').replace('{n}', daysLast));
+            parts.push(daysLast === 1 ? tr('int_context_last_day').replace('{n}', daysLast) : tr('int_context_last_day_pl').replace('{n}', daysLast));
           }
         } else if (bucket === 'difficult') {
           // Grade
@@ -827,9 +827,9 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
           });
           if (gradeRow) {
             var avg = parseFloat(String(gradeRow.media || gradeRow.average || gradeRow.grade || '').replace(',', '.'));
-            if (!isNaN(avg)) parts.push(tr('int_ai_grade_mean').replace('{value}', Math.round(avg)));
+            if (!isNaN(avg)) parts.push(tr('int_context_grade_mean').replace('{value}', Math.round(avg)));
           }
-          parts.push(tr('int_ai_grade_drop'));
+          parts.push(tr('int_context_grade_drop'));
         }
 
         return parts.length ? parts.join('\n') : translateReason(effectiveReason(d));

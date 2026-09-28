@@ -34,16 +34,6 @@ $capabilities = [
             'manager'        => CAP_ALLOW,
         ],
     ],
-    'block/mwa_dashboard:useai' => [
-        'captype' => 'read',
-        'riskbitmask' => RISK_PERSONAL,
-        'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => [
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
-        ],
-    ],
     'block/mwa_dashboard:manageinterventions' => [
         'captype' => 'write',
         'riskbitmask' => RISK_PERSONAL | RISK_SPAM,

@@ -18,10 +18,8 @@
  * Privacy subsystem implementation for block_mwa_dashboard.
  *
  * The plugin stores course analytics, intervention messages and immutable
- * intervention snapshots in Moodle. Optional AI features transmit minimised
- * educational data directly to the official provider selected by the institution.
- * No intermediate server is involved. All individual identifiers are pseudonymised
- * or removed inside Moodle before any external transmission occurs.
+ * intervention snapshots in Moodle. The plugin does not transmit course data
+ * to external analysis providers.
  *
  * @package    block_mwa_dashboard
  * @copyright  2026 Bruno Porto
@@ -49,10 +47,7 @@ class provider implements
     /**
      * Describe the personal data stored or transmitted by this plugin.
      *
-     * Five internal database tables retain analytics data or plugin configuration within Moodle.
-     * Two external endpoints may receive minimised educational data when
-     * AI is enabled by the site administrator. All external transmissions
-     * are pseudonymised or aggregated server-side before leaving Moodle.
+     * Internal database tables retain analytics data, intervention messages, and plugin configuration.
      *
      * @param collection $collection The collection to add metadata to.
      * @return collection The updated collection.
@@ -146,47 +141,6 @@ class provider implements
                 'timemodified' => 'privacy:metadata:course:timemodified',
             ],
             'privacy:metadata:course'
-        );
-
-        // ── External AI endpoints ─────────────────────────────────────────
-        //
-        // Transmission occurs only when:
-        //   (a) the site administrator has enabled AI features,
-        //   (b) a supported provider has been selected and configured, and
-        //   (c) a user with the required capability triggers an AI operation.
-        //
-        // All transmissions go directly from the Moodle server to the provider
-        // API. There is no MWA intermediary server.
-
-        // Individual recommendation endpoint (/ia).
-        // Real student names are replaced with request-scoped aliases (e.g. Student-001)
-        // inside Moodle before transmission. Email addresses, IP addresses, Moodle user IDs,
-        // enrolment identifiers and submission content are blocked by the server-side filter.
-        // Aliases are restored to display names locally after the response is received.
-        $collection->add_external_location_link(
-            'ai_individual_recommendation',
-            [
-                'student_alias'          => 'privacy:metadata:external:ia:student_alias',
-                'participation'          => 'privacy:metadata:external:ia:participation',
-                'interactions'           => 'privacy:metadata:external:ia:interactions',
-                'active_days'            => 'privacy:metadata:external:ia:active_days',
-                'last_access'            => 'privacy:metadata:external:ia:last_access',
-                'completion'             => 'privacy:metadata:external:ia:completion',
-                'engagement'             => 'privacy:metadata:external:ia:engagement',
-                'pending_items'          => 'privacy:metadata:external:ia:pending_items',
-                'grades'                 => 'privacy:metadata:external:ia:grades',
-                'teacher_prompt'         => 'privacy:metadata:external:ia:teacher_prompt',
-                'forum_post_content'     => 'privacy:metadata:external:ia:forum_post_content',
-                'quiz_configuration'     => 'privacy:metadata:external:ia:quiz_configuration',
-                // Declared explicitly for transparency: both categories are withheld
-                // inside Moodle and are not included in the current external payload.
-                'quiz_questions'         => 'privacy:metadata:external:ia:quiz_questions',
-                'quiz_answers_and_correctness' =>
-                    'privacy:metadata:external:ia:quiz_answers_and_correctness',
-                'course_resource_content' => 'privacy:metadata:external:ia:course_resource_content',
-                'intervention_history'   => 'privacy:metadata:external:ia:intervention_history',
-            ],
-            'privacy:metadata:external:ia'
         );
 
         return $collection;

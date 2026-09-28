@@ -175,8 +175,7 @@
 }
 
 #block-mwa-dashboard-app[data-theme="uady"] .nav-badge,
-#block-mwa-dashboard-app[data-theme="uady"] .nav-badge.amber,
-#block-mwa-dashboard-app[data-theme="uady"] .nav-badge.ia {
+#block-mwa-dashboard-app[data-theme="uady"] .nav-badge.amber {
   background: #eef1f4;
   color: #52606d;
 }
@@ -247,4 +246,99 @@
     display: flex;
     flex-direction: column;
   }
+}
+
+/* Keep dashboard states within the institutional navy and neutral palette. */
+#block-mwa-dashboard-app[data-theme="uady"] {
+  --green: #52675b;
+  --green-dim: rgba(82, 103, 91, .10);
+  --red: #6a5960;
+  --red-dim: rgba(106, 89, 96, .09);
+  --amber: #72664e;
+  --amber-dim: rgba(114, 102, 78, .09);
+  --purple: #536278;
+  --purple-dim: rgba(83, 98, 120, .09);
+  --teal: #526a6c;
+  accent-color: #002147;
+}
+
+#block-mwa-dashboard-app[data-theme="uady"] ::selection {
+  background: rgba(0, 33, 71, .16);
+  color: #17212b;
+}
+
+#block-mwa-dashboard-app[data-theme="uady"] button,
+#block-mwa-dashboard-app[data-theme="uady"] select,
+#block-mwa-dashboard-app[data-theme="uady"] input,
+#block-mwa-dashboard-app[data-theme="uady"] a {
+  accent-color: #002147;
+}
+
+#block-mwa-dashboard-app[data-theme="uady"] button:hover,
+#block-mwa-dashboard-app[data-theme="uady"] button:active,
+#block-mwa-dashboard-app[data-theme="uady"] button[aria-pressed="true"],
+#block-mwa-dashboard-app[data-theme="uady"] .is-selected,
+#block-mwa-dashboard-app[data-theme="uady"] .selected {
+  border-color: #002147;
+  color: #002147;
+}
+
+#block-mwa-dashboard-app[data-theme="uady"] .btn,
+#block-mwa-dashboard-app[data-theme="uady"] .btn-accent,
+#block-mwa-dashboard-app[data-theme="uady"] .ac-btn-p,
+#block-mwa-dashboard-app[data-theme="uady"] .rex-email-btn,
+#block-mwa-dashboard-app[data-theme="uady"] .fr-btn,
+#block-mwa-dashboard-app[data-theme="uady"] .mwa-msg-send-btn {
+  background-color: #002147;
+  background-image: none;
+  border-color: #002147;
+  box-shadow: none;
+}
+
+#block-mwa-dashboard-app[data-theme="uady"] .card,
+#block-mwa-dashboard-app[data-theme="uady"] .kpi,
+#block-mwa-dashboard-app[data-theme="uady"] [class*="-card"],
+#block-mwa-dashboard-app[data-theme="uady"] [class*="-panel"],
+#block-mwa-dashboard-app[data-theme="uady"] [class*="-modal"] {
+  background-image: none;
+  box-shadow: var(--shadow);
+}
+
+#block-mwa-dashboard-app[data-theme="uady"] [class*="purple"],
+#block-mwa-dashboard-app[data-theme="uady"] .purple {
+  border-color: var(--line);
+  color: #536278 !important;
+}
+
+#block-mwa-dashboard-app[data-theme="uady"] .fr-funnel-0,
+#block-mwa-dashboard-app[data-theme="uady"] .fr-funnel-1,
+#block-mwa-dashboard-app[data-theme="uady"] .fr-funnel-2,
+#block-mwa-dashboard-app[data-theme="uady"] .fr-funnel-3,
+#block-mwa-dashboard-app[data-theme="uady"] .fr-funnel-4 {
+  background: #49647f;
+}
+
+#block-mwa-dashboard-app[data-theme="uady"] .ac-card,
+#block-mwa-dashboard-app[data-theme="uady"] .btn-accent,
+#block-mwa-dashboard-app[data-theme="uady"] .ac-btn-p,
+#block-mwa-dashboard-app[data-theme="uady"] .rex-email-btn {
+  background-image: none;
+}
+
+#block-mwa-dashboard-app[data-theme="uady"] .ac-card {
+  background-color: #fff;
+  border-color: #e1e5e9;
+}
+
+#block-mwa-dashboard-app[data-theme="uady"] button:hover,
+#block-mwa-dashboard-app[data-theme="uady"] a:hover {
+  border-color: #49647f;
+  color: #002147;
+}
+
+#block-mwa-dashboard-app[data-theme="uady"] :focus-visible,
+.cl-detail-modal[data-theme="uady"] :focus-visible {
+  outline: 2px solid #002147;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(0, 33, 71, .14);
 }
