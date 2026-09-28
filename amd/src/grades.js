@@ -21,7 +21,7 @@
 
 /**
  * Note: This module generates HTML markup directly in JavaScript strings for
- * performance reasons â€” the dashboard renders large dynamic datasets (student lists,
+ * performance reasons — the dashboard renders large dynamic datasets (student lists,
  * heatmaps, charts) that require frequent partial updates. All user-supplied data is
  * escaped via the esc() helper before insertion into the DOM.
  * See: https://docs.moodle.org/dev/JavaScript_Modules#HTML_generation
@@ -102,7 +102,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
       function norm(v) { return (v === undefined || v === null) ? '' : String(v).trim(); }
       function normKey(k) { return String(k || '').replace(/\xa0/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase(); }
     
-      /* â”€â”€ globally accessible cache â”€â”€ */
+      /* ── globally accessible cache ── */
       var GRADES_CACHE = [];
       var ACT_NAMES    = {};  // { seq: 'Nome completo da atividade' }
       var ACT_CMIDS    = {};  // { seq: cmid }
@@ -114,17 +114,17 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
       var GR_PAGE = 1;
       var GR_PAGE_SIZE = 10;
     
-      /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-         PARSE â€” converte array bruto de notas
+      /* ════════════════════════════════════════════
+         PARSE — converte array bruto de notas
          Suporta o formato real retornado pela api.php:
            'First name', 'Last name', 'Email'
            'Activity N - NomeDaAtividade (Grade)'
            'Course total (Grade)'
-         E tambÃ©m o formato de export XLSX do Moodle:
+         E também o formato de export XLSX do Moodle:
            'Nome', 'Sobrenome', 'Email'
            '[Atividade N] NomeDaAtividade (Real)'
            'Total do curso (Real)'
-      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+      ════════════════════════════════════════════ */
       function parseGrades(raw) {
         if (!raw || !raw.length) return [];
     
@@ -163,13 +163,13 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
         if (!sample) return [];
         var keys   = Object.keys(sample).filter(function (k) { return k !== '__mwa_type__'; });
     
-        // Detect name columns â€” supports pt and en
+        // Detect name columns — supports pt and en
         var firstNameKey = keys.find(function (k) { return /^(nome|first\s*name)$/i.test(k.trim()); });
         var lastNameKey  = keys.find(function (k) { return /^(sobrenome|last\s*name|surname)$/i.test(k.trim()); });
         var fullNameKey  = keys.find(function (k) { return /nome.*completo|full.*name|^aluno$/i.test(k); });
         var emailKey     = keys.find(function (k) { return /e.?mail/i.test(k); });
     
-        // Detect total column â€” supports API format ('Course total (Grade)')
+        // Detect total column — supports API format ('Course total (Grade)')
         // e formato XLSX ('Total do curso (Real)')
         var totalKey = keys.find(function (k) { return /^course\s+total\s*\(grade\)/i.test(normKey(k)); })
           || keys.find(function (k) { return normKey(k).startsWith('total do curso'); })
@@ -247,9 +247,9 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
             // Fallback: formato XLSX exportado manualmente pelo professor
             var kn = String(k || '').replace(/\xa0/g, ' ').replace(/\s+/g, ' ').trim();
             var mXlsx       = kn.match(/\[Atividade\s*(\d+)\]/i);
-            var mXlsxApi    = kn.match(/^Atividade\s+(\d+)\s*[-â€“]\s*(.+?)(?:\s*\(Real\)|\s*\(Valor\))?\s*$/i);
-            var mXlsxMoodle = kn.match(/^(Tarefa|Forum|Forum|QuestionÃ¡rio|H5P|Wiki|GlossÃ¡rio|LiÃ§Ã£o|SCORM|Arquivo|Pacote\s+H5P|Base\s+de\s+dados)[:\s]+(.+?)(?:\s*\(Real\)|\s*\(Valor\))?\s*$/i);
-            var mApi        = kn.match(/^Activity\s+(\d+)\s*[-â€“]\s*(.+?)(?:\s*\(Grade\))?\s*$/i);
+            var mXlsxApi    = kn.match(/^Atividade\s+(\d+)\s*[-–]\s*(.+?)(?:\s*\(Real\)|\s*\(Valor\))?\s*$/i);
+            var mXlsxMoodle = kn.match(/^(Tarefa|Forum|Forum|Questionário|H5P|Wiki|Glossário|Lição|SCORM|Arquivo|Pacote\s+H5P|Base\s+de\s+dados)[:\s]+(.+?)(?:\s*\(Real\)|\s*\(Valor\))?\s*$/i);
+            var mApi        = kn.match(/^Activity\s+(\d+)\s*[-–]\s*(.+?)(?:\s*\(Grade\))?\s*$/i);
             var isAct       = mXlsx || mXlsxApi || mXlsxMoodle || mApi;
             if (!isAct) return;
             seq++;
@@ -271,9 +271,9 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
         }).filter(function (g) { return g.name; });
       }
     
-      /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+      /* ════════════════════════════════════════════
          RENDER PRINCIPAL
-      â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+      ════════════════════════════════════════════ */
       function renderGrades() {
         var el = document.getElementById('gradesWrap');
         if (!el) return;
@@ -300,12 +300,12 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
         // keep the XLSX name which is more descriptive.
         var logs = (window.MWADashboard && window.MWADashboard.state && window.MWADashboard.state.logs) || [];
         if (logs.length) {
-          // Build map: activity number â†’ contextodoevento name
+          // Build map: activity number → contextodoevento name
           var logNameMap = {};
           logs.forEach(function (r) {
             var ctx = (r.contextodoevento || '').trim();
             if (!ctx) return;
-            var m = ctx.match(/^Atividade\s+(\d+)\s*[-â€“]\s*(.+)$/i);
+            var m = ctx.match(/^Atividade\s+(\d+)\s*[-–]\s*(.+)$/i);
             if (m) logNameMap[m[1]] = ctx; // nome completo: "Atividade 3 - Tarefa"
           });
           // Only replace if current ACT_NAMES entry is numeric/empty
@@ -398,7 +398,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
         var avgClass = avgPct >= 60 ? 'gr-grade-ok' : 'gr-grade-low';
         var maxClass = maxStudent && isApproved(maxStudent) ? 'gr-grade-ok' : 'gr-grade-low';
     
-        // â”€â”€ KPIs â”€â”€
+        // ── KPIs ──
         var kpisHtml =
           '<div class="kpis gr-analysis-kpis">'
           + '<button type="button" class="kpi c-green gr-kpi-filter gr-kpi-with-chip gr-analysis-kpi gr-kpi-green" onclick="window.MWAGrades&&window.MWAGrades.setFilter(\'approved\')">' + gradeChipWrap(gradeChips.approved) + '<div class="gr-kpi-head"><span class="gr-kpi-icon" aria-hidden="true"><svg class="mwa-ui-icon"><use href="#mwa-icon-check"></use></svg></span><div class="kpi-label">' + tr('gr_approved') + tip('gr_tip_kpi_approved') + '</div></div><div class="kpi-value">' + passRate + '%</div><div class="kpi-sub">' + approved.length + ' ' + esc(approved.length === 1 ? tr('student') : tr('students')) + '</div></button>'
@@ -408,19 +408,19 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
           + (maxG > 0 ? '<div class="kpi c-teal gr-analysis-kpi gr-kpi-teal"><div class="gr-kpi-head"><span class="gr-kpi-icon" aria-hidden="true"><svg class="mwa-ui-icon"><use href="#mwa-icon-star"></use></svg></span><div class="kpi-label">' + tr('gr_highest') + tip('gr_tip_highest') + '</div></div><div class="kpi-value ' + maxClass + '">' + maxG.toFixed(1) + '</div></div>' : '')
           + '</div>';
     
-        // â”€â”€ Partial semester warning â”€â”€
+        // ── Partial semester warning ──
         var midHtml = isMid
-          ? '<div class="gr-mid-warning"><svg class="mwa-ui-icon" aria-hidden="true"><use href="#mwa-icon-bell"></use></svg><div><strong>' + tr('gr_partial_warning_title') + '</strong> â€” ' + tr('gr_partial_warning_body').replace('{max}', courseMax.toFixed(1)).replace('{target}', (courseMax * 0.60).toFixed(1)) + '</div></div>'
+          ? '<div class="gr-mid-warning"><svg class="mwa-ui-icon" aria-hidden="true"><use href="#mwa-icon-bell"></use></svg><div><strong>' + tr('gr_partial_warning_title') + '</strong> — ' + tr('gr_partial_warning_body').replace('{max}', courseMax.toFixed(1)).replace('{target}', (courseMax * 0.60).toFixed(1)) + '</div></div>'
           : '';
     
-        // â”€â”€ Charts â”€â”€
+        // ── Charts ──
         var chartsHtml =
           '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">'
           + '<div class="card gr-chart-card"><div class="card-head" style="padding:12px 16px;font-size:.75rem;font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);">' + icon('chart') + ' ' + tr('gr_chart_dist') + tip('gr_tip_chart_distribution') + '</div><div style="height:220px;padding:12px;"><canvas id="grChartDist"></canvas></div></div>'
           + '<div class="card gr-chart-card"><div class="card-head" style="padding:12px 16px;font-size:.75rem;font-weight:900;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);"><svg class="mwa-ui-icon" aria-hidden="true"><use href="#mwa-icon-check"></use></svg>' + tr('gr_chart_approval') + tip('gr_tip_chart_approval') + '</div><div style="height:220px;padding:12px;"><canvas id="grChartAR"></canvas></div></div>'
           + '</div>';
     
-        // â”€â”€ Filter bar â”€â”€
+        // ── Filter bar ──
         var filterHtml =
           '<div class="gr-filter-panel">'
           + '<div class="gr-filter-row">'
@@ -448,7 +448,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
           + '</div>'
           + '</div>';
     
-        // â”€â”€ Approved table â”€â”€
+        // ── Approved table ──
         var approvedTableCols = '<colgroup><col style="width:68%"><col style="width:24%"><col style="width:8%"></colgroup>';
         var progressTableCols = '<colgroup><col style="width:32%"><col style="width:14%"><col style="width:14%"><col style="width:32%"><col style="width:8%"></colgroup>';
         var noGradeTableCols = approvedTableCols;
@@ -462,11 +462,11 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
         }).join('');
     
         var approvedHtml = '<div class="gr-card approved" id="grCardApproved">'
-          + '<div class="gr-card-head"><span class="gr-card-title" style="color:var(--green);"><svg class="mwa-ui-icon" aria-hidden="true"><use href="#mwa-icon-check"></use></svg>' + tr('gr_approved') + ' (' + approved.length + ')</span>' + tip('gr_tip_card_approved') + '<span class="gr-card-sub">â‰¥ ' + (courseMax * 0.60).toFixed(1) + ' ' + tr('gr_points') + ' (60%)</span></div>'
+          + '<div class="gr-card-head"><span class="gr-card-title" style="color:var(--green);"><svg class="mwa-ui-icon" aria-hidden="true"><use href="#mwa-icon-check"></use></svg>' + tr('gr_approved') + ' (' + approved.length + ')</span>' + tip('gr_tip_card_approved') + '<span class="gr-card-sub">≥ ' + (courseMax * 0.60).toFixed(1) + ' ' + tr('gr_points') + ' (60%)</span></div>'
           + '<div class="gr-table-scroll"><table class="gr-tbl gr-approved-table">' + approvedTableCols + '<thead><tr><th>' + tr('gr_col_student') + '</th><th>' + tr('gr_col_grade') + '</th><th aria-hidden="true"></th></tr></thead><tbody>' + approvedRows + '</tbody></table></div>'
           + '</div>';
     
-        // â”€â”€ In progress table â”€â”€
+        // ── In progress table ──
         var inProgHtml = '';
         if (inProg.length) {
           var avgIP    = (inProg.reduce(function (s, g) { return s + g.total; }, 0) / inProg.length).toFixed(1);
@@ -479,7 +479,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
             var pct = pctNorm(g);
             var barColor = pct >= 60 ? 'var(--green)' : pct >= 40 ? 'var(--amber)' : 'var(--red)';
             var missing = Math.max(0, target - g.total);
-            var falta = missing > 0 ? 'âˆ’' + missing.toFixed(1) : 'â€”';
+            var falta = missing > 0 ? '−' + missing.toFixed(1) : '—';
             var gradeLabel = g.total.toFixed(1);
             return '<tr class="gr-clickable-row" data-name="' + esc(g.name).toLowerCase() + '" data-gname="' + esc(g.name) + '" data-group="inprogress" onclick="window.MWAGrades.showDetailByEl(this)">'
               + '<td>' + studentCell(g) + '</td>'
@@ -493,17 +493,17 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
           inProgHtml = '<div class="gr-card inprogress" id="grCardInProgress">'
             + '<div class="gr-card-head"><span class="gr-card-title" style="color:var(--amber);"><svg class="mwa-ui-icon" aria-hidden="true"><use href="#mwa-icon-hourglass"></use></svg>' + tr('gr_in_progress') + ' (' + inProg.length + ')</span>' + tip('gr_tip_card_in_progress') + '<span class="gr-card-sub">' + tr('gr_below_60_note') + '</span></div>'
             + '<div class="gr-table-scroll"><table class="gr-tbl gr-progress-table">' + progressTableCols + '<thead><tr><th>' + tr('gr_col_student') + '</th><th>' + tr('gr_col_current_grade') + '</th><th>' + tr('gr_col_missing') + '</th><th>' + tr('gr_col_progress') + '</th><th aria-hidden="true"></th></tr></thead><tbody>' + ipRows + '</tbody></table></div>'
-            + '<div class="gr-footer"><span>' + tr('gr_avg_current') + ':</span><span style="font-family:\'DM Mono\',monospace;font-weight:700;color:var(--amber);">' + avgIP + ' pts</span><span>Â· ' + tr('gr_avg_missing') + '</span><span style="font-family:\'DM Mono\',monospace;font-weight:700;color:var(--red);">' + avgFalta + ' pts</span></div>'
+            + '<div class="gr-footer"><span>' + tr('gr_avg_current') + ':</span><span style="font-family:\'DM Mono\',monospace;font-weight:700;color:var(--amber);">' + avgIP + ' pts</span><span>· ' + tr('gr_avg_missing') + '</span><span style="font-family:\'DM Mono\',monospace;font-weight:700;color:var(--red);">' + avgFalta + ' pts</span></div>'
             + '</div>';
         }
     
-        // â”€â”€ No grade table â”€â”€
+        // ── No grade table ──
         var noGradeHtml = '';
         if (noGrade.length) {
           var ngRows = noGrade.map(function (g) {
             return '<tr class="gr-clickable-row" data-name="' + esc(g.name).toLowerCase() + '" data-gname="' + esc(g.name) + '" data-group="nograde" onclick="window.MWAGrades.showDetailByEl(this)">'
               + '<td>' + studentCell(g) + '</td>'
-              + '<td><span class="gr-no-grade-value">â€”</span></td>'
+              + '<td><span class="gr-no-grade-value">—</span></td>'
               + '<td class="gr-open-cell"><span class="gr-row-arrow">&nearr;</span></td>'
               + '</tr>';
           }).join('');
@@ -538,8 +538,8 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
           return '<tr class="gr-clickable-row" data-name="' + esc(g.name).toLowerCase() + '" data-gname="' + esc(g.name) + '" data-group="' + entry.group + '" onclick="window.MWAGrades.showDetailByEl(this)">'
             + '<td>' + studentCell(g) + '</td>'
             + '<td><span class="gr-unified-status ' + tone + '"><i></i>' + esc(label) + '</span></td>'
-            + '<td><span class="gr-grade-val" style="color:' + color + ';">' + (grade === null ? 'â€”' : grade.toFixed(1)) + '</span></td>'
-            + '<td><span class="gr-unified-missing' + (missing > 0 ? ' has-missing' : '') + '">' + (missing > 0 ? 'âˆ’' + missing.toFixed(1) : 'â€”') + '</span></td>'
+            + '<td><span class="gr-grade-val" style="color:' + color + ';">' + (grade === null ? '—' : grade.toFixed(1)) + '</span></td>'
+            + '<td><span class="gr-unified-missing' + (missing > 0 ? ' has-missing' : '') + '">' + (missing > 0 ? '−' + missing.toFixed(1) : '—') + '</span></td>'
             + '<td><div class="gr-prog-wrap"><div class="gr-prog-bg"><div class="gr-prog-fill" style="width:' + pct + '%;background:' + color + ';"></div><div class="gr-prog-marker" style="left:60%;"></div></div><span class="gr-prog-label" style="color:' + color + ';">' + pct + '%</span></div><div class="gr-prog-sub">' + (grade === null ? '0' : grade.toFixed(1)) + '/' + maximum.toFixed(1) + '</div></td>'
             + '<td class="gr-open-cell"><span class="gr-row-arrow">&nearr;</span></td>'
             + '</tr>';
@@ -554,16 +554,16 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
         filter(false);
         saveGradeTrendSnapshot(currentMetrics, trendSnapshot);
     
-        // â”€â”€ Charts â”€â”€
+        // ── Charts ──
         setTimeout(function () {
           renderCharts(valid, approved, inProg, noGrade, pctNorm);
         }, 60);
       }
     
-      /* â”€â”€ Charts â”€â”€ */
+      /* ── Charts ── */
       function renderCharts(valid, approved, inProg, noGrade, pctNorm) {
         if (!Chart) return;
-        // Distribution uses the current tracked maximum, normalised to 0â€“100%.
+        // Distribution uses the current tracked maximum, normalised to 0–100%.
         var bins  = [[0,20],[20,40],[40,60],[60,80],[80,101]];
         var binCounts = bins.map(function (b) {
           return valid.filter(function (g) {
@@ -581,7 +581,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
           window._grChartDist = new Chart(c1, {
             type: 'bar',
             data: {
-              labels: ['0â€“20','20â€“40','40â€“60','60â€“80','80â€“100'],
+              labels: ['0–20','20–40','40–60','60–80','80–100'],
               datasets: [{ data: binCounts, backgroundColor: ['#d95f5f','#f5a623','#5b9bd5','#3aab7a','#8b72d4'], borderRadius: 5 }]
             },
             options: {
@@ -633,7 +633,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
         }
       }
     
-      /* â”€â”€ Detail modals de notas â”€â”€ */
+      /* ── Detail modals de notas ── */
       function showDetail(name, evt) {
         if (evt) evt.stopPropagation();
         var g = null;
@@ -658,7 +658,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
     
         var acts    = g.actGrades || {};
         var graded  = keys.filter(function(k) { var v=acts[k]; return v !== null && v !== undefined && !isNaN(v); }).length;
-        var tot     = g.total !== null ? g.total.toFixed(1) : 'â€”';
+        var tot     = g.total !== null ? g.total.toFixed(1) : '—';
         var approved = g.total !== null && g.total >= ((g.totalmax && g.totalmax > 0 ? g.totalmax : 100) * 0.60);
         var tc      = g.total === null ? 'var(--muted)' : approved ? 'var(--green)' : 'var(--amber)';
         var maximum = g.totalmax && g.totalmax > 0 ? g.totalmax : 100;
@@ -686,7 +686,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
             + '<span class="gr-act-num' + stateClass + '">' + esc(label) + '</span>'
             + '<span class="gr-act-name" title="' + esc(nm) + '">' + esc(nm) + '</span>'
             + '<span class="gr-act-state" style="color:' + col + ';">' + esc(hasV ? tr('gr_state_released') : overdue ? tr('gr_state_overdue') : tr('gr_state_pending')) + '</span>'
-            + '<span class="gr-act-val" style="color:' + col + ';">' + (hasV ? Number(val).toFixed(1) + ' pts' : 'â€”') + '</span>'
+            + '<span class="gr-act-val" style="color:' + col + ';">' + (hasV ? Number(val).toFixed(1) + ' pts' : '—') + '</span>'
             + '</div>';
         }).join('');
 
@@ -767,7 +767,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
         document.addEventListener('keydown', handler);
       }
     
-      /* â”€â”€ Filtro de busca/grupo â”€â”€ */
+      /* ── Filtro de busca/grupo ── */
       function filter(resetPage) {
         if (resetPage) GR_PAGE = 1;
         var search = (document.getElementById('grSearch') || {}).value || '';
@@ -811,7 +811,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
       function goPage(page) { GR_PAGE = Math.max(1, Number(page) || 1); filter(false); }
       function setPageSize(size) { GR_PAGE_SIZE = [5,10,20,50].indexOf(Number(size)) >= 0 ? Number(size) : 10; GR_PAGE = 1; filter(false); }
     
-      /* â”€â”€ Build data for export â”€â”€ */
+      /* ── Build data for export ── */
 
       function setFilter(group) {
         var value = group || 'all';
@@ -858,7 +858,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
         return { header: header, rows: rows, allKeys: allKeys };
       }
 
-      /* â”€â”€ Gerador XLSX nativo (sem biblioteca externa) â”€â”€ */
+      /* ── Gerador XLSX nativo (sem biblioteca externa) ── */
       function exportXLSX() {
         if (!GRADES_CACHE.length) { Store.notify(tr('gr_no_grades_loaded'), 'warning'); return; }
 
@@ -871,20 +871,20 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
         var allRows = [header].concat(rows);
         var fname  = tr('gr_export_filename', 'grades_') + new Date().toISOString().slice(0, 10) + '.xlsx';
 
-        /* â”€â”€ XML helpers â”€â”€ */
+        /* ── XML helpers ── */
         function xmlEsc(s) {
           return String(s == null ? '' : s)
             .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;').replace(/'/g, '&apos;');
         }
-        function colName(n) { // 0-based â†’ A, B, ... Z, AA, ...
+        function colName(n) { // 0-based → A, B, ... Z, AA, ...
           var s = ''; n++;
           while (n > 0) { n--; s = String.fromCharCode(65 + n % 26) + s; n = Math.floor(n / 26); }
           return s;
         }
         function cellRef(r, c) { return colName(c) + (r + 1); }
 
-        /* â”€â”€ Shared strings â”€â”€ */
+        /* ── Shared strings ── */
         var sharedStr = [], sharedMap = {};
         function si(s) {
           var k = String(s == null ? '' : s);
@@ -892,7 +892,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
           return sharedMap[k];
         }
 
-        /* â”€â”€ Spreadsheet content â”€â”€ */
+        /* ── Spreadsheet content ── */
         var sheetRows = '';
         allRows.forEach(function (row, r) {
           var cells = '';
@@ -961,7 +961,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
           + '<Override PartName="/xl/sharedStrings.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml"/>'
           + '</Types>';
 
-        /* â”€â”€ Build ZIP in memory (stored format â€” method 0) â”€â”€ */
+        /* ── Build ZIP in memory (stored format — method 0) ── */
         function strToBytes(s) {
           var enc = new TextEncoder();
           return enc.encode(s);
@@ -1052,13 +1052,13 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
         Store.notify(tr('gr_export') + ': ' + fname, 'success');
       }
 
-      /* â”€â”€ showDetailByEl: chamado pelo data-* onclick â”€â”€ */
+      /* ── showDetailByEl: chamado pelo data-* onclick ── */
       function showDetailByEl(el) {
         var name = el && el.dataset && el.dataset.gname;
         if (name) showDetail(name, null);
       }
     
-      /* â”€â”€ openProfile: navigate to profile tab with pre-selected student â”€â”€ */
+      /* ── openProfile: navigate to profile tab with pre-selected student ── */
       function openProfile(el) {
         var name = el && el.dataset && el.dataset.gname;
         if (!name) return;

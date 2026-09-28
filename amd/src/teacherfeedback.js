@@ -113,7 +113,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
 
     function pctText(value, total) {
         var result = pct(value, total);
-        return result === null ? 'â€”' : result + '%';
+        return result === null ? '—' : result + '%';
     }
 
     function timestamp(log) {
@@ -354,17 +354,17 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
     }
 
     function formatNumber(value, suffix) {
-        if (value === null || value === undefined || isNaN(value)) { return 'â€”'; }
+        if (value === null || value === undefined || isNaN(value)) { return '—'; }
         return Number(value) === 0 ? '0' : round(value, 1) + (suffix || '');
     }
 
     function formatDate(ts) {
-        if (!ts) { return 'â€”'; }
+        if (!ts) { return '—'; }
         return new Date(ts * 1000).toLocaleDateString();
     }
 
     function formatDateTime(ts) {
-        if (!ts) { return 'â€”'; }
+        if (!ts) { return '—'; }
         return new Date(ts * 1000).toLocaleString([], {dateStyle: 'short', timeStyle: 'short'});
     }
 
@@ -375,7 +375,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
     }
 
     function duration(seconds) {
-        if (seconds === null || seconds === undefined || !isFinite(seconds)) { return 'â€”'; }
+        if (seconds === null || seconds === undefined || !isFinite(seconds)) { return '—'; }
         var hours = seconds / 3600;
         if (hours < 1) { return Math.round(seconds / 60) + ' min'; }
         if (hours < 48) { return round(hours, 1) + ' h'; }
@@ -413,17 +413,17 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
         var reasonOptions = option('all', tr('tf_filter_all_reasons'), filters.reason);
         REASONS.forEach(function(key) { reasonOptions += option(key, REASON_META[key].label(), filters.reason); });
         return '<div class="fr-toolbar open">' +
-            '<div class="fr-filter"><label>PerÃ­odo inicial</label><input id="frFrom" type="date" value="' + esc(filters.from) + '"></div>' +
-            '<div class="fr-filter"><label>PerÃ­odo final</label><input id="frTo" type="date" value="' + esc(filters.to) + '"></div>' +
+            '<div class="fr-filter"><label>Período inicial</label><input id="frFrom" type="date" value="' + esc(filters.from) + '"></div>' +
+            '<div class="fr-filter"><label>Período final</label><input id="frTo" type="date" value="' + esc(filters.to) + '"></div>' +
             '<div class="fr-filter"><label>Motivo</label><select id="frReason">' + reasonOptions + '</select></div>' +
             '<div class="fr-filter"><label>Professor</label><select id="frTeacher">' + teacherOptions + '</select></div>' +
             '<div class="fr-filter fr-student-filter"><label>Estudante</label><select id="frStudent">' + studentOptions + '</select></div>' +
-            '<button type="button" class="fr-btn fr-clear" id="frClear">âŒ« Limpar filtros</button></div>';
+            '<button type="button" class="fr-btn fr-clear" id="frClear">⌫ Limpar filtros</button></div>';
     }
 
     function headerActionsHtml() {
         return '<div class="fr-header-actions">' +
-            '<button type="button" class="fr-btn fr-export" id="frExport">' + svg('download', 16) + ' Exportar relatÃ³rio (PDF)</button></div>';
+            '<button type="button" class="fr-btn fr-export" id="frExport">' + svg('download', 16) + ' Exportar relatório (PDF)</button></div>';
     }
 
     function kpi(icon, label, value, sub, color, help) {
@@ -706,9 +706,9 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
             return list.length ? list.slice(0, 12).join(', ') + (list.length > 12 ? ' e mais ' + (list.length - 12) : '') : 'nenhum estudante identificado';
         }
         function metricSentence(label, summary) {
-            if (!summary.count) { return 'NÃ£o hÃ¡ pares comparÃ¡veis suficientes para avaliar ' + label + ' no recorte.'; }
-            var direction = summary.average > 0.05 ? 'aumentou' : summary.average < -0.05 ? 'diminuiu' : 'permaneceu estÃ¡vel';
-            return 'Na comparaÃ§Ã£o antes Ã— depois, ' + label + ' ' + direction + ' em mÃ©dia ' +
+            if (!summary.count) { return 'Não há pares comparáveis suficientes para avaliar ' + label + ' no recorte.'; }
+            var direction = summary.average > 0.05 ? 'aumentou' : summary.average < -0.05 ? 'diminuiu' : 'permaneceu estável';
+            return 'Na comparação antes × depois, ' + label + ' ' + direction + ' em média ' +
                 formatNumber(Math.abs(summary.average), ' pontos') + '. ' + summary.improved.length + ' de ' + summary.count +
                 ' estudantes melhoraram e ' + summary.declined.length + ' apresentaram queda.';
         }
@@ -727,49 +727,49 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
         var sustained = sustainedAfterSeven(groups);
         var findings = [
             'Foram acompanhados ' + total + ' estudantes. ' + responded.length + ' (' + pctText(responded.length, total) +
-                ') retornaram ao Moodle apÃ³s a intervenÃ§Ã£o; ' + evolved.length + ' (' + pctText(evolved.length, total) +
+                ') retornaram ao Moodle após a intervenção; ' + evolved.length + ' (' + pctText(evolved.length, total) +
                 ') atingiram integralmente o objetivo observado.',
             metricSentence('o engajamento', engagement),
             metricSentence('a nota', grade)
         ];
         if (sustained.eligible) {
-            findings.push(sustained.count + ' de ' + sustained.eligible + ' estudantes elegÃ­veis (' +
-                pctText(sustained.count, sustained.eligible) + ') mantiveram atividade apÃ³s sete dias.');
+            findings.push(sustained.count + ' de ' + sustained.eligible + ' estudantes elegíveis (' +
+                pctText(sustained.count, sustained.eligible) + ') mantiveram atividade após sete dias.');
         }
         if (reasonResults.length) {
             var best = reasonResults[0], weakest = reasonResults.length > 1 ? reasonResults[reasonResults.length - 1] : null;
-            findings.push('O maior retorno foi observado em â€œ' + best.label + 'â€: ' + best.responded + ' de ' + best.total +
-                ' (' + pctText(best.responded, best.total) + ').' + (weakest ? ' O menor ocorreu em â€œ' + weakest.label + 'â€: ' +
+            findings.push('O maior retorno foi observado em “' + best.label + '”: ' + best.responded + ' de ' + best.total +
+                ' (' + pctText(best.responded, best.total) + ').' + (weakest ? ' O menor ocorreu em “' + weakest.label + '”: ' +
                     weakest.responded + ' de ' + weakest.total + ' (' + pctText(weakest.responded, weakest.total) + ').' : ''));
         }
         var recommendations = [];
-        if (noResponse.length) { recommendations.push('Priorizar novo contato com ' + names(noResponse) + ', que ainda nÃ£o retornaram apÃ³s a intervenÃ§Ã£o.'); }
-        if (partial.length) { recommendations.push('Reavaliar a estratÃ©gia de ' + names(partial) + ', que retornaram, mas ainda nÃ£o alcanÃ§aram o resultado integral.'); }
+        if (noResponse.length) { recommendations.push('Priorizar novo contato com ' + names(noResponse) + ', que ainda não retornaram após a intervenção.'); }
+        if (partial.length) { recommendations.push('Reavaliar a estratégia de ' + names(partial) + ', que retornaram, mas ainda não alcançaram o resultado integral.'); }
         if (grade.declined.length || engagement.declined.length) { recommendations.push('Revisar individualmente os casos com queda: ' + names(grade.declined.concat(engagement.declined)) + '.'); }
-        if (!recommendations.length) { recommendations.push('Manter o acompanhamento periÃ³dico para confirmar a continuidade dos avanÃ§os observados.'); }
+        if (!recommendations.length) { recommendations.push('Manter o acompanhamento periódico para confirmar a continuidade dos avanços observados.'); }
         var improved = engagement.improved.concat(grade.improved);
         var issuedAt = new Date().toLocaleString([], {dateStyle: 'long', timeStyle: 'short'});
-        var period = filters.from || filters.to ? (filters.from ? new Date(filters.from + 'T00:00:00').toLocaleDateString() : 'inÃ­cio') +
-            ' a ' + (filters.to ? new Date(filters.to + 'T00:00:00').toLocaleDateString() : 'hoje') : 'Todo o perÃ­odo disponÃ­vel';
+        var period = filters.from || filters.to ? (filters.from ? new Date(filters.from + 'T00:00:00').toLocaleDateString() : 'início') +
+            ' a ' + (filters.to ? new Date(filters.to + 'T00:00:00').toLocaleDateString() : 'hoje') : 'Todo o período disponível';
         var interventionRows = rows.slice().sort(function(a, b) { return b.captured - a.captured; }).map(function(row) {
-            var status = !row.response ? 'Sem retorno' : row.reached === true ? 'Objetivo alcanÃ§ado' : 'Em acompanhamento';
-            return '<tr><td>' + esc(formatDateTime(row.captured)) + '</td><td>' + esc(row.raw.student_name || row.raw.student_email || 'NÃ£o identificado') +
-                '</td><td>' + esc(REASON_META[row.reason].label()) + '</td><td>' + esc(row.raw.teacher_name || row.raw.teachername || row.raw.sender_name || 'â€”') +
+            var status = !row.response ? 'Sem retorno' : row.reached === true ? 'Objetivo alcançado' : 'Em acompanhamento';
+            return '<tr><td>' + esc(formatDateTime(row.captured)) + '</td><td>' + esc(row.raw.student_name || row.raw.student_email || 'Não identificado') +
+                '</td><td>' + esc(REASON_META[row.reason].label()) + '</td><td>' + esc(row.raw.teacher_name || row.raw.teachername || row.raw.sender_name || '—') +
                 '</td><td>' + esc(status) + '</td><td>' + esc(row.firstResponse ? duration(row.firstResponse - row.captured) : 'Sem retorno') + '</td></tr>';
         }).join('');
         return '<section class="fr-card fr-analytical-summary fr-export-only" data-fr-scope="overview"><header class="fr-export-report-head">' +
-            '<div><small>MWA DASHBOARD Â· RELATÃ“RIO ANALÃTICO</small><h1>RelatÃ³rio de Acompanhamento e EvoluÃ§Ã£o da Aprendizagem</h1></div>' +
-            '<dl><div><dt>Data de expediÃ§Ã£o</dt><dd>' + esc(issuedAt) + '</dd></div><div><dt>PerÃ­odo analisado</dt><dd>' + esc(period) +
-            '</dd></div><div><dt>IntervenÃ§Ãµes analisadas</dt><dd>' + rows.length + '</dd></div><div><dt>Estudantes acompanhados</dt><dd>' + total + '</dd></div></dl></header>' +
-            '<div class="fr-analytical-title">' + svg('sparkles', 20) + '<div><h2>AnÃ¡lise pedagÃ³gica do perÃ­odo</h2><p>Leitura automÃ¡tica dos dados antes e depois das intervenÃ§Ãµes.</p></div></div>' +
-            '<div class="fr-analytical-grid"><div><h3>O que estÃ¡ acontecendo</h3><ul>' + findings.map(function(item) { return '<li>' + esc(item) + '</li>'; }).join('') +
-            '</ul></div><div><h3>O que melhorou</h3><p>' + (improved.length ? 'Houve melhora mensurÃ¡vel para: ' + esc(names(improved)) + '.' :
-                'Ainda nÃ£o hÃ¡ melhora mensurÃ¡vel nos pares comparÃ¡veis deste recorte.') + '</p><h3>Pontos de atenÃ§Ã£o e prÃ³ximos passos</h3><ul>' +
+            '<div><small>MWA DASHBOARD · RELATÓRIO ANALÍTICO</small><h1>Relatório de Acompanhamento e Evolução da Aprendizagem</h1></div>' +
+            '<dl><div><dt>Data de expedição</dt><dd>' + esc(issuedAt) + '</dd></div><div><dt>Período analisado</dt><dd>' + esc(period) +
+            '</dd></div><div><dt>Intervenções analisadas</dt><dd>' + rows.length + '</dd></div><div><dt>Estudantes acompanhados</dt><dd>' + total + '</dd></div></dl></header>' +
+            '<div class="fr-analytical-title">' + svg('sparkles', 20) + '<div><h2>Análise pedagógica do período</h2><p>Leitura automática dos dados antes e depois das intervenções.</p></div></div>' +
+            '<div class="fr-analytical-grid"><div><h3>O que está acontecendo</h3><ul>' + findings.map(function(item) { return '<li>' + esc(item) + '</li>'; }).join('') +
+            '</ul></div><div><h3>O que melhorou</h3><p>' + (improved.length ? 'Houve melhora mensurável para: ' + esc(names(improved)) + '.' :
+                'Ainda não há melhora mensurável nos pares comparáveis deste recorte.') + '</p><h3>Pontos de atenção e próximos passos</h3><ul>' +
             recommendations.map(function(item) { return '<li>' + esc(item) + '</li>'; }).join('') + '</ul></div></div>' +
-            '<section class="fr-export-interventions"><h2>IntervenÃ§Ãµes incluÃ­das no relatÃ³rio</h2><p>RelaÃ§Ã£o cronolÃ³gica das aÃ§Ãµes do recorte e do retorno observado posteriormente no Moodle.</p>' +
-            '<table><thead><tr><th>Data da intervenÃ§Ã£o</th><th>Estudante</th><th>Motivo</th><th>ResponsÃ¡vel</th><th>SituaÃ§Ã£o observada</th><th>Tempo atÃ© o retorno</th></tr></thead><tbody>' +
+            '<section class="fr-export-interventions"><h2>Intervenções incluídas no relatório</h2><p>Relação cronológica das ações do recorte e do retorno observado posteriormente no Moodle.</p>' +
+            '<table><thead><tr><th>Data da intervenção</th><th>Estudante</th><th>Motivo</th><th>Responsável</th><th>Situação observada</th><th>Tempo até o retorno</th></tr></thead><tbody>' +
             interventionRows + '</tbody></table></section>' +
-            '<p class="fr-analytical-note">As variaÃ§Ãµes mostram associaÃ§Ã£o temporal apÃ³s as intervenÃ§Ãµes e nÃ£o comprovam causalidade. A leitura depende da disponibilidade de dados comparÃ¡veis.</p></section>';
+            '<p class="fr-analytical-note">As variações mostram associação temporal após as intervenções e não comprovam causalidade. A leitura depende da disponibilidade de dados comparáveis.</p></section>';
     }
 
     function deltaCard(label, pairs, suffix, invert, mode, detail) {
@@ -782,36 +782,36 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
             var totalTracked = pairs.length;
             var completedTracked = after === null ? 0 : after;
             var remainingTracked = Math.max(0, totalTracked - completedTracked);
-            var progressChip = '<small class="up">â†‘ ' + formatNumber(completedTracked) + '</small>';
+            var progressChip = '<small class="up">↑ ' + formatNumber(completedTracked) + '</small>';
             return '<div class="fr-delta fr-activity-delta"><span class="fr-delta-label">' + label + '</span>' +
-                '<strong><b class="initial-red"><small>' + tr('tf_delta_remaining') + '</small>' + (totalTracked ? formatNumber(remainingTracked) : 'â€”') +
-                '</b><em>â†’</em><b class="positive"><small>' + tr('tf_delta_concluded') + '</small>' +
-                (totalTracked ? formatNumber(completedTracked) : 'â€”') + '</b></strong>' + progressChip + '</div>';
+                '<strong><b class="initial-red"><small>' + tr('tf_delta_remaining') + '</small>' + (totalTracked ? formatNumber(remainingTracked) : '—') +
+                '</b><em>→</em><b class="positive"><small>' + tr('tf_delta_concluded') + '</small>' +
+                (totalTracked ? formatNumber(completedTracked) : '—') + '</b></strong>' + progressChip + '</div>';
         }
         var gradeMetric = lower(label).indexOf('nota') >= 0;
         function metricValue(value, valueSuffix) {
-            if (value === null || value === undefined || isNaN(value)) { return 'â€”'; }
+            if (value === null || value === undefined || isNaN(value)) { return '—'; }
             return gradeMetric ? Number(value).toFixed(1) + (valueSuffix || '') : formatNumber(value, valueSuffix);
         }
         var delta = before !== null && after !== null ? after - before : null;
         var good = delta !== null && (invert ? delta < 0 : delta > 0);
         var deltaText = delta === null ? tr('tf_no_tracked_items') : delta === 0 ? '0' :
-            (delta > 0 ? 'â†‘ +' : 'â†“ ') + metricValue(delta, suffix);
+            (delta > 0 ? '↑ +' : '↓ ') + metricValue(delta, suffix);
         var detailClass = null;
         if (detail === 'approval') {
             var approvedBefore = pairs.filter(function(pair) { return pair.before >= 100; }).length;
             var approvedAfter = pairs.filter(function(pair) { return pair.after >= 100; }).length;
             var approvalRate = pairs.length ? Math.round(approvedAfter * 1000 / pairs.length) / 10 : null;
             var approvalGain = approvedAfter - approvedBefore;
-            var approvalChip = '<small class="up">â†‘ ' + Math.max(0, approvalGain) + '</small>';
+            var approvalChip = '<small class="up">↑ ' + Math.max(0, approvalGain) + '</small>';
             return '<div class="fr-delta fr-approval-delta"><span class="fr-delta-label">' + label + '</span>' +
-                '<strong><b><small>' + tr('tf_delta_students') + '</small>' + approvedAfter + '</b><em>Â·</em><b class="positive"><small>' + tr('tf_delta_percent') + '</small>' +
-                (approvalRate === null ? 'â€”' : formatNumber(approvalRate, '%')) + '</b></strong>' + approvalChip + '</div>';
+                '<strong><b><small>' + tr('tf_delta_students') + '</small>' + approvedAfter + '</b><em>·</em><b class="positive"><small>' + tr('tf_delta_percent') + '</small>' +
+                (approvalRate === null ? '—' : formatNumber(approvalRate, '%')) + '</b></strong>' + approvalChip + '</div>';
         }
         var beforeClass = before === 0 ? 'zero' : '';
         var afterClass = after === 0 ? 'zero' : (invert ? 'neutral' : 'positive');
         var afterText = after === 0 && suffix ? '0' + suffix : metricValue(after, suffix);
-        return '<div class="fr-delta"><span class="fr-delta-label">' + label + '</span><strong><b class="' + beforeClass + '">' + metricValue(before, suffix) + '</b><em>â†’</em><b class="' + afterClass + '">' + afterText + '</b></strong>' +
+        return '<div class="fr-delta"><span class="fr-delta-label">' + label + '</span><strong><b class="' + beforeClass + '">' + metricValue(before, suffix) + '</b><em>→</em><b class="' + afterClass + '">' + afterText + '</b></strong>' +
             '<small class="' + (detailClass !== null ? detailClass : delta === null ? '' : delta === 0 ? 'zero' : good ? 'up' : 'down') + '">' +
             deltaText + '</small></div>';
     }
@@ -833,7 +833,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
             {label: tr('tf_chart_grade'), color: '#11813b', values: pairs.grade},
             {label: tr('tf_chart_approval'), color: '#6423a5', values: pairs.approval, approval: true}
         ].filter(function(item) { return item.values.length; });
-        if (!series.length) { return '<div class="fr-no-data">Sem pares snapshot Ã— atual elegÃ­veis para o grÃ¡fico.</div>'; }
+        if (!series.length) { return '<div class="fr-no-data">Sem pares snapshot × atual elegíveis para o gráfico.</div>'; }
         var timelineDays = {};
         series.forEach(function(item) {
             item.values.forEach(function(value) { timelineDays[localDateKey(value.captured)] = true; });
@@ -1043,7 +1043,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
         norm(text).split(/\r?\n/).forEach(function(rawLine) {
             var line = norm(rawLine);
             if (!line) { closeList(); return; }
-            var bullet = line.match(/^[-*â€¢]\s+(.+)$/);
+            var bullet = line.match(/^[-*•]\s+(.+)$/);
             var numbered = line.match(/^\d+[.)]\s+(.+)$/);
             if (bullet || numbered) {
                 var desired = numbered ? 'ol' : 'ul';
@@ -1074,7 +1074,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
             var beforeGrade = courseTotalGrade(snapshot);
             var afterGrade = row.currentIndicator ? courseTotalGrade(row.currentIndicator) : null;
             return [
-                'Estudante: ' + norm(row.raw.student_name || row.raw.student_email || 'NÃ£o identificado'),
+                'Estudante: ' + norm(row.raw.student_name || row.raw.student_email || 'Não identificado'),
                 tr('tf_ai_motivo').replace('{v}', REASON_META[row.reason].label()),
                 tr('tf_ai_intervencao').replace('{v}', formatDateTime(row.captured)),
                 tr('tf_ai_engagement_delta').replace('{before}', formatNumber(beforeEngagement, '%')).replace('{after}', formatNumber(afterEngagement, '%')),
@@ -1086,25 +1086,25 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
                 tr('tf_ai_continuity').replace('{v}', row.after.some(function(log) { return timestamp(log) > row.captured + 7 * DAY; }) ? tr('tf_ai_continuity_yes') : tr('tf_ai_continuity_no'))
             ].join(' | ');
         });
-        return 'Crie um relatÃ³rio pedagÃ³gico em portuguÃªs brasileiro comparando os dados antes e depois das intervenÃ§Ãµes. ' +
-            'Use exclusivamente os dados fornecidos, nÃ£o invente causas nem informaÃ§Ãµes. Diferencie associaÃ§Ã£o de causalidade. ' +
-            'Estruture em: sÃ­ntese executiva; avanÃ§os observados; alunos que precisam de novo acompanhamento; padrÃµes por motivo; ' +
-            'recomendaÃ§Ãµes prÃ¡ticas; limitaÃ§Ãµes dos dados. Destaque nÃºmeros e nomes somente quando estiverem nos dados. ' +
-            'NÃ£o use Markdown, hashtags, asteriscos, tabelas ou blocos de cÃ³digo. Escreva tÃ­tulos simples em linhas separadas, parÃ¡grafos curtos e listas claras.\n\n' +
-            'Recorte: ' + rows.length + ' intervenÃ§Ãµes e ' + groups.length + ' estudantes Ãºnicos.\n' + lines.join('\n');
+        return 'Crie um relatório pedagógico em português brasileiro comparando os dados antes e depois das intervenções. ' +
+            'Use exclusivamente os dados fornecidos, não invente causas nem informações. Diferencie associação de causalidade. ' +
+            'Estruture em: síntese executiva; avanços observados; alunos que precisam de novo acompanhamento; padrões por motivo; ' +
+            'recomendações práticas; limitações dos dados. Destaque números e nomes somente quando estiverem nos dados. ' +
+            'Não use Markdown, hashtags, asteriscos, tabelas ou blocos de código. Escreva títulos simples em linhas separadas, parágrafos curtos e listas claras.\n\n' +
+            'Recorte: ' + rows.length + ' intervenções e ' + groups.length + ' estudantes únicos.\n' + lines.join('\n');
     }
 
     function generateAiReport(allRows) {
         var config = Store.getConfig ? Store.getConfig() : {};
         var rows = filterRows(allRows);
         if (!config.ia_enabled) {
-            aiReportError = tr('ai_unavailable_message', 'ðŸ”’ Artificial Intelligence features are unavailable. Configure a valid API key in MWA administration.');
+            aiReportError = tr('ai_unavailable_message', '🔒 Artificial Intelligence features are unavailable. Configure a valid API key in MWA administration.');
             aiReport = '';
             renderReport(allRows);
             return;
         }
         if (!rows.length) {
-            aiReportError = 'NÃ£o hÃ¡ dados no recorte atual para analisar.';
+            aiReportError = 'Não há dados no recorte atual para analisar.';
             aiReport = '';
             renderReport(allRows);
             return;
@@ -1118,10 +1118,10 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
             prompt: buildAiPrompt(rows)
         }).then(function(result) {
             aiReport = norm(result && (result.recommendation || result.response || result.content));
-            aiReportError = aiReport ? '' : 'A IA nÃ£o retornou conteÃºdo para este relatÃ³rio.';
+            aiReportError = aiReport ? '' : 'A IA não retornou conteúdo para este relatório.';
         }).catch(function(error) {
             aiReport = '';
-            aiReportError = 'NÃ£o foi possÃ­vel gerar o relatÃ³rio com IA. ' + norm(error && error.message);
+            aiReportError = 'Não foi possível gerar o relatório com IA. ' + norm(error && error.message);
         }).then(function() {
             aiReportLoading = false;
             renderReport(allRows);
@@ -1171,8 +1171,8 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
         });
         var hasEvents = access.some(function(item) { return item.count > 0; });
         if (!hasEvents) {
-            return '<div class="fr-no-data">Ainda nÃ£o existem acessos posteriores Ã s intervenÃ§Ãµes selecionadas.</div>' +
-                info('O grÃ¡fico comeÃ§a no momento da intervenÃ§Ã£o e utiliza somente logs reais posteriores do Moodle, atÃ© o 15Âº dia.');
+            return '<div class="fr-no-data">Ainda não existem acessos posteriores às intervenções selecionadas.</div>' +
+                info('O gráfico começa no momento da intervenção e utiliza somente logs reais posteriores do Moodle, até o 15º dia.');
         }
 
         var maxValue = Math.max.apply(null, access.concat(academic).map(function(item) { return item.count; }).concat([1]));
@@ -1191,7 +1191,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
         var singleStudent = filters.student !== 'all' && journeys.length === 1;
         function dayLabel(index) {
             if (!singleStudent) { return 'D+' + index; }
-            return 'D+' + index + ' Â· ' + formatDate(journeys[0].captured + index * DAY);
+            return 'D+' + index + ' · ' + formatDate(journeys[0].captured + index * DAY);
         }
         function seriesPath(values) {
             return values.map(function(item, index) {
@@ -1202,7 +1202,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
             return values.map(function(item, index) {
                 var students = Object.keys(item.students);
                 var detail = JSON.stringify({series: label, day: dayLabel(index), value: item.count, students: students});
-                var title = label + ' Â· ' + dayLabel(index) + ': ' + item.count;
+                var title = label + ' · ' + dayLabel(index) + ': ' + item.count;
                 return '<circle class="fr-journey-point" tabindex="0" role="button" cx="' + x(index) + '" cy="' +
                     y(item.count) + '" r="4.2" fill="' + color + '" data-fr-journey-detail="' + esc(detail) +
                     '" aria-label="' + esc(title) + '"><title>' + esc(title) + '</title></circle>';
@@ -1235,11 +1235,11 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
             sorted.map(function(row) {
                 var now = Date.now() / 1000;
                 function marker(startDays, endDays) {
-                    if (now - row.captured < endDays * DAY) { return 'â€”'; }
+                    if (now - row.captured < endDays * DAY) { return '—'; }
                     return row.after.some(function(log) {
                         var time = timestamp(log);
                         return time >= row.captured + startDays * DAY && time <= row.captured + endDays * DAY;
-                    }) ? 'âœ“' : 'Ã—';
+                    }) ? '✓' : '×';
                 }
                 var progress = progressState(row);
                 var progressHtml = progress === 'integral' ? '<b class="green">Integral</b>' :
@@ -1273,12 +1273,12 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
             kpi('target', tr('tf_kpi_evolved'), String(reached), pctText(reached, total) + ' ' + tr('tf_of_total'), '#198754', tr('tf_kpi_evolved_tip')) +
             kpi('hourglass', tr('tf_kpi_tracking'), String(monitoring), pctText(monitoring, total) + ' ' + tr('tf_of_total'), '#ff7a00', tr('tf_kpi_tracking_tip')) +
             kpi('close', tr('tf_kpi_no_response'), String(noResponse), pctText(noResponse, total) + ' ' + tr('tf_of_total'), '#ed0000', tr('tf_kpi_no_response_tip')) +
-            kpi('trend', tr('tf_kpi_sustained'), sustained.eligible ? String(sustained.count) : 'â€”', sustained.eligible ? pctText(sustained.count, sustained.eligible) + ' ' + tr('tf_of_eligible') : tr('tf_no_eligible_after'), '#7030a0', tr('tf_kpi_sustained_tip')) +
+            kpi('trend', tr('tf_kpi_sustained'), sustained.eligible ? String(sustained.count) : '—', sustained.eligible ? pctText(sustained.count, sustained.eligible) + ' ' + tr('tf_of_eligible') : tr('tf_no_eligible_after'), '#7030a0', tr('tf_kpi_sustained_tip')) +
             '</div>' + filtersHtml(allRows) + tabsHtml();
 
         if (!rows.length) {
-            html += '<div class="fr-empty"><span>â–¥</span><h2>' + tr('tf_empty_eligible') + '</h2><p>' + tr('tf_empty_eligible_desc') + '</p></div>';
-            if (ignored) { html += info(ignored + ' intervenÃ§Ã£o(Ãµes) anterior(es) ao snapshot foram preservadas, mas nÃ£o entram em comparaÃ§Ãµes antes Ã— depois.'); }
+            html += '<div class="fr-empty"><span>▥</span><h2>' + tr('tf_empty_eligible') + '</h2><p>' + tr('tf_empty_eligible_desc') + '</p></div>';
+            if (ignored) { html += info(ignored + ' intervenção(ões) anterior(es) ao snapshot foram preservadas, mas não entram em comparações antes × depois.'); }
             Store.renderHtml(box, html);
             bind(allRows);
             return;
@@ -1297,12 +1297,12 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
             card(tr('tf_card_continuity'), continuityHtml(groups), 'overview continuity', 'fr-span-7 fr-continuity-card') + '</div>';
         html += aiReportHtml();
         html += '<div class="fr-grid fr-grid-bottom">' +
-            card('InteraÃ§Ã£o do estudante apÃ³s a intervenÃ§Ã£o', interactionHtml(rows, groups), 'overview interaction', 'fr-span-7 fr-interaction-card') +
+            card('Interação do estudante após a intervenção', interactionHtml(rows, groups), 'overview interaction', 'fr-span-7 fr-interaction-card') +
             card(tr('tf_card_mediation_time'), mediationHtml(rows), 'overview mediation', 'fr-span-7 fr-mediation-card') +
             card(tr('tf_progress_by_strategy'), strategyTable(rows), 'mediation', 'fr-span-8') +
             card(tr('tf_card_journey'), accessJourneyHtml(rows, groups), 'trajectory', 'fr-span-14 fr-journey-card') +
             card(tr('tf_card_trajectory'), trajectoryTable(rows), 'trajectory', 'fr-span-14') + '</div>';
-        if (ignored) { html += info(ignored + ' intervenÃ§Ã£o(Ãµes) sem snapshot foram excluÃ­das das mÃ©tricas comparativas.'); }
+        if (ignored) { html += info(ignored + ' intervenção(ões) sem snapshot foram excluídas das métricas comparativas.'); }
         Store.renderHtml(box, html);
         applyTab();
         bind(allRows);
@@ -1363,7 +1363,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
             var names = Array.isArray(detail.students) ? detail.students : [];
             panel.replaceChildren();
             var title = document.createElement('strong');
-            title.textContent = (detail.series || 'Indicador') + ' Â· ' + (detail.label || '') + ' Â· ' +
+            title.textContent = (detail.series || 'Indicador') + ' · ' + (detail.label || '') + ' · ' +
                 (detail.approval ? detail.value + (Number(detail.value) === 1 ? ' estudante' : ' estudantes') : 'valor ' + detail.value);
             var text = document.createElement('span');
             text.textContent = names.length ? (detail.approval ? tr('tf_students_approved') : tr('tf_students_improved')) + ' ' + names.join(', ') :
@@ -1389,7 +1389,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
             var names = Array.isArray(detail.students) ? detail.students.filter(Boolean) : [];
             panel.replaceChildren();
             var title = document.createElement('strong');
-            title.textContent = (detail.series || 'Indicador') + ' Â· ' + (detail.label || '') + ' Â· ' + (detail.value || '0');
+            title.textContent = (detail.series || 'Indicador') + ' · ' + (detail.label || '') + ' · ' + (detail.value || '0');
             var text = document.createElement('span');
             text.textContent = names.length ? names.join(', ') : tr('tf_no_student_counted');
             panel.appendChild(title);
@@ -1412,7 +1412,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
             var names = Array.isArray(detail.students) ? detail.students : [];
             panel.replaceChildren();
             var title = document.createElement('strong');
-            title.textContent = (detail.series || 'Eventos') + ' Â· ' + (detail.day || '') + ': ' + Number(detail.value || 0);
+            title.textContent = (detail.series || 'Eventos') + ' · ' + (detail.day || '') + ': ' + Number(detail.value || 0);
             var text = document.createElement('span');
             text.textContent = names.length ? tr('tf_students_label') + ' ' + names.join(', ') : tr('tf_no_student_point');
             panel.appendChild(title);
@@ -1435,7 +1435,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
             var names = Array.isArray(detail.names) ? detail.names.filter(Boolean) : [];
             panel.replaceChildren();
             var title = document.createElement('strong');
-            title.textContent = detail.label || 'ClassificaÃ§Ã£o';
+            title.textContent = detail.label || 'Classificação';
             var text = document.createElement('span');
             text.textContent = names.length ? names.join(', ') : tr('tf_no_student_here');
             panel.appendChild(title);
@@ -1593,11 +1593,11 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
         var before = values.length ? (sumValues ? values.reduce(function(total, item) { return total + Number(item.before || 0); }, 0) : avg(values.map(function(item) { return item.before; }))) : null;
         var after = showAfter && values.length ? (sumValues ? values.reduce(function(total, item) { return total + Number(item.after || 0); }, 0) : avg(values.map(function(item) { return item.after; }))) : null;
         var formatMetric = function(value) {
-            if (value === null || value === undefined || isNaN(value)) { return 'â€”'; }
+            if (value === null || value === undefined || isNaN(value)) { return '—'; }
             return lower(label).indexOf('nota') >= 0 ? Number(value).toFixed(1) + (suffix || '') : formatNumber(value, suffix || '');
         };
         return '<div class="fr-ir-metric"><span>' + esc(label) + '</span><strong>' +
-            esc(formatMetric(before)) + '<em>â†’</em>' + esc(formatMetric(after)) + '</strong></div>';
+            esc(formatMetric(before)) + '<em>→</em>' + esc(formatMetric(after)) + '</strong></div>';
     }
 
     function individualApprovalMetric(label, values, showAfter) {
@@ -1606,13 +1606,13 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
         var beforeApproved = beforeValue === null ? null : beforeValue >= 100;
         var afterApproved = afterValue === null ? null : afterValue >= 100;
         function state(value) {
-            if (value === null) { return '<b class="is-neutral">â€”</b>'; }
+            if (value === null) { return '<b class="is-neutral">—</b>'; }
             return '<b class="' + (value ? 'is-approved' : 'is-not-approved') + '">' +
                 esc(tr(value ? 'snapshot_yes' : 'snapshot_no')) + '</b>';
         }
         var transition = state(beforeApproved);
         if (afterApproved !== null && afterApproved !== beforeApproved) {
-            transition += '<em>â†’</em>' + state(afterApproved);
+            transition += '<em>→</em>' + state(afterApproved);
         }
         return '<div class="fr-ir-metric fr-ir-approval-metric"><span>' + esc(label) + '</span><strong>' + transition + '</strong></div>';
     }
@@ -1677,7 +1677,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
         var interventionRows = ordered.map(function(row) {
             var reason = REASON_META[row.reason] ? REASON_META[row.reason].label() : row.reason;
             return '<tr><td>' + esc(formatDateTime(row.captured)) + '</td><td>' + esc(reason) + '</td><td>' +
-                esc(row.raw.teacher_name || 'â€”') + '</td><td>' + (row.response ? tr('tf_ir_responded') : tr('tf_ir_no_response')) + '</td></tr>';
+                esc(row.raw.teacher_name || '—') + '</td><td>' + (row.response ? tr('tf_ir_responded') : tr('tf_ir_no_response')) + '</td></tr>';
         }).join('');
         var timeline = [];
         ordered.forEach(function(row) {
@@ -1687,7 +1687,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
         });
         timeline.sort(function(a, b) { return a.time - b.time; });
         var timelineHtml = timeline.length ? timeline.map(function(item) {
-            return '<div class="fr-ir-timeline-item"><span><svg class="mwa-ui-icon" aria-hidden="true"><use href="#mwa-icon-' + item.icon + '"></use></svg></span><div><strong>' + esc(item.title) + '</strong><small>' + esc(formatDateTime(item.time)) + ' Â· ' + esc(item.detail || '') + '</small></div></div>';
+            return '<div class="fr-ir-timeline-item"><span><svg class="mwa-ui-icon" aria-hidden="true"><use href="#mwa-icon-' + item.icon + '"></use></svg></span><div><strong>' + esc(item.title) + '</strong><small>' + esc(formatDateTime(item.time)) + ' · ' + esc(item.detail || '') + '</small></div></div>';
         }).join('') : '<div class="fr-ir-empty">' + esc(tr('tf_ir_no_events')) + '</div>';
         function joinPhrases(items) {
             if (items.length < 2) { return items.join(''); }
@@ -1730,7 +1730,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
         Store.renderHtml(overlay, '<section class="fr-ir-modal" role="dialog" aria-modal="true" aria-labelledby="frIrTitle">' +
             '<header class="fr-ir-head"><div><svg class="mwa-ui-icon" aria-hidden="true"><use href="#mwa-icon-chart"></use></svg><div><small>' + esc(tr('tf_ir_title')) + '</small><h2 id="frIrTitle">' + esc(tr('tf_ir_evolution_of').replace('{student}', studentName)) + '</h2></div></div>' +
             '<div class="fr-ir-actions"><button type="button" onclick="window.MWATeacherFeedback.printIndividualReport()"><svg class="mwa-ui-icon" aria-hidden="true"><use href="#mwa-icon-download"></use></svg> ' + esc(tr('tf_ir_export_pdf')) + '</button><button type="button" class="fr-ir-close" aria-label="' + esc(tr('close')) + '" onclick="window.MWATeacherFeedback.closeIndividualReport()"><svg class="mwa-ui-icon" aria-hidden="true"><use href="#mwa-icon-close"></use></svg></button></div></header>' +
-            '<div class="fr-ir-body"><div class="fr-ir-summary"><div><span>' + esc(tr('student')) + '</span><strong>' + esc(studentName) + '</strong></div><div><span>' + esc(tr('tf_ir_period')) + '</span><strong>' + (ordered.length ? esc(formatDate(ordered[0].captured)) + ' ' + esc(tr('tf_ir_to')) + ' ' + esc(formatDate(Math.floor(Date.now() / 1000))) : 'â€”') + '</strong></div><div><span>' + esc(tr('tf_ir_interventions')) + '</span><strong>' + rows.length + '</strong></div><div><span>' + esc(tr('tf_ir_classification')) + '</span><strong class="' + classificationClass + '">' + esc(classification) + '</strong></div></div>' +
+            '<div class="fr-ir-body"><div class="fr-ir-summary"><div><span>' + esc(tr('student')) + '</span><strong>' + esc(studentName) + '</strong></div><div><span>' + esc(tr('tf_ir_period')) + '</span><strong>' + (ordered.length ? esc(formatDate(ordered[0].captured)) + ' ' + esc(tr('tf_ir_to')) + ' ' + esc(formatDate(Math.floor(Date.now() / 1000))) : '—') + '</strong></div><div><span>' + esc(tr('tf_ir_interventions')) + '</span><strong>' + rows.length + '</strong></div><div><span>' + esc(tr('tf_ir_classification')) + '</span><strong class="' + classificationClass + '">' + esc(classification) + '</strong></div></div>' +
             '<section class="fr-ir-section"><h3>' + esc(tr('tf_ir_before_after')) + '</h3><div class="fr-ir-metrics">' +
             individualMetric(tr('tf_ir_engagement'), pairs.engagement, '', false, hasVerifiedResponse) + individualMetric(tr('tf_ir_average_grade'), pairs.grade, '', false, hasVerifiedResponse) +
             individualApprovalMetric(tr('tf_ir_approval'), pairs.approval, hasVerifiedResponse) +

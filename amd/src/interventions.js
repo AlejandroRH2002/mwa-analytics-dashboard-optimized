@@ -47,7 +47,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
       function snapshotTitle() {
         var config = Store.getConfig ? Store.getConfig() : {};
         var language = String(config.language || '').toLowerCase();
-        return language.indexOf('pt') === 0 ? 'SituaÃ§Ã£o no momento da intervenÃ§Ã£o' : tr('snapshot_title');
+        return language.indexOf('pt') === 0 ? 'Situação no momento da intervenção' : tr('snapshot_title');
       }
       function esc(v) {
         return String(v === undefined || v === null ? '' : v)
@@ -400,9 +400,9 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
         var reasons = [
           { v: '',                   l: tr('msg_reason_select') },
           { v: 'Nunca acessou',          l: '\uD83D\uDEAB ' + tr('msg_reason_never') },
-          { v: 'Baixa participaÃ§Ã£o',     l: '\uD83D\uDCC9 ' + tr('msg_reason_low_participation') },
-          { v: 'PendÃªncia acadÃªmica',    l: '\uD83D\uDCCB ' + tr('msg_reason_academic_pending') },
-          { v: 'Dificuldade acadÃªmica',  l: '\uD83D\uDCCA ' + tr('msg_reason_difficulty') },
+          { v: 'Baixa participação',     l: '\uD83D\uDCC9 ' + tr('msg_reason_low_participation') },
+          { v: 'Pendência acadêmica',    l: '\uD83D\uDCCB ' + tr('msg_reason_academic_pending') },
+          { v: 'Dificuldade acadêmica',  l: '\uD83D\uDCCA ' + tr('msg_reason_difficulty') },
           { v: 'Outro',              l: '\uD83D\uDCAC ' + tr('msg_reason_other') },
         ];
     
@@ -667,9 +667,9 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
         if (m) { channel = ' [' + m[1] + ']'; reason = reason.replace(m[0], '').trim(); }
         var map = {
           'Baixo engajamento':  'msg_reason_low_eng',
-          'Risco de evasÃ£o':     'msg_reason_risk',
-          'Risco de evasÃƒÂ£o':    'msg_reason_risk',
-          'Risco de evasÃƒÆ’Ã‚Â£o':   'msg_reason_risk',
+          'Risco de evasão':     'msg_reason_risk',
+          'Risco de evasÃ£o':    'msg_reason_risk',
+          'Risco de evasÃƒÂ£o':   'msg_reason_risk',
           '7+ dias sem acesso': 'msg_reason_inactive',
           'Tarefa pendente':    'msg_reason_task',
           'Reengajamento':      'msg_reason_reeng',
@@ -953,10 +953,10 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
 
       /* Map interventionResult state to the new status labels */
       /* Status pills matching the reference image:
-         ðŸ”µ Awaiting response  (blue)
-         ðŸŸ¡ Returned           (yellow/orange)
-         ðŸŸ  Partial progress   (orange)
-         ðŸŸ¢ Full progress / Goal reached  (green)
+         🔵 Awaiting response  (blue)
+         🟡 Returned           (yellow/orange)
+         🟠 Partial progress   (orange)
+         🟢 Full progress / Goal reached  (green)
       */
       var SVG_DOT_BLUE   = '<svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#4f8ef7"/></svg>';
       var SVG_DOT_YELLOW = '<svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#f59e0b"/></svg>';
@@ -990,7 +990,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
       /* Follow-up uses the exact calendar SVG icon. */
       function followupHtml(d, result) {
         var state = result ? result.state : 'none';
-        if (d.status !== 'sent') return '<span style="color:var(--muted);">â€”</span>';
+        if (d.status !== 'sent') return '<span style="color:var(--muted);">—</span>';
         if (state === 'delivered') {
           // Refresh/done icon indicates that follow-up is complete.
           return '<span class="int2-followup">' + SVG_REFRESH + ' ' + tr('int_followup_done') + '</span>';
@@ -1046,7 +1046,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
           return [
             fmtDate(d.timesent).slice(0,10),
             d.student_name || '',
-            (function(r){var m={'Baixo engajamento':'msg_reason_low_eng','Risco de evasÃ£o':'msg_reason_risk','Risco de evasÃƒÂ£o':'msg_reason_risk','Risco de evasÃƒÆ’Ã‚Â£o':'msg_reason_risk','7+ dias sem acesso':'msg_reason_inactive','Tarefa pendente':'msg_reason_task','Reengajamento':'msg_reason_reeng','Parabenizar':'msg_reason_praise','Outro':'msg_reason_other'};return m[r]?tr(m[r]):r||'';})(d.intervention_reason||''),
+            (function(r){var m={'Baixo engajamento':'msg_reason_low_eng','Risco de evasão':'msg_reason_risk','Risco de evasÃ£o':'msg_reason_risk','Risco de evasÃƒÂ£o':'msg_reason_risk','7+ dias sem acesso':'msg_reason_inactive','Tarefa pendente':'msg_reason_task','Reengajamento':'msg_reason_reeng','Parabenizar':'msg_reason_praise','Outro':'msg_reason_other'};return m[r]?tr(m[r]):r||'';})(d.intervention_reason||''),
             d.teacher_name || '',
             effectLabel,
             d.send_type || 'moodle',
@@ -1140,7 +1140,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
       }
 
       /* ================================================================
-         interventionResult â€” unchanged from original
+         interventionResult — unchanged from original
       ================================================================ */
       function interventionResult(d) {
         function formatDiffSeconds(diffSec) {
@@ -1168,11 +1168,11 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
         if (returnTs === null) {
           return {state: 'pending', label: tr('int_result_pending', 'Pending'), html: '<span class="int-result-pill pending"><i></i>' + esc(tr('int_result_pending', 'Pending')) + '</span>'};
         }
-        return {state: 'accessed', label: tr('int_result_accessed', 'Accessed'), html: '<span class="int-result-pill accessed"><i></i>' + esc(tr('int_result_accessed', 'Accessed')) + ' Â· ' + esc(formatDiffSeconds(returnTs - d.timesent)) + '</span>'};
+        return {state: 'accessed', label: tr('int_result_accessed', 'Accessed'), html: '<span class="int-result-pill accessed"><i></i>' + esc(tr('int_result_accessed', 'Accessed')) + ' · ' + esc(formatDiffSeconds(returnTs - d.timesent)) + '</span>'};
       }
 
       /* ================================================================
-         RENDER INTERVENTIONS PAGE â€” new design
+         RENDER INTERVENTIONS PAGE — new design
       ================================================================ */
       function renderInterventionsPage() {
         var el = document.getElementById('interventionsWrap');
@@ -1771,7 +1771,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
             + '</div><div class="int-snapshot-grid' + (bucket === 'pending' ? ' int-snapshot-grid-pending' : '') + (bucket === 'low' ? ' int-snapshot-grid-low' : '') + (bucket === 'never' ? ' int-snapshot-grid-never' : '') + '">' + rows + '</div>'
             + (legacyGradeSnapshot ? '<div class="int-snapshot-lock">' + tr('int_snapshot_lock') + '</div>' : '')
             + '<div class="int-snapshot-date">' + esc(tr('snapshot_recorded_at')) + ': ' + esc(capturedLabel) + '</div>'
-            + '<div class="int-snapshot-lock">ðŸ”’ ' + esc(tr('snapshot_historical_notice')) + '</div>';
+            + '<div class="int-snapshot-lock">🔒 ' + esc(tr('snapshot_historical_notice')) + '</div>';
           return '<div class="int-snapshot-launch">'
             + '<button type="button" class="int-snapshot-open-btn" onclick="event.stopPropagation();window.MWAInterventions.openSnapshot(' + Number(d.id) + ')">'
             + '<span class="int-snapshot-open-icon">' + icon('chart') + '</span><span><strong>' + esc(tr('snapshot_short_title')) + '</strong><small>' + esc(tr('snapshot_open')) + '</small></span>'

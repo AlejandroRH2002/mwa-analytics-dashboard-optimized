@@ -353,7 +353,7 @@ define([
         function gradeEmail(row){var k=Object.keys(row).find(function(x){return lower(x)==='email'||lower(x).includes('email')});return k?norm(row[k]):''}
         function gradeName(row){var f=Object.keys(row).find(function(x){return lower(x).includes('first')||lower(x).includes('nome')});var l=Object.keys(row).find(function(x){return lower(x).includes('last')||lower(x).includes('sobrenome')});return [f?row[f]:'',l?row[l]:''].join(' ').trim()}
         function gradePicture(row){var k=Object.keys(row).find(function(x){var lx=lower(x);return lx==='picture url'||lx==='pictureurl'||lx.includes('profile image')||lx.includes('foto')});return k?norm(row[k]):''}
-        function gradeUserId(row){var k=Object.keys(row).find(function(x){var lx=lower(x);return lx==='user id'||lx==='userid'||lx==='id do usuario'||lx==='id do usuÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡rio'});var n=k?parseInt(row[k],10):0;return isNaN(n)?0:n}
+        function gradeUserId(row){var k=Object.keys(row).find(function(x){var lx=lower(x);return lx==='user id'||lx==='userid'||lx==='id do usuario'||lx==='id do usuÃƒÆ’Ã‚Â¡rio'});var n=k?parseInt(row[k],10):0;return isNaN(n)?0:n}
         function logPicture(log){return norm(log.pictureurl||log.profileimageurl||log.userpictureurl)}
         function isSubmission(log){var text=lower([log.nomedoevento,log.action,log.componente,log.component].join(' '));return text.includes('submit')||text.includes('submission')||text.includes('submitted')||text.includes('upload')||text.includes('graded')}
         function activityName(log){return norm(log.contextodoevento)||norm(log.context)||norm(log._modtype)||null}
@@ -653,7 +653,7 @@ define([
           + kpiSmart(tr('active_course_students', 'Student/Interaction'), activeCourseStudents, tr('with_course_activity', 'With detected participation'), dStudents, false, tr('ac_tip_active_course_students', 'Students with a collected interaction or native academic evidence: submission, attempt, forum post, or completion recorded in Moodle.'), {page:'classlist', classFilter:'interactions', icon:'<svg class="mwa-ui-icon"><use href="#mwa-icon-refresh"></use></svg>', theme:'teal', nonDecreasing:true})
           + kpiSmart(tr('total_interactions', 'Total interactions'), totalStudentInteractions,     tr('moodle_events', 'Moodle events'),     dLogs,     false, tr('ac_tip_total_interactions'), {icon:'<svg class="mwa-ui-icon"><use href="#mwa-icon-message"></use></svg>', theme:'green', nonDecreasing:true})
           + kpiSmart(tr('average_student', 'Average / student'),    avgInt,                tr('interactions', 'interactions'),             dAvgInt,   false, tr('ac_tip_average_student'), {icon:'<svg class="mwa-ui-icon"><use href="#mwa-icon-chart"></use></svg>', theme:'amber'})
-          + kpiSmart(tr('grade_average'), avgGrade!==null ? avgGrade.toFixed(1) : 'â€”', avgGrade!==null ? tr('of_100_points', 'of 100 points') : tr('gr_none_launched', 'No grade entered yet'), dGrade, false, tr('ac_tip_grade_average'), {page:'grades', icon:'<svg class="mwa-ui-icon"><use href="#mwa-icon-star"></use></svg>', theme:'purple'}));
+          + kpiSmart(tr('grade_average'), avgGrade!==null ? avgGrade.toFixed(1) : '—', avgGrade!==null ? tr('of_100_points', 'of 100 points') : tr('gr_none_launched', 'No grade entered yet'), dGrade, false, tr('ac_tip_grade_average'), {page:'grades', icon:'<svg class="mwa-ui-icon"><use href="#mwa-icon-star"></use></svg>', theme:'purple'}));
         }
         
         function mwaChartType(label){
@@ -684,17 +684,17 @@ define([
           var c = String(label || '').toLowerCase().trim();
           var map = {
             assignment: tr('event_type_assignment','Assignment'), assign: tr('event_type_assignment','Assignment'), tarefa: tr('event_type_assignment','Assignment'),
-            forum: tr('event_type_forum','Forum'), 'fÃ³rum': tr('event_type_forum','Forum'),
-            page: tr('event_type_page','Page'), 'pÃ¡gina': tr('event_type_page','Page'),
-            quiz: tr('event_type_quiz','Quiz'), questionario: tr('event_type_quiz','Quiz'), 'questionÃ¡rio': tr('event_type_quiz','Quiz'),
+            forum: tr('event_type_forum','Forum'), 'fórum': tr('event_type_forum','Forum'),
+            page: tr('event_type_page','Page'), 'página': tr('event_type_page','Page'),
+            quiz: tr('event_type_quiz','Quiz'), questionario: tr('event_type_quiz','Quiz'), 'questionário': tr('event_type_quiz','Quiz'),
             book: tr('event_type_book','Book'), livro: tr('event_type_book','Book'),
             file: tr('event_type_file','File'), resource: tr('event_type_file','File'), arquivo: tr('event_type_file','File'),
             folder: tr('event_type_folder','Folder'), pasta: tr('event_type_folder','Folder'),
             url: tr('event_type_url','URL'),
-            glossary: tr('event_type_glossary','Glossary'), 'glossÃ¡rio': tr('event_type_glossary','Glossary'),
+            glossary: tr('event_type_glossary','Glossary'), 'glossário': tr('event_type_glossary','Glossary'),
             data: tr('event_type_database','Database'), database: tr('event_type_database','Database'),
             chat: tr('event_type_chat','Chat'),
-            lesson: tr('event_type_lesson','Lesson'), 'liÃ§Ã£o': tr('event_type_lesson','Lesson'),
+            lesson: tr('event_type_lesson','Lesson'), 'lição': tr('event_type_lesson','Lesson'),
             scorm: tr('event_type_scorm','SCORM'),
             h5p: tr('event_type_h5p','H5P'), h5pactivity: tr('event_type_h5p','H5P'), hvp: tr('event_type_h5p','H5P'),
             imscp: tr('event_type_imscp','IMS package'),
@@ -740,13 +740,13 @@ define([
           var ev = String((l && l.nomedoevento) || '').toLowerCase();
           return !text ||
             text === 'course module viewed' ||
-            text === 'mÃƒÆ’Ã‚Â³dulo do curso visualizado' ||
+            text === 'mÃƒÂ³dulo do curso visualizado' ||
             text === 'modulo do curso visualizado' ||
             text === 'submission graded' ||
-            text === 'submissÃƒÆ’Ã‚Â£o avaliada' ||
+            text === 'submissÃƒÂ£o avaliada' ||
             text === 'submissao avaliada' ||
             ev === 'course module viewed' ||
-            ev === 'mÃƒÆ’Ã‚Â³dulo do curso visualizado' ||
+            ev === 'mÃƒÂ³dulo do curso visualizado' ||
             ev === 'modulo do curso visualizado';
         }
         function hmResolvedResourceName(l, list) {
@@ -769,9 +769,9 @@ define([
           var source = String((l && (l._modtype || l.componente || l.component || l.contextodoevento || l.nomedoevento)) || '').toLowerCase();
           if (source.indexOf('h5p') >= 0 || source.indexOf('hvp') >= 0 || source.indexOf('interativo') >= 0) return 'h5pactivity';
           if (source.indexOf('quiz') >= 0 || source.indexOf('question') >= 0 || source.indexOf('question') >= 0) return 'quiz';
-          if (source.indexOf('forum') >= 0 || source.indexOf('fÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³rum') >= 0 || source.indexOf('fÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³rum') >= 0) return 'forum';
+          if (source.indexOf('forum') >= 0 || source.indexOf('fÃƒÆ’Ã‚Â³rum') >= 0 || source.indexOf('fÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³rum') >= 0) return 'forum';
           if (source.indexOf('assign') >= 0 || source.indexOf('tarefa') >= 0) return 'assign';
-          if (source.indexOf('page') >= 0 || source.indexOf('pÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡gina') >= 0 || source.indexOf('pÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡gina') >= 0) return 'page';
+          if (source.indexOf('page') >= 0 || source.indexOf('pÃƒÆ’Ã‚Â¡gina') >= 0 || source.indexOf('pÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡gina') >= 0) return 'page';
           if (source.indexOf('resource') >= 0 || source.indexOf('arquivo') >= 0) return 'resource';
           if (source.indexOf('url') >= 0) return 'url';
           if (source.indexOf('scorm') >= 0) return 'scorm';
@@ -792,7 +792,7 @@ define([
           var wantedMod = lower(modType);
           if (!targetLower || !links.length) return null;
           function cleanName(v) {
-            return lower(String(v || '').replace(/^(conteudo interativo|conteÃƒÆ’Ã‚Âºdo interativo|h5p|hvp|quiz|questionario|questionÃƒÆ’Ã‚Â¡rio|forum|fÃƒÆ’Ã‚Â³rum|tarefa|assign|pagina|pÃƒÆ’Ã‚Â¡gina|page)\s*:\s*/i, '').trim());
+            return lower(String(v || '').replace(/^(conteudo interativo|conteÃƒÂºdo interativo|h5p|hvp|quiz|questionario|questionÃƒÂ¡rio|forum|fÃƒÂ³rum|tarefa|assign|pagina|pÃƒÂ¡gina|page)\s*:\s*/i, '').trim());
           }
           var targetClean = cleanName(target);
           var best = null;
@@ -1438,10 +1438,10 @@ define([
           if (total > 0) {
             insights.push('- '+tr('hm_peak_insight', 'Peak access on {day} at {hour}h.').replace('{day}',DAYS[peakDay]).replace('{hour}',String(bestH)));
             insights.push('- '+tr('hm_after18_insight').replace('{pct}',String(pctAfter)));
-            insights.push('- '+tr('hm_besttime_insight', 'Best message window: {start}hâ€“{end}h.').replace('{start}',String(best2hStart)).replace('{end}',String(best2hStart+2)));
+            insights.push('- '+tr('hm_besttime_insight', 'Best message window: {start}h–{end}h.').replace('{start}',String(best2hStart)).replace('{end}',String(best2hStart+2)));
             var deadlineCount = Object.keys(deadlines).length;
             if (deadlineCount > 0) {
-              insights.push('- '+tr('hm_deadline_insight', '{n} possible deadline(s) detected with access spikes (ðŸ”´ cells).').replace('{n}',String(deadlineCount)));
+              insights.push('- '+tr('hm_deadline_insight', '{n} possible deadline(s) detected with access spikes (🔴 cells).').replace('{n}',String(deadlineCount)));
             }
             var prevTotal = Object.values(weekTrend[0]).reduce(function(a,b){return a+b;},0);
             var currTotal = Object.values(weekTrend[1]).reduce(function(a,b){return a+b;},0);
@@ -1464,7 +1464,7 @@ define([
             uLogs
               .forEach(function(l){ var d=parseDate(l); if(d) uHours[d.getHours()]++; });
             var uBest = uHours.indexOf(Math.max.apply(null,uHours));
-            var bucket = uBest<12?tr('hm_morning', 'Morning (6amâ€“12pm)'):uBest<18?tr('hm_afternoon', 'Afternoon (12pmâ€“6pm)'):tr('hm_evening', 'Evening (6pmâ€“12am)');
+            var bucket = uBest<12?tr('hm_morning', 'Morning (6am–12pm)'):uBest<18?tr('hm_afternoon', 'Afternoon (12pm–6pm)'):tr('hm_evening', 'Evening (6pm–12am)');
             if (!hourGrades[bucket]) hourGrades[bucket] = [];
             if (!hourGradeLogs[bucket]) hourGradeLogs[bucket] = [];
             hourGrades[bucket].push(s.grade);

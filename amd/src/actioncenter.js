@@ -104,14 +104,14 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
       var ctxName=norm(log&& (log.contextodoevento||log.eventcontext||log.context||''));
       var ev=norm(log&& (log.nomedoevento||log.eventname||log.action||''));
       var low=lower(ctxName);
-      if(ctxName&&low!=='course module viewed'&&low!=='mÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³dulo do curso visualizado')return ctxName.replace(/^(page|pÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡gina|book|livro|url|resource|recurso|file|arquivo|folder|pasta)\s*:\s*/i,'');
+      if(ctxName&&low!=='course module viewed'&&low!=='mÃƒÆ’Ã‚Â³dulo do curso visualizado')return ctxName.replace(/^(page|pÃƒÆ’Ã‚Â¡gina|book|livro|url|resource|recurso|file|arquivo|folder|pasta)\s*:\s*/i,'');
       return ev&&lower(ev)!=='course module viewed'?ev:'';
     }
     function isResourceLog(log){
       var mod=moduleOfLog(log);
       var comp=lower(log&& (log.component||log.componente||''));
-      if(mod==='label'||comp.indexOf('ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡rea de mÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â­dia e texto')>=0||comp.indexOf('text and media area')>=0)return false;
-      return ['page','book','url','resource','folder','imscp'].indexOf(mod)>=0||['pÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡gina','page','livro','book','url','arquivo','file','pasta','folder'].indexOf(comp)>=0;
+      if(mod==='label'||comp.indexOf('ÃƒÆ’Ã‚Â¡rea de mÃƒÆ’Ã‚Â­dia e texto')>=0||comp.indexOf('text and media area')>=0)return false;
+      return ['page','book','url','resource','folder','imscp'].indexOf(mod)>=0||['pÃƒÆ’Ã‚Â¡gina','page','livro','book','url','arquivo','file','pasta','folder'].indexOf(comp)>=0;
     }
     function studentAccessedCatalogItem(student,item){
       var studentName=lower(student&&student.name);
@@ -259,8 +259,8 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
       }).filter(function(item){return item.name&&item.available&&!item.done;});
     }
     function targetsForReason(reason, target){
-      if(reason==='PendÃªncia acadÃªmica')return buildActivityTargetsForStudent(target);
-      if(reason==='Baixa participaÃ§Ã£o')return buildResourceTargetsForStudent(target);
+      if(reason==='Pendência acadêmica')return buildActivityTargetsForStudent(target);
+      if(reason==='Baixa participação')return buildResourceTargetsForStudent(target);
       return [];
     }
     function helpTip(text){
@@ -397,7 +397,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
       if(!list.length)return '';
       function shortName(n){
         n=String(n||'');
-        return n.length>32?n.slice(0,31).replace(/[\s\-â€“â€”:,.]+$/,'')+'\u2026':n;
+        return n.length>32?n.slice(0,31).replace(/[\s\-–—:,.]+$/,'')+'\u2026':n;
       }
       var html='<div class="ac-items ac-items-compact">'+shown.map(function(it){
         var full=String(it.name||'');
@@ -624,7 +624,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
         html+='<div style=\"font-size:.8rem;font-weight:700;margin-bottom:.6rem;\">'+esc(wLabel)+' - '+esc(activeStudentsLabel(Object.keys(cur).length))+'</div>';
         if(left.length)html+='<div class=\"mwa-ret-left\">'+esc(tr('ret_drill_left', 'Did not return ({n}): ').replace('{n}',left.length))+left.map(function(n){var p=n.trim().split(/\s+/);return esc((p[0]||'')+' '+(p[p.length-1]||''));}).join(', ')+'</div>';
         if(came.length)html+='<div class=\"mwa-ret-came\">'+esc(tr('ret_drill_came', 'Returned/new ({n}): ').replace('{n}',came.length))+came.map(function(n){var p=n.trim().split(/\s+/);return esc((p[0]||'')+' '+(p[p.length-1]||''));}).join(', ')+'</div>';
-        if(stayed.length)html+='<div class="mwa-ret-stayed">'+tr('ret_drill_stayed', 'âœ“ Continued ({n})').replace('{n}',stayed.length)+'</div>';
+        if(stayed.length)html+='<div class="mwa-ret-stayed">'+tr('ret_drill_stayed', '✓ Continued ({n})').replace('{n}',stayed.length)+'</div>';
         html+='</div>';
         showRetentionDrill(wLabel+' - '+tr('ret_drill_retention', 'Retention'),html);
       };
@@ -914,9 +914,9 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
       var reasonOpts=[
         {v:'',l:tr('msg_reason_select')},
         {v:'Nunca acessou',l:'\uD83D\uDEAB ' + tr('msg_reason_never')},
-        {v:'Baixa participaÃ§Ã£o',l:'\uD83D\uDCC9 ' + tr('msg_reason_low_participation')},
-        {v:'PendÃªncia acadÃªmica',l:'\uD83D\uDCCB ' + tr('msg_reason_academic_pending')},
-        {v:'Dificuldade acadÃªmica',l:'\uD83D\uDCCA ' + tr('msg_reason_difficulty')},
+        {v:'Baixa participação',l:'\uD83D\uDCC9 ' + tr('msg_reason_low_participation')},
+        {v:'Pendência acadêmica',l:'\uD83D\uDCCB ' + tr('msg_reason_academic_pending')},
+        {v:'Dificuldade acadêmica',l:'\uD83D\uDCCA ' + tr('msg_reason_difficulty')},
         {v:'Outro',l:'\uD83D\uDCAC ' + tr('msg_reason_other')}
       ];      reasonOpts.forEach(function(o){
         var opt=document.createElement('option');
@@ -949,9 +949,9 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
       body.appendChild(snapshotObjectiveDiv);
       var suggestedObjectives={
         'Nunca acessou':tr('snapshot_objective_never', 'Complete the first course access.'),
-        'Baixa participaÃ§Ã£o':tr('snapshot_objective_low', 'Resume and increase course participation.'),
-        'PendÃªncia acadÃªmica':tr('snapshot_objective_pending', 'Complete pending academic activities.'),
-        'Dificuldade acadÃªmica':tr('snapshot_objective_difficult', 'Support improvement in learning outcomes.'),
+        'Baixa participação':tr('snapshot_objective_low', 'Resume and increase course participation.'),
+        'Pendência acadêmica':tr('snapshot_objective_pending', 'Complete pending academic activities.'),
+        'Dificuldade acadêmica':tr('snapshot_objective_difficult', 'Support improvement in learning outcomes.'),
         'Outro':''
       };
       function updateSnapshotFields(){
@@ -999,9 +999,9 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
       body.appendChild(msgDiv);
       var reasonTemplates={
         'Nunca acessou':{subject:tr('tpl_never_subject'),body:tr('tpl_never_body')},
-        'Baixa participaÃ§Ã£o':{subject:tr('tpl_eng_subject'),body:tr('tpl_eng_body')},
-        'PendÃªncia acadÃªmica':{subject:tr('tpl_task_subject'),body:tr('tpl_task_body')},
-        'Dificuldade acadÃªmica':{subject:tr('tpl_difficulty_subject'),body:tr('tpl_difficulty_body')},
+        'Baixa participação':{subject:tr('tpl_eng_subject'),body:tr('tpl_eng_body')},
+        'Pendência acadêmica':{subject:tr('tpl_task_subject'),body:tr('tpl_task_body')},
+        'Dificuldade acadêmica':{subject:tr('tpl_difficulty_subject'),body:tr('tpl_difficulty_body')},
         'Outro':{subject:tr('tpl_other_subject'),body:tr('tpl_other_body')}
       };
       var selectedTargetOptions=[];
@@ -1036,13 +1036,13 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
         });
       }
       function targetTypeForReason(reason){
-        if(reason==='PendÃªncia acadÃªmica')return 'activity_completion';
-        if(reason==='Baixa participaÃ§Ã£o')return 'resource_access';
+        if(reason==='Pendência acadêmica')return 'activity_completion';
+        if(reason==='Baixa participação')return 'resource_access';
         if(reason==='Nunca acessou')return 'access_after_message';
         return '';
       }
       function reasonUsesTargetItems(reason){
-        return reason==='PendÃªncia acadÃªmica'||reason==='Baixa participaÃ§Ã£o';
+        return reason==='Pendência acadêmica'||reason==='Baixa participação';
       }
       function updateTargetMessage(){
         var tpl=reasonTemplates[reasonSel.value];
@@ -1060,8 +1060,8 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
       function ensureFirstNameToken(text){
         var value=String(text||'').trim().replace(/\{\{\s*firstname\s*\}\}/gi,'{firstname}');
         if(/\{firstname\}/i.test(value))return value;
-        value=value.replace(/^\s*(olÃ¡|ola|oi)\s*,?\s*(pessoal|turma|estudantes|alunos)\s*[!,.:â€“â€”-]*\s*/i,'');
-        return 'OlÃ¡, {firstname}!\n\n'+value;
+        value=value.replace(/^\s*(olá|ola|oi)\s*,?\s*(pessoal|turma|estudantes|alunos)\s*[!,.:–—-]*\s*/i,'');
+        return 'Olá, {firstname}!\n\n'+value;
       }
       function targetItemsHtml(items){
         items=(items||[]).filter(function(item){return item&&item.name;});
@@ -1084,7 +1084,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
       function renderTargetOptions(){
         var reason=reasonSel.value;
         selectedTargetOptions=[];
-        if(reason!=='PendÃªncia acadÃªmica'&&reason!=='Baixa participaÃ§Ã£o'){
+        if(reason!=='Pendência acadêmica'&&reason!=='Baixa participação'){
           targetSelectDiv.style.display='none';
           targetSelectList.replaceChildren();
           return;
@@ -1230,7 +1230,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
         var requiresTargets=reasonUsesTargetItems(reason);
         var checkedKeys=selectedTargetKeys();
         if(requiresTargets&&!checkedKeys.length){
-          Store.notify(tr('msg_target_required','Selecione pelo menos uma atividade ou conteÃºdo para acompanhar.'),'warning');
+          Store.notify(tr('msg_target_required','Selecione pelo menos uma atividade ou conteúdo para acompanhar.'),'warning');
           return;
         }
         var preparedTargets=selectedTargets.map(function(t){
@@ -1364,7 +1364,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
         }).catch(function(e){
           aiBtn.disabled=false;
           aiBtn.textContent='\u2728 '+tr('msg_ai_generate');
-          Store.notify('AtenÃ§Ã£o: '+e.message,'error');
+          Store.notify('Atenção: '+e.message,'error');
         });
       };
 

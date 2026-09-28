@@ -33,18 +33,18 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
         if(String(language||'').indexOf('pt')!==0||!label)return label;
         var translations={
             'Submission graded':'Entrega avaliada',
-            'Course module viewed':'MÃ³dulo do curso visualizado',
+            'Course module viewed':'Módulo do curso visualizado',
             'Submission submitted':'Entrega enviada',
             'File uploaded':'Arquivo enviado',
-            'Quiz attempt submitted':'Tentativa do questionÃ¡rio enviada',
-            'Quiz attempt started':'Tentativa do questionÃ¡rio iniciada',
+            'Quiz attempt submitted':'Tentativa do questionário enviada',
+            'Quiz attempt started':'Tentativa do questionário iniciada',
             'Course viewed':'Curso visualizado',
-            'Forum post created':'PublicaÃ§Ã£o no fÃ³rum criada',
-            'Discussion created':'DiscussÃ£o criada',
-            'Discussion viewed':'DiscussÃ£o visualizada',
-            'User logged in':'UsuÃ¡rio entrou no Moodle',
-            'User logged out':'UsuÃ¡rio saiu do Moodle',
-            'Content created':'ConteÃºdo criado'
+            'Forum post created':'Publicação no fórum criada',
+            'Discussion created':'Discussão criada',
+            'Discussion viewed':'Discussão visualizada',
+            'User logged in':'Usuário entrou no Moodle',
+            'User logged out':'Usuário saiu do Moodle',
+            'Content created':'Conteúdo criado'
         };
         Object.keys(translations).forEach(function(english){
             label=label.replace(new RegExp(english,'gi'),translations[english]);
@@ -223,9 +223,9 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
                 nome:n,
                 diasSemAcesso:ago==null?'never accessed':ago,
                 interacoes:interactions,
-                engScore:score!=null?score+'%':'â€”',
-                notaTotal:grade!=null?grade.toFixed(1):'â€”',
-                notasPorAtividade:actGradeStr||'â€”',
+                engScore:score!=null?score+'%':'—',
+                notaTotal:grade!=null?grade.toFixed(1):'—',
+                notasPorAtividade:actGradeStr||'—',
             };
         });
 
@@ -236,18 +236,18 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
             if(!isPortuguese||!label)return label;
             var translations={
                 'Submission graded':'Entrega avaliada',
-                'Course module viewed':'MÃ³dulo do curso visualizado',
+                'Course module viewed':'Módulo do curso visualizado',
                 'Submission submitted':'Entrega enviada',
                 'File uploaded':'Arquivo enviado',
-                'Quiz attempt submitted':'Tentativa do questionÃ¡rio enviada',
-                'Quiz attempt started':'Tentativa do questionÃ¡rio iniciada',
+                'Quiz attempt submitted':'Tentativa do questionário enviada',
+                'Quiz attempt started':'Tentativa do questionário iniciada',
                 'Course viewed':'Curso visualizado',
-                'Forum post created':'PublicaÃ§Ã£o no fÃ³rum criada',
-                'Discussion created':'DiscussÃ£o criada',
-                'Discussion viewed':'DiscussÃ£o visualizada',
-                'User logged in':'UsuÃ¡rio entrou no Moodle',
-                'User logged out':'UsuÃ¡rio saiu do Moodle',
-                'Content created':'ConteÃºdo criado'
+                'Forum post created':'Publicação no fórum criada',
+                'Discussion created':'Discussão criada',
+                'Discussion viewed':'Discussão visualizada',
+                'User logged in':'Usuário entrou no Moodle',
+                'User logged out':'Usuário saiu do Moodle',
+                'Content created':'Conteúdo criado'
             };
             Object.keys(translations).forEach(function(english){
                 label=label.replace(new RegExp(english,'gi'),translations[english]);
@@ -465,7 +465,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
                 atividadesAvaliativas:gradedActivities.length,
                 pendenciasAvaliativas:gradedPendingTotal,
                 recursosBaixaCobertura:lowCoverageActivities.length,
-                horarioPico:peakHour?peakHour+'h':'â€”',
+                horarioPico:peakHour?peakHour+'h':'—',
                 atividadesComNota:gradedActivities.slice(0,ACTIVITY_CAP),
                 atividadesAvaliativasDetalhes:gradedMeta.slice(0,ACTIVITY_CAP),
                 baixaCobertura:lowCoverageActivities.slice(0,ACTIVITY_CAP),
@@ -653,7 +653,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
 
         var cfg_s=Store.getConfig?Store.getConfig():{};
         if(!cfg_s.ia_enabled){
-            alert(tr('ai_unavailable_message', 'ðŸ”’ Artificial Intelligence features are unavailable. Configure a valid API key in MWA administration.'));
+            alert(tr('ai_unavailable_message', '🔒 Artificial Intelligence features are unavailable. Configure a valid API key in MWA administration.'));
             return;
         }
         if(!hasClassData()){
@@ -673,7 +673,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
         if(!CUR_ID)newConv();
         var conv=getCur();if(!conv)return;
         conv.messages.push({role:'user',content:text});
-        if(conv.messages.length===1)conv.title=text.slice(0,35)+(text.length>35?'â€¦':'');
+        if(conv.messages.length===1)conv.title=text.slice(0,35)+(text.length>35?'…':'');
         if(input){input.value='';input.style.height='auto';}
         var sugEl=$('chatSuggestions');if(sugEl)sugEl.replaceChildren();
         renderMessages();
@@ -693,9 +693,9 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
         var courseName=(ctx&&ctx.curso&&ctx.curso.nomeCurso)||tr('chat_unknown_course', 'not identified');
         var lang=cfg.language||'pt_br';
         var langInstr=lang.indexOf('pt')===0
-            ?tr('chat_lang_instr_pt','Responda sempre em portuguÃªs brasileiro, de forma direta e prÃ¡tica.')
+            ?tr('chat_lang_instr_pt','Responda sempre em português brasileiro, de forma direta e prática.')
             :lang.indexOf('es')===0
-            ?tr('chat_lang_instr_es','Responda siempre en espaÃ±ol, de forma directa y prÃ¡ctica.')
+            ?tr('chat_lang_instr_es','Responda siempre en español, de forma directa y práctica.')
             :'Always respond in English, in a direct and practical way.';
         var langLabel=lang.indexOf('pt')===0?'portuguese-br':lang.indexOf('es')===0?'spanish':'english';
 
@@ -757,7 +757,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/log', 'core/templates'], fun
         var rendered=renderTemplate(el, 'chat_chips', {chips:chips});
         var sub=$('chatConvSub');
         if(sub)sub.textContent=(logs.length || grades.length || (state.students||[]).length)
-            ?tr('chat_data_ready', 'Data loaded â€” ready to analyse')
+            ?tr('chat_data_ready', 'Data loaded — ready to analyse')
             :tr('chat_no_data_sub', 'Load data to activate chat');
         return rendered;
     }

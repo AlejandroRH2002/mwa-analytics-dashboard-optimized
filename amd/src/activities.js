@@ -21,7 +21,7 @@
 
 /**
  * Note: This module generates HTML markup directly in JavaScript strings for
- * performance reasons ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â the dashboard renders large dynamic datasets (student lists,
+ * performance reasons Ã¢â‚¬â€ the dashboard renders large dynamic datasets (student lists,
  * heatmaps, charts) that require frequent partial updates. All user-supplied data is
  * escaped via the esc() helper before insertion into the DOM.
  * See: https://docs.moodle.org/dev/JavaScript_Modules#HTML_generation
@@ -65,7 +65,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
         var ctx = norm(r.contextodoevento || r.eventcontext || r.context || '');
         var ev = eventName(r);
         var name = ctx || ev || 'Outro';
-        return name.replace(/^(quiz|question[aÃƒÆ’Ã‚Â¡]rio|assignment|tarefa|forum|f[oÃƒÆ’Ã‚Â³]rum|page|p[aÃƒÆ’Ã‚Â¡]gina|resource|recurso|file|arquivo|h5p|hvp|conte[uÃƒÆ’Ã‚Âº]do interativo|conte.{0,4}do interativo|interactive content)\s*:\s*/i, '');
+        return name.replace(/^(quiz|question[aÃƒÂ¡]rio|assignment|tarefa|forum|f[oÃƒÂ³]rum|page|p[aÃƒÂ¡]gina|resource|recurso|file|arquivo|h5p|hvp|conte[uÃƒÂº]do interativo|conte.{0,4}do interativo|interactive content)\s*:\s*/i, '');
       }
       function lowerText(r) {
         return [
@@ -80,15 +80,15 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
         var text = lowerText(r);
         return text.indexOf('h5p') >= 0 ||
                text.indexOf('hvp') >= 0 ||
-               text.indexOf('conteÃƒÆ’Ã‚Âºdo interativo') >= 0 ||
-               text.indexOf('conteÃƒÆ’Ã‚Â£Ãƒâ€šÃ‚Âºdo interativo') >= 0 ||
+               text.indexOf('conteÃƒÂºdo interativo') >= 0 ||
+               text.indexOf('conteÃƒÂ£Ã‚Âºdo interativo') >= 0 ||
                text.indexOf('conte') >= 0 && text.indexOf('interativo') >= 0 ||
                text.indexOf('interactive content') >= 0;
       }
       function isManagementEvent(r) {
         var ev = eventName(r).toLowerCase();
-        return ev.indexOf('mÃƒÆ’Ã‚Â³dulo de curso atualizado') >= 0 ||
-               ev.indexOf('mÃƒÆ’Ã‚Â³dulo de curso criado') >= 0 ||
+        return ev.indexOf('mÃƒÂ³dulo de curso atualizado') >= 0 ||
+               ev.indexOf('mÃƒÂ³dulo de curso criado') >= 0 ||
                ev.indexOf('course module updated') >= 0 ||
                ev.indexOf('course module created') >= 0;
       }
@@ -197,7 +197,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
         var modtype = (r._modtype||'').toLowerCase();
         var ev   = eventName(r).toLowerCase();
         if (modtype === 'label' || comp === 'label' ||
-            comp.indexOf('ÃƒÂ¡rea de mÃƒÂ­dia e texto') >= 0 ||
+            comp.indexOf('Ã¡rea de mÃ­dia e texto') >= 0 ||
             comp.indexOf('area de midia e texto') >= 0 ||
             comp.indexOf('text and media area') >= 0) {
           return 'login';
@@ -210,13 +210,13 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
 
         /* Post/entry based: the student contributes an item. */
         if (MOD_FORUM[modtype] || MOD_FORUM[comp] ||
-            comp === 'fÃƒÆ’Ã‚Â³rum' || comp === 'glossÃƒÆ’Ã‚Â¡rio' || comp === 'base de dados' || comp === 'quadro')
+            comp === 'fÃƒÂ³rum' || comp === 'glossÃƒÂ¡rio' || comp === 'base de dados' || comp === 'quadro')
           return 'forum';
 
         /* File/text submission based. */
         if (MOD_TAREFA[modtype] || MOD_TAREFA[comp] ||
-            comp === 'tarefa' || comp === 'diÃƒÆ’Ã‚Â¡rio' || comp === 'laboraÃƒÆ’Ã‚Â³rio de avaliaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o' ||
-            comp === 'laboratÃƒÆ’Ã‚Â³rio virtual de programaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o')
+            comp === 'tarefa' || comp === 'diÃƒÂ¡rio' || comp === 'laboraÃƒÂ³rio de avaliaÃƒÂ§ÃƒÂ£o' ||
+            comp === 'laboratÃƒÂ³rio virtual de programaÃƒÂ§ÃƒÂ£o')
           return 'tarefa';
 
         /* H5P has its own bucket, separate from quiz/lesson/SCORM. */
@@ -228,17 +228,17 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
 
         /* Attempt based. */
         if (MOD_QUIZ[modtype] || MOD_QUIZ[comp] ||
-            comp === 'questionÃƒÆ’Ã‚Â¡rio' || comp === 'questionario' || comp === 'pacote h5p' ||
-            comp === 'scorm package' || comp === 'liÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o' || comp === 'escolha' ||
+            comp === 'questionÃƒÂ¡rio' || comp === 'questionario' || comp === 'pacote h5p' ||
+            comp === 'scorm package' || comp === 'liÃƒÂ§ÃƒÂ£o' || comp === 'escolha' ||
             comp === 'escolha um grupo' || comp === 'jogo' || comp === 'pesquisa' ||
-            comp === 'pesquisa de avaliaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o' || comp === 'presenÃƒÆ’Ã‚Â§a' || comp === 'questionÃƒÆ’Ã‚Â¡rio' ||
+            comp === 'pesquisa de avaliaÃƒÂ§ÃƒÂ£o' || comp === 'presenÃƒÂ§a' || comp === 'questionÃƒÂ¡rio' ||
             comp === 'sala de aula - webconf' ||
             ev.indexOf('xapi') >= 0 || ev.indexOf('attempt') >= 0)
           return 'quiz';
 
         /* Consume-only resources. */
         if (MOD_RESOURCE[modtype] || MOD_RESOURCE[comp] ||
-            comp === 'pÃƒÆ’Ã‚Â¡gina' || comp === 'livro' || comp === 'arquivo' || comp === 'pasta' || comp === 'rÃƒÆ’Ã‚Â³tulo')
+            comp === 'pÃƒÂ¡gina' || comp === 'livro' || comp === 'arquivo' || comp === 'pasta' || comp === 'rÃƒÂ³tulo')
           return 'video';
 
         /* Anything else that is still a real course module (a plugin we do not
@@ -259,8 +259,8 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
         if (/^curso\s*:/i.test(n)) return true;
         if (/^sistema$/i.test(n)) return true;
         if (/^system$/i.test(n)) return true;
-        if (/^ÃƒÆ’Ã‚Â¡rea de texto/i.test(n)) return true;
-        if (/^mÃƒÆ’Ã‚Â­dia/i.test(n)) return true;
+        if (/^ÃƒÂ¡rea de texto/i.test(n)) return true;
+        if (/^mÃƒÂ­dia/i.test(n)) return true;
         return false;
       }
     
@@ -287,7 +287,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
                  ev.indexOf('xapi') >= 0;
         }
 
-        if (comp === 'quiz' || comp === 'game' || comp === 'jogo' || comp === 'questionÃƒÆ’Ã‚Â¡rio' || comp === 'questionario' || comp === 'h5p' || comp === 'hvp' ||
+        if (comp === 'quiz' || comp === 'game' || comp === 'jogo' || comp === 'questionÃƒÂ¡rio' || comp === 'questionario' || comp === 'h5p' || comp === 'hvp' ||
             comp.indexOf('h5p') >= 0 || comp.indexOf('hvp') >= 0 ||
             comp === 'scorm package' || comp === 'lesson') {
           return ev === 'quiz attempt submitted' ||
@@ -307,7 +307,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
                  ev.includes('enviou a tentativa');
         }
     
-        if (comp === 'forum' || comp === 'fÃƒÆ’Ã‚Â³rum') {
+        if (comp === 'forum' || comp === 'fÃƒÂ³rum') {
           return ev === 'forum post created' ||
                  ev === 'discussion created' ||
                  ev === 'content created' ||
@@ -1276,8 +1276,8 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
               var totalStu = d.allStudentsCount || (d.concludedSt.length + d.pendingSt.length + d.notAccessedSt.length);
               var engData = [
                 'Cobertura de acesso: ' + d.pct + '% (' + (d.concludedSt.length + d.pendingSt.length) + '/' + totalStu + ' alunos acessaram)',
-                'ConclusÃ£o/entrega: '   + d.concPct + '% (' + d.concludedSt.length + '/' + totalStu + ' concluÃ­ram)',
-                'Viram mas nÃ£o concluÃ­ram: ' + d.pendingSt.length,
+                'Conclusão/entrega: '   + d.concPct + '% (' + d.concludedSt.length + '/' + totalStu + ' concluíram)',
+                'Viram mas não concluíram: ' + d.pendingSt.length,
                 'Sem nenhum acesso: '   + d.notAccessedSt.length,
               ].join('\n');
 
@@ -1285,63 +1285,63 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
 
               if (actContent) {
                 var trimmedContent = actContent.length > 4500
-                  ? actContent.substring(0, 4500) + '\\n[...conteÃºdo resumido]'
+                  ? actContent.substring(0, 4500) + '\\n[...conteúdo resumido]'
                   : actContent;
 
                 promptParts.push(
-                  'Analise esta ' + modDesc + ' do Moodle. Responda em portuguÃªs, sem markdown.'
+                  'Analise esta ' + modDesc + ' do Moodle. Responda em português, sem markdown.'
                 );
                 promptParts.push('');
-                promptParts.push('Escreva 2 seÃ§Ãµes:');
+                promptParts.push('Escreva 2 seções:');
                 promptParts.push('');
-                promptParts.push('1. DIAGNÃ“STICO');
-                promptParts.push('Avalie o que estÃ¡ sendo pedido e avaliado. Cruze com o engajamento.');
+                promptParts.push('1. DIAGNÓSTICO');
+                promptParts.push('Avalie o que está sendo pedido e avaliado. Cruze com o engajamento.');
                 if (modtype === 'forum') {
-                  promptParts.push('IMPORTANTE: Resuma o que os alunos discutiram â€” temas centrais, argumentos, convergÃªncias, lacunas. Avalie se a reflexÃ£o foi suficiente.');
+                  promptParts.push('IMPORTANTE: Resuma o que os alunos discutiram — temas centrais, argumentos, convergências, lacunas. Avalie se a reflexão foi suficiente.');
                 } else if (modtype === 'quiz') {
-                  promptParts.push('IMPORTANTE: Avalie somente as configuraÃ§Ãµes e os dados agregados do questionÃ¡rio. Enunciados, alternativas e gabaritos nÃ£o sÃ£o enviados.');
+                  promptParts.push('IMPORTANTE: Avalie somente as configurações e os dados agregados do questionário. Enunciados, alternativas e gabaritos não são enviados.');
                 } else if (modtype === 'assign') {
-                  promptParts.push('IMPORTANTE: Avalie clareza do enunciado, critÃ©rios de avaliaÃ§Ã£o, prazos, tentativas, forma de entrega.');
+                  promptParts.push('IMPORTANTE: Avalie clareza do enunciado, critérios de avaliação, prazos, tentativas, forma de entrega.');
                 }
                 // YouTube videos detected in content
-                if (actContent.indexOf('VÃDEO DO YOUTUBE DETECTADO') >= 0) {
-                  promptParts.push('IMPORTANTE: Foi detectado um vÃ­deo do YouTube. Use as informaÃ§Ãµes extraÃ­das (tÃ­tulo, canal, descriÃ§Ã£o) para avaliar se o vÃ­deo Ã© adequado ao objetivo pedagÃ³gico e se estÃ¡ alinhado com o tema do curso. Afirme com base nos dados â€” nÃ£o use expressÃµes como "parece ter" ou "possivelmente". Se as informaÃ§Ãµes forem insuficientes, pesquise sobre o vÃ­deo usando a URL fornecida.');
+                if (actContent.indexOf('VÍDEO DO YOUTUBE DETECTADO') >= 0) {
+                  promptParts.push('IMPORTANTE: Foi detectado um vídeo do YouTube. Use as informações extraídas (título, canal, descrição) para avaliar se o vídeo é adequado ao objetivo pedagógico e se está alinhado com o tema do curso. Afirme com base nos dados — não use expressões como "parece ter" ou "possivelmente". Se as informações forem insuficientes, pesquise sobre o vídeo usando a URL fornecida.');
                 }
                 if (modtype === 'page' || modtype === 'url' || modtype === 'resource') {
-                  promptParts.push('IMPORTANTE: Avalie se o conteÃºdo/recurso Ã© adequado, se a estrutura Ã© clara, se estÃ¡ alinhado com o objetivo do curso. Se houver links ou vÃ­deos, avalie se complementam bem o conteÃºdo.');
+                  promptParts.push('IMPORTANTE: Avalie se o conteúdo/recurso é adequado, se a estrutura é clara, se está alinhado com o objetivo do curso. Se houver links ou vídeos, avalie se complementam bem o conteúdo.');
                 }
                 promptParts.push('');
-                promptParts.push('2. SUGESTÃ•ES DE MELHORIA');
-                promptParts.push('3 a 5 melhorias concretas. Referencie trechos especÃ­ficos do conteÃºdo. Nunca diga que estÃ¡ bom â€” sempre melhore algo.');
+                promptParts.push('2. SUGESTÕES DE MELHORIA');
+                promptParts.push('3 a 5 melhorias concretas. Referencie trechos específicos do conteúdo. Nunca diga que está bom — sempre melhore algo.');
                 if (modtype === 'quiz') {
-                  promptParts.push('Sugira melhorias gerais de configuraÃ§Ã£o e estratÃ©gia avaliativa, sem inferir ou solicitar o conteÃºdo das questÃµes.');
+                  promptParts.push('Sugira melhorias gerais de configuração e estratégia avaliativa, sem inferir ou solicitar o conteúdo das questões.');
                 } else if (modtype === 'forum') {
-                  promptParts.push('Sugira como aprofundar a discussÃ£o e melhorar a qualidade dos posts.');
+                  promptParts.push('Sugira como aprofundar a discussão e melhorar a qualidade dos posts.');
                 }
-                if (actContent.indexOf('VÃDEO DO YOUTUBE DETECTADO') >= 0) {
-                  promptParts.push('Para vÃ­deos: sugira se deveria haver atividade complementar (quiz, fÃ³rum, resumo), se hÃ¡ vÃ­deos alternativos ou complementares que enriqueceriam o aprendizado.');
+                if (actContent.indexOf('VÍDEO DO YOUTUBE DETECTADO') >= 0) {
+                  promptParts.push('Para vídeos: sugira se deveria haver atividade complementar (quiz, fórum, resumo), se há vídeos alternativos ou complementares que enriqueceriam o aprendizado.');
                 }
                 promptParts.push('');
                 promptParts.push('--- ENGAJAMENTO ---');
                 promptParts.push(d.title + ' (' + modDesc + ')');
                 promptParts.push(engData);
                 promptParts.push('');
-                promptParts.push('--- CONTEÃšDO DA ATIVIDADE (leia com atenÃ§Ã£o antes de responder) ---');
+                promptParts.push('--- CONTEÚDO DA ATIVIDADE (leia com atenção antes de responder) ---');
                 promptParts.push(trimmedContent);
               } else {
                 /* Without content, base the diagnosis on engagement data only. */
                 promptParts.push(
-                  'VocÃª Ã© um especialista em Learning Analytics para EaD no Moodle. ' +
-                  'Analise esta ' + modDesc + ' com base nos dados de engajamento e responda em portuguÃªs, sem markdown pesado.'
+                  'Você é um especialista em Learning Analytics para EaD no Moodle. ' +
+                  'Analise esta ' + modDesc + ' com base nos dados de engajamento e responda em português, sem markdown pesado.'
                 );
                 promptParts.push('');
                 promptParts.push('Atividade: ' + d.title);
                 promptParts.push('Tipo: ' + modDesc);
                 promptParts.push(engData);
                 promptParts.push('');
-                promptParts.push('FaÃ§a duas partes:');
-                promptParts.push('1. DIAGNÃ“STICO â€” o que os dados indicam sobre o engajamento e possÃ­veis causas.');
-                promptParts.push('2. SUGESTÃ•ES DE MELHORIA â€” 3 melhorias concretas na atividade para aumentar participaÃ§Ã£o, conclusÃ£o ou qualidade das interaÃ§Ãµes.');
+                promptParts.push('Faça duas partes:');
+                promptParts.push('1. DIAGNÓSTICO — o que os dados indicam sobre o engajamento e possíveis causas.');
+                promptParts.push('2. SUGESTÕES DE MELHORIA — 3 melhorias concretas na atividade para aumentar participação, conclusão ou qualidade das interações.');
               }
 
               var prompt = promptParts.join('\n');
@@ -1362,7 +1362,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
               btnAi.textContent = '';
               var generateIcon = document.createElement('span');
               generateIcon.setAttribute('aria-hidden', 'true');
-              generateIcon.textContent = 'âœ¨';
+              generateIcon.textContent = '✨';
               btnAi.appendChild(generateIcon);
               btnAi.appendChild(document.createTextNode(' ' + tr('act_ai_generate')));
             });
