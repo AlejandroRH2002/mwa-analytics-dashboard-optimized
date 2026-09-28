@@ -77,7 +77,6 @@ $string['nav_today'] = 'Today';
 $string['nav_students'] = 'Students';
 $string['nav_content'] = 'Content';
 $string['nav_analysis'] = 'Analysis';
-$string['nav_ai'] = 'AI';
 $string['nav_report'] = 'Report';
 $string['nav_action_center'] = 'Action Center';
 $string['nav_alerts'] = 'Alerts';
@@ -89,7 +88,6 @@ $string['nav_content_analysis'] = 'Content Analysis';
 $string['nav_access_heatmap'] = 'Access Heatmap';
 $string['nav_engagement'] = 'Engagement Prediction';
 $string['nav_personalised_plan'] = 'Personalised Plan';
-$string['nav_chat'] = 'Chat with Class';
 $string['sidebar_collapse'] = 'Collapse sidebar';
 $string['sidebar_expand'] = 'Expand sidebar';
 $string['nav_contact_report'] = 'Contact Report';
@@ -200,7 +198,6 @@ $string['placeholder_student_profile'] = 'Student profile area. Functionality wi
 $string['placeholder_content_analysis'] = 'Content analysis area. Functionality will be added next.';
 $string['placeholder_engagement'] = 'Engagement prediction area. Functionality will be added next.';
 $string['placeholder_personalised'] = 'Personalised plan area. Functionality will be added next.';
-$string['placeholder_chat'] = 'Class chat area. Functionality will be added next.';
 $string['feature_placeholder'] = 'Feature placeholder';
 $string['feature_coming_soon'] = 'This feature will be implemented in the next steps.';
 $string['no_data'] = 'No data available.';
@@ -1116,28 +1113,6 @@ $string['pl_day_fri'] = 'Friday';
 $string['pl_day_sat'] = 'Saturday';
 $string['pl_msg_btn'] = 'Message';
 
-// ── Chat com a turma ──
-$string['chat_history'] = 'Conversations';
-$string['chat_new_conv'] = 'New conversation';
-$string['chat_context_label'] = 'Context';
-$string['chat_assistant_name'] = 'Class assistant';
-$string['chat_assistant_tip'] = 'Use this assistant to analyse class indicators and privacy-safe pseudonymised educational profiles without sending real student identities to external AI.';
-$string['chat_no_data_sub'] = 'Load data to activate chat';
-$string['chat_data_ready'] = 'Data loaded — ready to analyse';
-$string['chat_input_placeholder'] = 'Ask about the class, request analyses or reports...';
-$string['chat_no_convs'] = 'No conversations';
-$string['chat_welcome_data'] = 'Hello! I receive aggregate indicators and privacy-safe pseudonymised educational profiles. Real student identities remain inside Moodle and are restored locally in the response.';
-$string['chat_welcome_nodata'] = 'Hello! Load class data so I can analyse and answer questions about students.';
-$string['chat_sug1'] = 'How large is the at-risk group this week?';
-$string['chat_sug2'] = 'Which collective patterns need attention today?';
-$string['chat_sug3'] = 'How is the overall class engagement?';
-$string['chat_sug4'] = 'Write a general message for the low-performing group';
-$string['chat_sug5'] = 'How have the class indicators changed recently?';
-$string['chat_sug6'] = 'Make an executive summary of the class';
-$string['chat_load_data_first'] = 'Load class data first.';
-$string['chat_no_reply'] = 'Could not generate a response. Please try again.';
-$string['chat_error'] = 'Error connecting to AI';
-$string['chat_no_data'] = 'No data';
 
 // ── Configurações da IA ──
 $string['settings_ia_heading'] = 'AI provider credentials (optional)';
@@ -1158,10 +1133,6 @@ $string['settings_ia_test_button'] = 'Test connection';
 $string['settings_ia_test_page_desc'] = 'This test validates the provider, model and key using a technical request without personal or educational data.';
 $string['settings_ia_test_success'] = 'Connection succeeded with {$a->provider} using model {$a->model}.';
 $string['settings_ia_test_failure'] = 'Could not connect to the provider.';
-$string['chat_unknown_course'] = 'unidentified';
-$string['chat_all_period'] = 'entire period';
-$string['chat_ia_not_configured'] = 'AI not configured';
-$string['chat_ia_not_configured_alert'] = 'AI is not configured. Select a provider, enter its API key, choose a model and save the settings.';
 
 // ── Action Center: retention drill-down ──
 $string['ret_drill_active_students'] = '{n} active students';
@@ -1374,14 +1345,6 @@ $string['privacy:metadata:external:ia:quiz_questions'] = 'Quiz question text is 
 $string['privacy:metadata:external:ia:quiz_answers_and_correctness'] = 'Quiz alternatives, answers and correctness markers are explicitly withheld inside Moodle and are not transmitted to the external AI provider.';
 $string['privacy:metadata:external:ia:course_resource_content'] = 'Full or extracted content from course pages, books, resources and H5P activities used for pedagogical analysis.';
 $string['privacy:metadata:external:ia:intervention_history'] = 'Previous pedagogical interventions, notes, messages and outcome indicators used to support follow-up analysis.';
-$string['privacy:metadata:external:chat'] = 'The official DeepSeek, OpenAI, Google Gemini, Anthropic or OpenRouter API selected by the institution for analysis and pedagogical decision support. Transmission occurs only when AI is enabled. Chat receives aggregate class data and, when pedagogically required, minimised individual educational metrics linked only to request-scoped pseudonyms; real names and direct identifiers are not transmitted. Processing occurs in the infrastructure and location defined by the selected provider, without an MWA intermediary.';
-$string['privacy:metadata:external:chat:messages'] = 'Conversation messages sent by the teacher. Names and email addresses of enrolled students are removed before transmission. The plugin does not persist the conversation on the server after the response.';
-$string['privacy:metadata:external:chat:conversation_history'] = 'The conversation history included in the current request so the provider can answer in context. The plugin does not persist this history on the server after the response.';
-$string['privacy:metadata:external:chat:class_counts'] = 'Aggregate counts such as students, interactions, approvals, pending items and students at risk or without recent access.';
-$string['privacy:metadata:external:chat:class_averages'] = 'Aggregate class averages such as grades, interactions, coverage and completion.';
-$string['privacy:metadata:external:chat:risk_counts'] = 'The aggregate number of students in risk groups, without individual identification.';
-$string['privacy:metadata:external:chat:activity_metrics'] = 'Activity names and aggregate metrics such as accesses, coverage and the number of students missing.';
-$string['privacy:metadata:external:chat:peak_access_time'] = 'The access peak hour or time range calculated for the class.';
 
 // ── Privacy metadata — messages table ──
 $string['privacy:metadata:messages']                     = 'Stores pedagogical intervention messages sent by teachers to students through the MWA Dashboard. Each record links the sending teacher, the receiving student and the course.';
@@ -1449,19 +1412,11 @@ $string['sp_tl_90d']           = 'Last 90 days';
 $string['sp_tl_all']           = 'Full history';
 $string['sp_tl_show_more']     = 'Show more';
 $string['sp_tl_show_less']     = 'Show less';
-$string['chat_delete_conv']    = 'Delete';
-$string['chat_delete_icon']    = '×';
 $string['close_icon']          = '×';
 
 // ── Hardcoded strings fix — final sweep ──
 $string['ac_concluded']                  = '✓ Completed';
 $string['int_tpl_dropout_risk']          = 'Dropout risk';
-$string['chat_alert_viewed_not_submitted']= 'Viewed but not submitted: ';
-$string['chat_alert_symbolic']           = 'Symbolic access: ';
-$string['chat_alert_night_owls']         = 'Night owls: ';
-$string['chat_unknown_course']           = 'not identified';
-$string['chat_lang_instr_pt']            = 'Responda sempre em português brasileiro, de forma direta e prática.';
-$string['chat_lang_instr_es']            = 'Responda siempre en español, de forma directa y práctica.';
 
 // Tooltips - Individual profile.
 $string['sp_tip_last_access']        = 'Shows how many days have passed since the student last accessed the course.';
@@ -1970,11 +1925,10 @@ $string['tf_ai_continuity_no']       = 'not recorded';
 
 $string['tf_donut_info'] = 'Only considers students who received an intervention with a historical snapshot.';
 $string['settings_ia_enabled'] = 'Enable external AI processing';
-$string['settings_ia_enabled_desc'] = 'Explicitly authorises direct transmission of minimised educational data to the selected provider for analysis, recommendations and pedagogical decision support. Individual recommendations and individual chat analysis use Moodle-side pseudonymisation; direct identifiers and submission content are excluded. Enable only after institutional privacy, contractual, retention and international-transfer reviews.';
+$string['settings_ia_enabled_desc'] = 'Explicitly authorises direct transmission of minimised educational data to the selected provider for analysis, recommendations and pedagogical decision support. Individual recommendations use Moodle-side pseudonymisation; direct identifiers and submission content are excluded. Enable only after institutional privacy, contractual, retention and international-transfer reviews.';
 $string['ai_unavailable_message'] = '🔒 Artificial Intelligence features are unavailable. Configure a valid API key in MWA administration.';
 $string['ai_configuration_incomplete'] = $string['ai_unavailable_message'];
 $string['ai_disabled'] = $string['ai_unavailable_message'];
-$string['chat_ia_not_configured_alert'] = $string['ai_unavailable_message'];
 $string['tf_ai_not_configured'] = 'AI features unavailable';
 $string['tf_ai_not_configured_sub'] = $string['ai_unavailable_message'];
 $string['settings_ia_credential_button'] = 'Configure provider credential';
@@ -2055,7 +2009,6 @@ $string['settings_ia_quickstart_step3'] = 'Click Save. The credential field will
 $string['settings_ia_quickstart_step4'] = 'Enter the credential obtained directly from your chosen provider and save.';
 $string['settings_ia_quickstart_step5'] = 'Use the "Test connection" button to confirm everything is working.';
 
-$string['privacy:metadata:external:chat:pseudonymised_student_metrics'] = 'Minimised educational metrics such as grade, interactions, engagement, access, completion and pending activity indicators linked only to a request-scoped pseudonym created inside Moodle.';
 $string['close'] = 'Close';
 $string['tf_ir_open'] = 'Evolution report';
 $string['tf_ir_title'] = 'Individual report';
@@ -2120,10 +2073,6 @@ $string['tf_ir_still_not_approved'] = 'The student has not passed yet.';
 $string['tf_ir_remains_approved'] = 'The student had already passed and remains approved.';
 $string['dashboard_updated_at'] = 'Updated at';
 $string['return_to_course'] = 'Return to course';
-$string['chat_reload_error'] = 'The class data could not be refreshed';
-$string['chat_reload_data'] = 'Refresh class data';
-$string['chat_reloading_data'] = 'Refreshing class data...';
-$string['chat_load_data_error'] = 'The class data could not be loaded. Check the browser console to identify the service with a problem.';
 $string['ctxextract_error'] = 'Could not extract the content: {$a}';
 $string['ctxextract_unsupported_type'] = 'Unsupported file type for text extraction: {$a}';
 $string['loading'] = 'Loading...';

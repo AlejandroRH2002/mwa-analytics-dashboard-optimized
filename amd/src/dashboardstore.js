@@ -68,7 +68,7 @@ define([], function() {
             return Promise.reject(new Error('Dashboard AJAX bridge is not available.'));
         }
         var actionArgs = args || {};
-        var aiReadOnlyActions = ['get_ai_recommendation', 'chat_message'];
+        var aiReadOnlyActions = ['get_ai_recommendation'];
         var canRetry = aiReadOnlyActions.indexOf(method) !== -1;
         var isTransientFailure = function(error) {
             var details = [
@@ -321,7 +321,7 @@ define([], function() {
         }
         facade = {};
         defineFacadeProperty(facade, 'MWADashboard', function() { return dashboard; }, setDashboard);
-        ['MWAActionCenter', 'MWAAlerts', 'MWAClassList', 'MWAProfile', 'MWAActivities', 'MWAGrades', 'MWAInterventions', 'MWAChat'].forEach(function(name) {
+        ['MWAActionCenter', 'MWAAlerts', 'MWAClassList', 'MWAProfile', 'MWAActivities', 'MWAGrades', 'MWAInterventions'].forEach(function(name) {
             defineFacadeProperty(facade, name, function() { return modules[name]; }, function(value) { register(name, value); });
         });
         ['MWA_GRADE_CACHE', 'MWA_ACT_NAMES', 'MWA_ACT_CMIDS', 'MWA_ACT_MODULES', 'MWA_NOTES', 'MWA_CONTACTS', 'mwaRetentionChart'].forEach(function(name) {

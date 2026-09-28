@@ -97,14 +97,6 @@ $functions = [
         'ajax'          => true,
         'loginrequired' => true,
     ],
-    'block_mwa_dashboard_chat_message' => [
-        'classname'     => 'block_mwa_dashboard\external',
-        'methodname'    => 'chat_message',
-        'description'   => 'Send a chat message to the AI assistant',
-        'type'          => 'read',
-        'ajax'          => true,
-        'loginrequired' => true,
-    ],
     'block_mwa_dashboard_get_activity_content' => [
         'classname'     => 'block_mwa_dashboard\external',
         'methodname'    => 'get_activity_content',

@@ -189,27 +189,6 @@ class provider implements
             'privacy:metadata:external:ia'
         );
 
-        // Chat endpoint (/chat).
-        // The server strips individual student records and retains only aggregate class
-        // metrics and, when pedagogically required, pseudonymised per-student educational
-        // indicators (alias + educational metrics — no name, email, IP or identifier).
-        // Teacher messages are sanitised to remove any enrolled student names before
-        // transmission. The conversation is not persisted server-side after the response.
-        $collection->add_external_location_link(
-            'ai_aggregate_chat',
-            [
-                'teacher_messages'              => 'privacy:metadata:external:chat:messages',
-                'conversation_history'          => 'privacy:metadata:external:chat:conversation_history',
-                'class_counts'                  => 'privacy:metadata:external:chat:class_counts',
-                'class_averages'                => 'privacy:metadata:external:chat:class_averages',
-                'risk_counts'                   => 'privacy:metadata:external:chat:risk_counts',
-                'activity_metrics'              => 'privacy:metadata:external:chat:activity_metrics',
-                'pseudonymised_student_metrics' => 'privacy:metadata:external:chat:pseudonymised_student_metrics',
-                'peak_access_time'              => 'privacy:metadata:external:chat:peak_access_time',
-            ],
-            'privacy:metadata:external:chat'
-        );
-
         return $collection;
     }
 
