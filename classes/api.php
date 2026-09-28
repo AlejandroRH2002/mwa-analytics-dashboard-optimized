@@ -31,6 +31,39 @@ class api {
     private static $excludedcmidcache = [];
 
     /**
+     * Update whether event capture is enabled for a course.
+     *
+     * Existing activity exclusions are preserved.
+     *
+     * @param int $courseid Course ID.
+     * @param bool $enabled Whether capture is enabled.
+     */
+    public static function update_course_capture(int $courseid, bool $enabled): void {
+        global $DB;
+
+        if ($courseid <= 1) {
+            return;
+        }
+
+        $record = $DB->get_record('block_mwa_dashboard_course', ['courseid' => $courseid]);
+        if ($record) {
+            $record->enabled = $enabled ? 1 : 0;
+            $record->timemodified = time();
+            $DB->update_record('block_mwa_dashboard_course', $record);
+        } else {
+            $DB->insert_record('block_mwa_dashboard_course', (object)[
+                'courseid' => $courseid,
+                'enabled' => $enabled ? 1 : 0,
+                'excludedcmids' => '[]',
+                'timemodified' => time(),
+            ]);
+        }
+
+        observer::invalidate_course_cache($courseid);
+        unset(self::$excludedcmidcache[$courseid]);
+    }
+
+    /**
      * Return course module ids excluded from dashboard tracking.
      *
      * @param int $courseid Course id.

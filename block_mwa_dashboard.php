@@ -61,36 +61,6 @@ class block_mwa_dashboard extends block_base {
     }
 
     /**
-     * Synchronise the explicit course capture setting.
-     *
-     * @param int $courseid Course ID.
-     * @param bool $enabled Whether capture is enabled.
-     */
-    private function update_course_capture(int $courseid, bool $enabled): void {
-        global $DB;
-
-        if ($courseid <= 1) {
-            return;
-        }
-
-        $record = $DB->get_record('block_mwa_dashboard_course', ['courseid' => $courseid]);
-        if ($record) {
-            $record->enabled = $enabled ? 1 : 0;
-            $record->timemodified = time();
-            $DB->update_record('block_mwa_dashboard_course', $record);
-        } else {
-            $record = (object)[
-                'courseid' => $courseid,
-                'enabled' => $enabled ? 1 : 0,
-                'timemodified' => time(),
-            ];
-            $DB->insert_record('block_mwa_dashboard_course', $record);
-        }
-
-        \block_mwa_dashboard\observer::invalidate_course_cache($courseid);
-    }
-
-    /**
      * Check whether capture is enabled for this course.
      *
      * @param int $courseid Course ID.
@@ -114,7 +84,7 @@ class block_mwa_dashboard extends block_base {
 
         $courseid = $this->get_instance_courseid();
         if ($courseid > 1 && property_exists($data, 'enablecapture')) {
-            $this->update_course_capture($courseid, !empty($data->enablecapture));
+            \block_mwa_dashboard\api::update_course_capture($courseid, !empty($data->enablecapture));
         }
     }
 
@@ -152,7 +122,7 @@ class block_mwa_dashboard extends block_base {
         $blockid = optional_param('mwa_capture_blockid', 0, PARAM_INT);
         if ($canmanagecapture && $blockid === (int)$this->instance->id && $toggle !== null) {
             require_sesskey();
-            $this->update_course_capture($courseid, !empty($toggle));
+            \block_mwa_dashboard\api::update_course_capture($courseid, !empty($toggle));
             redirect($PAGE->url);
         }
 
