@@ -1282,7 +1282,6 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
             subject:    subjectForStudent,
             message:    msgHtml,
             intervention_reason: reason,
-            ai_generated: 0,
             send_type:  sendType,
             student_email: t.email||'',
             target_type: targetType,
@@ -1299,73 +1298,6 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
           });
         }
         sendOne(0);
-      };
-
-      var aiBtn=document.createElement('button');
-      aiBtn.id='mwaBulkAIBtn';
-      aiBtn.className='mwa-msg-ai-btn';
-      aiBtn.textContent='\u2728 '+tr('msg_ai_generate');
-      function parseGeneratedMessage(text){
-        var source=String(text||'').replace(/\r\n|\r/g,'\n').trim();
-        var marker='(?:SUBJECT|ASSUNTO|MESSAGE|MENSAGEM)';
-        var subject='';
-        var body='';
-        var subjMatch=source.match(new RegExp('^\\s*(?:SUBJECT|ASSUNTO)\\s*:\\s*(.*?)\\s*$','mi'));
-        if(subjMatch)subject=subjMatch[1].trim();
-        var msgMatch=new RegExp('^\\s*(?:MESSAGE|MENSAGEM)\\s*:\\s*','mi').exec(source);
-        if(msgMatch){
-          body=source.slice(msgMatch.index+msgMatch[0].length);
-          var next=body.search(new RegExp('\\n\\s*'+marker+'\\s*:','i'));
-          if(next!==-1)body=body.slice(0,next);
-        }else{
-          body=source;
-        }
-        body=body
-          .replace(new RegExp('^\\s*(?:SUBJECT|ASSUNTO)\\s*:\\s*.*(?:\\n|$)','gmi'),'')
-          .replace(new RegExp('^\\s*(?:MESSAGE|MENSAGEM)\\s*:\\s*','gmi'),'')
-          .replace(/\n{3,}/g,'\n\n')
-          .trim();
-        return {subject:subject, message:body};
-      }
-      aiBtn.onclick=function(){
-        if(!selectedTargets.length){Store.notify(tr('msg_recipients_required', 'Select at least one recipient.'),'warning');return;}
-        aiBtn.disabled=true;
-        aiBtn.textContent='\u23F3 '+tr('msg_ai_generating_short','Gerando...');
-        var reason=(reasonSel.options[reasonSel.selectedIndex]?reasonSel.options[reasonSel.selectedIndex].textContent:'')||tr('msg_reason_low_eng');
-        var cfg=Store.getConfig?Store.getConfig():{};
-        var courseid=parseInt(cfg.courseid||0,10);
-        var nameList=selectedTargets.map(function(t){return t.name;}).join(', ');
-        var trackedNames=selectedTargetNames();
-        var prompt='You are an educational tutor writing a pedagogical message.\n\n'
-          +'RECIPIENT_COUNT: '+selectedTargets.length+'\n'
-          +'REASON: '+reason+'\n'
-          +'CHANNEL: '+bulkChannelPromptLabel()+'\n\n'
-          +'The system sends one separate personalized message to each student.\n'
-          +'Write in the singular and address the student using the exact literal token {firstname}.\n'
-          +'Never address a group and never list recipient names.\n'
-          +(trackedNames.length?'TRACKED_ITEMS: '+trackedNames.join(' | ')+'\nMention these tracked items clearly in the message.\n':'')
-          +'Write a short, empathetic pedagogical message in Brazilian Portuguese.\n'
-          +'Return ONLY two lines:\n'
-          +'SUBJECT: <subject line>\n'
-          +'MESSAGE: <message body, 3-4 sentences>\n'
-          +'Do not include any other text.';
-        Store.callAction('block_mwa_dashboard_get_ai_recommendation',{
-          courseid:courseid,
-          student_name:nameList,
-          prompt:prompt
-        }).then(function(res){
-          var text=(res&&(res.recommendation||res.response||res.content))||'';
-          if(!text)throw new Error(tr('err_ajax_bridge'));
-          var parsed=parseGeneratedMessage(text);
-          if(parsed.subject)subjInput.value=parsed.subject;
-          if(parsed.message)msgArea.value=appendSelectedTargetText(ensureFirstNameToken(parsed.message));
-          aiBtn.disabled=false;
-          aiBtn.textContent='\u2728 '+tr('msg_ai_generate');
-        }).catch(function(e){
-          aiBtn.disabled=false;
-          aiBtn.textContent='\u2728 '+tr('msg_ai_generate');
-          Store.notify('Atenção: '+e.message,'error');
-        });
       };
 
       footer.appendChild(sendBtn);

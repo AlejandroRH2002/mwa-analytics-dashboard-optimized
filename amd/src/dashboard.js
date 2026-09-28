@@ -145,7 +145,6 @@ define([
                 config.courseid = courseid;
                 config.groupid = groupid;
                 config.language = result.language || 'en';
-                config.ia_enabled = !!result.ia_enabled;
                 Store.configure(config, strings, callAction);
                 DashboardApp.init(config);
             })

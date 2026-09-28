@@ -17,9 +17,6 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
 
     var data = [];
     var activeTab = 'overview';
-    var aiReport = '';
-    var aiReportError = '';
-    var aiReportLoading = false;
     var filters = {from: '', to: '', reason: 'all', teacher: 'all', student: 'all'};
     var DAY = 86400;
     var REASONS = ['never', 'low', 'pending', 'difficult', 'other'];
@@ -438,7 +435,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
             ['overview', 'grid', tr('tf_tab_overview')], ['engagement', 'engagement', tr('tf_tab_engagement')],
             ['learning', 'learning', tr('tf_tab_learning')], ['interaction', 'interaction', tr('tf_tab_interaction')],
             ['continuity', 'permanence', tr('tf_tab_continuity')], ['mediation', 'mediation', tr('tf_tab_mediation')],
-            ['trajectory', 'trajectory', tr('tf_tab_trajectory')], ['ai', 'sparkles', tr('tf_tab_ai')]
+            ['trajectory', 'trajectory', tr('tf_tab_trajectory')]
         ];
         return '<div class="fr-tabs" role="tablist">' + tabs.map(function(tab) {
             return '<button type="button" data-fr-tab="' + tab[0] + '" class="' + (activeTab === tab[0] ? 'active' : '') + '">' +
@@ -1007,127 +1004,6 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
             info(tr('tf_med_48h_info')) + '</div>';
     }
 
-    function aiReportHtml() {
-        var config = Store.getConfig ? Store.getConfig() : {};
-        var body = '';
-        if (aiReportLoading) {
-            body = '<div class="fr-ai-loading"><span class="spinner"></span><p>' + tr('tf_ai_loading') + '</p></div>';
-        } else if (aiReportError) {
-            body = '<div class="fr-ai-error">' + svg('exclamation', 18) + '<p>' + esc(aiReportError) + '</p></div>';
-        } else if (aiReport) {
-            body = '<div class="fr-ai-content">' + formatAiReport(aiReport) + '</div>';
-        } else if (!config.ia_enabled) {
-            body = '<div class="fr-ai-empty">' + svg('sparkles', 28) + '<div><b>' + tr('tf_ai_not_configured') + '</b><p>' + tr('tf_ai_not_configured_sub') + '</p></div></div>';
-        } else {
-            body = '<div class="fr-ai-intro"><div class="fr-ai-empty">' + svg('sparkles', 28) +
-                '<div><b>' + tr('tf_ai_intro_title') + '</b><p>' + tr('tf_ai_intro_sub') + '</p></div></div>' +
-                '<div class="fr-ai-topics"><span>' + tr('tf_ai_topic_before_after') + '</span><span>' + tr('tf_ai_topic_progress') + '</span><span>' + tr('tf_ai_topic_priority') + '</span><span>' + tr('tf_ai_topic_recommend') + '</span></div>' +
-                '<button type="button" class="fr-btn fr-ai-generate fr-ai-primary" id="frAiGenerate">' + svg('sparkles', 16) + ' ' + tr('tf_ai_generate_btn') + '</button></div>';
-        }
-        return '<section class="fr-card fr-ai-report" data-fr-scope="ai"><div class="fr-ai-title"><div><span>' +
-            svg('sparkles', 20) + '</span><h2>' + tr('tf_ai_report_title') + '</h2></div>' +
-            (aiReport ? '<button type="button" class="fr-btn fr-ai-generate" id="frAiRegenerate">' + svg('refresh', 15) + ' ' + tr('tf_ai_regen_btn') + '</button>' : '') +
-            '</div>' + body + info(tr('tf_ai_report_notice')) + '</section>';
-    }
-
-    function formatAiReport(text) {
-        var html = '';
-        var listType = '';
-        function clean(value) {
-            return esc(norm(value).replace(/^#{1,6}\s*/, '').replace(/^\*\*(.*?)\*\*:?$/, '$1:')
-                .replace(/\*\*(.*?)\*\*/g, '$1').replace(/__(.*?)__/g, '$1').replace(/`([^`]*)`/g, '$1'));
-        }
-        function closeList() {
-            if (listType) { html += '</' + listType + '>'; listType = ''; }
-        }
-        norm(text).split(/\r?\n/).forEach(function(rawLine) {
-            var line = norm(rawLine);
-            if (!line) { closeList(); return; }
-            var bullet = line.match(/^[-*•]\s+(.+)$/);
-            var numbered = line.match(/^\d+[.)]\s+(.+)$/);
-            if (bullet || numbered) {
-                var desired = numbered ? 'ol' : 'ul';
-                if (listType !== desired) { closeList(); listType = desired; html += '<' + desired + '>'; }
-                html += '<li>' + clean((bullet || numbered)[1]) + '</li>';
-                return;
-            }
-            closeList();
-            var isMarkdownTitle = /^#{1,6}\s+/.test(line) || /^\*\*.*\*\*:?$/.test(line);
-            var isPlainTitle = line.length <= 70 && /:$/.test(line);
-            if (isMarkdownTitle || isPlainTitle) {
-                html += '<h3>' + clean(line).replace(/:$/, '') + '</h3>';
-            } else {
-                html += '<p>' + clean(line) + '</p>';
-            }
-        });
-        closeList();
-        return html;
-    }
-
-    function buildAiPrompt(rows) {
-        var groups = groupStudents(rows);
-        var lines = groups.slice(0, 100).map(function(group) {
-            var row = group.latest;
-            var snapshot = row.snapshot || {};
-            var beforeEngagement = number(snapshot.engagement);
-            var afterEngagement = currentEngagement(row);
-            var beforeGrade = courseTotalGrade(snapshot);
-            var afterGrade = row.currentIndicator ? courseTotalGrade(row.currentIndicator) : null;
-            return [
-                'Estudante: ' + norm(row.raw.student_name || row.raw.student_email || 'Não identificado'),
-                tr('tf_ai_motivo').replace('{v}', REASON_META[row.reason].label()),
-                tr('tf_ai_intervencao').replace('{v}', formatDateTime(row.captured)),
-                tr('tf_ai_engagement_delta').replace('{before}', formatNumber(beforeEngagement, '%')).replace('{after}', formatNumber(afterEngagement, '%')),
-                tr('tf_ai_grade_delta').replace('{before}', formatNumber(beforeGrade, '')).replace('{after}', formatNumber(afterGrade, '')),
-                tr('tf_ai_after_events').replace('{n}', row.after.length),
-                tr('tf_ai_after_academic').replace('{n}', row.academic.length),
-                tr('tf_ai_first_return').replace('{v}', row.firstResponse ? duration(row.firstResponse - row.captured) : tr('tf_ai_no_return')),
-                tr('tf_ai_result').replace('{v}', !row.response ? tr('tf_ai_result_none') : row.reached === true ? tr('tf_ai_result_full') : tr('tf_ai_result_partial')),
-                tr('tf_ai_continuity').replace('{v}', row.after.some(function(log) { return timestamp(log) > row.captured + 7 * DAY; }) ? tr('tf_ai_continuity_yes') : tr('tf_ai_continuity_no'))
-            ].join(' | ');
-        });
-        return 'Crie um relatório pedagógico em português brasileiro comparando os dados antes e depois das intervenções. ' +
-            'Use exclusivamente os dados fornecidos, não invente causas nem informações. Diferencie associação de causalidade. ' +
-            'Estruture em: síntese executiva; avanços observados; alunos que precisam de novo acompanhamento; padrões por motivo; ' +
-            'recomendações práticas; limitações dos dados. Destaque números e nomes somente quando estiverem nos dados. ' +
-            'Não use Markdown, hashtags, asteriscos, tabelas ou blocos de código. Escreva títulos simples em linhas separadas, parágrafos curtos e listas claras.\n\n' +
-            'Recorte: ' + rows.length + ' intervenções e ' + groups.length + ' estudantes únicos.\n' + lines.join('\n');
-    }
-
-    function generateAiReport(allRows) {
-        var config = Store.getConfig ? Store.getConfig() : {};
-        var rows = filterRows(allRows);
-        if (!config.ia_enabled) {
-            aiReportError = tr('ai_unavailable_message', '🔒 Artificial Intelligence features are unavailable. Configure a valid API key in MWA administration.');
-            aiReport = '';
-            renderReport(allRows);
-            return;
-        }
-        if (!rows.length) {
-            aiReportError = 'Não há dados no recorte atual para analisar.';
-            aiReport = '';
-            renderReport(allRows);
-            return;
-        }
-        aiReportLoading = true;
-        aiReportError = '';
-        renderReport(allRows);
-        Store.callAction('block_mwa_dashboard_get_ai_recommendation', {
-            courseid: Number(config.courseid || 0),
-            student_name: 'Turma acompanhada',
-            prompt: buildAiPrompt(rows)
-        }).then(function(result) {
-            aiReport = norm(result && (result.recommendation || result.response || result.content));
-            aiReportError = aiReport ? '' : 'A IA não retornou conteúdo para este relatório.';
-        }).catch(function(error) {
-            aiReport = '';
-            aiReportError = 'Não foi possível gerar o relatório com IA. ' + norm(error && error.message);
-        }).then(function() {
-            aiReportLoading = false;
-            renderReport(allRows);
-        });
-    }
-
     function strategyTable(rows) {
         var map = {};
         rows.forEach(function(row) {
@@ -1295,7 +1171,6 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
         html += '<div class="fr-grid fr-grid-support">' +
             card(tr('tf_card_synthesis'), donutHtml(groups), 'overview', 'fr-span-7 fr-summary-card') +
             card(tr('tf_card_continuity'), continuityHtml(groups), 'overview continuity', 'fr-span-7 fr-continuity-card') + '</div>';
-        html += aiReportHtml();
         html += '<div class="fr-grid fr-grid-bottom">' +
             card('Interação do estudante após a intervenção', interactionHtml(rows, groups), 'overview interaction', 'fr-span-7 fr-interaction-card') +
             card(tr('tf_card_mediation_time'), mediationHtml(rows), 'overview mediation', 'fr-span-7 fr-mediation-card') +
@@ -1344,10 +1219,6 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
             window.print();
             window.setTimeout(cleanup, 1200);
         }); }
-        var aiButton = document.getElementById('frAiGenerate');
-        var aiRegenerate = document.getElementById('frAiRegenerate');
-        if (aiButton) { aiButton.disabled = aiReportLoading; aiButton.addEventListener('click', function() { generateAiReport(rows); }); }
-        if (aiRegenerate) { aiRegenerate.disabled = aiReportLoading; aiRegenerate.addEventListener('click', function() { generateAiReport(rows); }); }
         document.querySelectorAll('[data-fr-tab]').forEach(function(button) {
             button.addEventListener('click', function() {
                 activeTab = button.getAttribute('data-fr-tab');

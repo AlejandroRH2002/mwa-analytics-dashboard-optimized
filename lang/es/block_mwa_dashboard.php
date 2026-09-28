@@ -23,6 +23,7 @@ $string['loading_title'] = 'Cargando datos del curso...';
 $string['loading_waiting'] = 'Esperando los datos de Moodle';
 $string['loading_connecting'] = 'Conectando con Moodle';
 $string['loading_retry'] = 'Intentar de nuevo';
+$string['hm_default_suggestion'] = 'Usa esta selección para enviar una orientación breve antes de la hora de mayor actividad y reforzar la siguiente actividad.';
 $string['no_data'] = 'No hay datos disponibles.';
 $string['data_load_failed'] = 'No se pudieron cargar los datos del curso.';
 $string['could_not_parse'] = 'No se pudo interpretar la respuesta de Moodle.';

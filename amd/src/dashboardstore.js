@@ -68,8 +68,7 @@ define([], function() {
             return Promise.reject(new Error('Dashboard AJAX bridge is not available.'));
         }
         var actionArgs = args || {};
-        var aiReadOnlyActions = ['get_ai_recommendation'];
-        var canRetry = aiReadOnlyActions.indexOf(method) !== -1;
+        var canRetry = false;
         var isTransientFailure = function(error) {
             var details = [
                 error && error.message,

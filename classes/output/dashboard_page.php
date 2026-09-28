@@ -70,8 +70,18 @@ class dashboard_page implements renderable, templatable {
         global $CFG;
         $groupconfig = $this->get_group_config();
         $plugininfo = \core_plugin_manager::instance()->get_plugin_info('block_mwa_dashboard');
+        $courseoptions = [];
+        foreach (\block_mwa_dashboard\api::get_dashboard_courses() as $course) {
+            $courseoptions[] = [
+                'id' => (int)$course->id,
+                'name' => format_string($course->fullname),
+                'selected' => (int)$course->id === $this->courseid,
+            ];
+        }
         return [
             'courseid'           => (int)$this->courseid,
+            'courseoptions'      => $courseoptions,
+            'hasmultiplecourses' => count($courseoptions) > 1,
             'wwwroot'            => (string)$CFG->wwwroot,
             'selectstudentlabel' => get_string('msg_select_student', 'block_mwa_dashboard'),
             'showgroupfilter'    => count($groupconfig['groups']) > 1,
@@ -99,7 +109,6 @@ class dashboard_page implements renderable, templatable {
                 'initialpage' => in_array($requestedpage, $allowedpages, true) ? $requestedpage : 'ac',
                 'wwwroot' => (string)$CFG->wwwroot,
                 'language' => current_language(),
-                'ia_enabled' => \block_mwa_dashboard\ai\client::is_configured(),
             ],
             'strings' => [],
         ];
@@ -118,7 +127,6 @@ class dashboard_page implements renderable, templatable {
             $coursename = (string)$DB->get_field('course', 'fullname', ['id' => $this->courseid]);
         }
 
-        $ia_provider = \block_mwa_dashboard\ai\client::provider();
         $context = \context_course::instance($this->courseid);
         $requestedpage = optional_param('mwa_page', '', PARAM_ALPHA);
         $allowedpages = [
@@ -141,8 +149,6 @@ class dashboard_page implements renderable, templatable {
                 'courseid' => $this->courseid,
                 'sesskey' => sesskey(),
             ]))->out(false),
-            'ia_enabled'  => \block_mwa_dashboard\ai\client::is_configured(),
-            'ia_provider' => (string)$ia_provider,
             'groupid' => (int)$groupconfig['groupid'],
             'groups' => $groupconfig['groups'],
         ];
@@ -1137,8 +1143,7 @@ class dashboard_page implements renderable, templatable {
             'hm_filter_resource_label', 'hm_filter_mode_label', 'hm_filter_period_label',
             'hm_detail_title', 'hm_detail_empty', 'hm_detail_students', 'hm_detail_activities', 'hm_view_activities',
             'hm_students_in_slot', 'hm_accesses_in_slot', 'hm_msg_this_time', 'hm_view_profiles',
-            'hm_ai_suggestion', 'hm_ai_suggestion_title', 'hm_ai_default_suggestion',
-            'hm_ai_generated_suggestion', 'hm_peak_action',
+            'hm_default_suggestion', 'hm_peak_action',
             'hm_filtered_action', 'hm_all_action', 'hm_peak_suggestion',
             'hm_filtered_suggestion', 'hm_all_suggestion', 'hm_grade_suggestion',
             'hm_besttime_action_suggestion',

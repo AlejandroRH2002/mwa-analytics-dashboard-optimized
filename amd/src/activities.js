@@ -366,14 +366,6 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
           + status.icon + '<span>' + esc(status.text) + '</span></div>';
       }
 
-      function aiHtmlToText(value) {
-        return String(value || '')
-          .replace(/^#{1,6}\s*/gm, '')
-          .replace(/\*\*(.*?)\*\*/g, '$1')
-          .replace(/\*(.*?)\*/g, '$1')
-          .trim();
-      }
-    
       var GAP_MS = 5  * 60 * 1000;
       var CAP_MS = 30 * 60 * 1000;
     
@@ -1129,15 +1121,6 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
           + '</div>';
         }
 
-        var aiHtml = '<div class="act-ai-panel">'
-          + '<div>'
-            + '<strong>' + esc(tr('act_ai_title')) + '</strong>'
-            + '<span>' + esc(tr('act_ai_desc')) + '</span>'
-          + '</div>'
-          + '<button type="button" id="actGenerateSuggestion">&#10024; ' + esc(tr('act_ai_generate')) + '</button>'
-          + '<div class="act-ai-result" id="actAiResult" hidden></div>'
-        + '</div>';
-    
         var footerHtml = '<div style="display:flex;justify-content:flex-start;gap:8px;padding:4px 20px 16px;flex-wrap:wrap;">'
           + (d.pendingSt.length
               ? '<button class="act-msg-btn" id="actMsgPend">'
@@ -1171,7 +1154,6 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
               + kpiHtml
               + tagsHtml
               + timeHtml
-              + aiHtml
             + '</div>'
     
             + footerHtml
@@ -1215,157 +1197,6 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
           btnMoreTime.onclick = function () {
             overlay.querySelectorAll('.act-time-extra').forEach(function (row) { row.hidden = false; });
             btnMoreTime.remove();
-          };
-        }
-        var btnAi = document.getElementById('actGenerateSuggestion');
-        if (btnAi) {
-          btnAi.onclick = function () {
-            var out = document.getElementById('actAiResult');
-            if (!out) return;
-            btnAi.disabled = true;
-            btnAi.classList.add('is-loading');
-            btnAi.textContent = '';
-            btnAi.appendChild(document.createTextNode(tr('act_ai_generating', 'Generating suggestion...')));
-            out.hidden = false;
-            Store.renderHtml(out,
-              '<div class="act-ai-loading-card">'
-                + '<div class="act-ai-loading-title">&#10022; ' + esc(tr('ev_ai_title', 'AI Analysis & Recommendation')) + '</div>'
-                + '<div class="act-ai-loading-row" role="status" aria-live="polite">'
-                  + '<span class="act-ai-dot" aria-hidden="true"></span>'
-                  + '<span class="act-ai-dot" aria-hidden="true"></span>'
-                  + '<span class="act-ai-dot" aria-hidden="true"></span>'
-                  + '<span class="act-ai-loading-label">' + esc(tr('act_ai_loading', 'Loading...')) + '</span>'
-                + '</div>'
-              + '</div>');
-            var cfg = Store.getConfig ? Store.getConfig() : {};
-            var courseid = parseInt(cfg.courseid || 0, 10);
-            /* Fetch the actual activity or resource content before building the prompt. */
-            var contentPromise;
-            if (d.cmid > 0) {
-              contentPromise = Store.callAction('block_mwa_dashboard_get_activity_content', {
-                courseid: courseid,
-                cmid: d.cmid
-              }).then(function (res) {
-                return (res && res.success && res.content) ? res.content : '';
-              }).catch(function () { return ''; });
-            } else {
-              contentPromise = Promise.resolve('');
-            }
-            contentPromise.then(function (actContent) {
-              var modtype = (d.modtype || d.type || '').toLowerCase();
-
-              /* Pedagogical context by module type. */
-              var modContext = {
-                assign: tr('act_mod_context_assign'),
-                forum: tr('act_mod_context_forum'),
-                quiz: tr('act_mod_context_quiz'),
-                h5pactivity: tr('act_mod_context_h5pactivity'),
-                page: tr('act_mod_context_page'),
-                book: tr('act_mod_context_book'),
-                url: tr('act_mod_context_url'),
-                scorm: tr('act_mod_context_scorm'),
-                glossary: tr('act_mod_context_glossary'),
-                wiki: tr('act_mod_context_wiki'),
-                data: tr('act_mod_context_data'),
-                resource: tr('act_mod_context_resource'),
-                label: tr('act_mod_context_label'),
-              };
-              var modDesc = modContext[modtype] || modtype || tr('act_mod_context_activity');
-
-              /* Formatted engagement data. */
-              var totalStu = d.allStudentsCount || (d.concludedSt.length + d.pendingSt.length + d.notAccessedSt.length);
-              var engData = [
-                'Cobertura de acesso: ' + d.pct + '% (' + (d.concludedSt.length + d.pendingSt.length) + '/' + totalStu + ' alunos acessaram)',
-                'Conclusão/entrega: '   + d.concPct + '% (' + d.concludedSt.length + '/' + totalStu + ' concluíram)',
-                'Viram mas não concluíram: ' + d.pendingSt.length,
-                'Sem nenhum acesso: '   + d.notAccessedSt.length,
-              ].join('\n');
-
-              var promptParts = [];
-
-              if (actContent) {
-                var trimmedContent = actContent.length > 4500
-                  ? actContent.substring(0, 4500) + '\\n[...conteúdo resumido]'
-                  : actContent;
-
-                promptParts.push(
-                  'Analise esta ' + modDesc + ' do Moodle. Responda em português, sem markdown.'
-                );
-                promptParts.push('');
-                promptParts.push('Escreva 2 seções:');
-                promptParts.push('');
-                promptParts.push('1. DIAGNÓSTICO');
-                promptParts.push('Avalie o que está sendo pedido e avaliado. Cruze com o engajamento.');
-                if (modtype === 'forum') {
-                  promptParts.push('IMPORTANTE: Resuma o que os alunos discutiram — temas centrais, argumentos, convergências, lacunas. Avalie se a reflexão foi suficiente.');
-                } else if (modtype === 'quiz') {
-                  promptParts.push('IMPORTANTE: Avalie somente as configurações e os dados agregados do questionário. Enunciados, alternativas e gabaritos não são enviados.');
-                } else if (modtype === 'assign') {
-                  promptParts.push('IMPORTANTE: Avalie clareza do enunciado, critérios de avaliação, prazos, tentativas, forma de entrega.');
-                }
-                // YouTube videos detected in content
-                if (actContent.indexOf('VÍDEO DO YOUTUBE DETECTADO') >= 0) {
-                  promptParts.push('IMPORTANTE: Foi detectado um vídeo do YouTube. Use as informações extraídas (título, canal, descrição) para avaliar se o vídeo é adequado ao objetivo pedagógico e se está alinhado com o tema do curso. Afirme com base nos dados — não use expressões como "parece ter" ou "possivelmente". Se as informações forem insuficientes, pesquise sobre o vídeo usando a URL fornecida.');
-                }
-                if (modtype === 'page' || modtype === 'url' || modtype === 'resource') {
-                  promptParts.push('IMPORTANTE: Avalie se o conteúdo/recurso é adequado, se a estrutura é clara, se está alinhado com o objetivo do curso. Se houver links ou vídeos, avalie se complementam bem o conteúdo.');
-                }
-                promptParts.push('');
-                promptParts.push('2. SUGESTÕES DE MELHORIA');
-                promptParts.push('3 a 5 melhorias concretas. Referencie trechos específicos do conteúdo. Nunca diga que está bom — sempre melhore algo.');
-                if (modtype === 'quiz') {
-                  promptParts.push('Sugira melhorias gerais de configuração e estratégia avaliativa, sem inferir ou solicitar o conteúdo das questões.');
-                } else if (modtype === 'forum') {
-                  promptParts.push('Sugira como aprofundar a discussão e melhorar a qualidade dos posts.');
-                }
-                if (actContent.indexOf('VÍDEO DO YOUTUBE DETECTADO') >= 0) {
-                  promptParts.push('Para vídeos: sugira se deveria haver atividade complementar (quiz, fórum, resumo), se há vídeos alternativos ou complementares que enriqueceriam o aprendizado.');
-                }
-                promptParts.push('');
-                promptParts.push('--- ENGAJAMENTO ---');
-                promptParts.push(d.title + ' (' + modDesc + ')');
-                promptParts.push(engData);
-                promptParts.push('');
-                promptParts.push('--- CONTEÚDO DA ATIVIDADE (leia com atenção antes de responder) ---');
-                promptParts.push(trimmedContent);
-              } else {
-                /* Without content, base the diagnosis on engagement data only. */
-                promptParts.push(
-                  'Você é um especialista em Learning Analytics para EaD no Moodle. ' +
-                  'Analise esta ' + modDesc + ' com base nos dados de engajamento e responda em português, sem markdown pesado.'
-                );
-                promptParts.push('');
-                promptParts.push('Atividade: ' + d.title);
-                promptParts.push('Tipo: ' + modDesc);
-                promptParts.push(engData);
-                promptParts.push('');
-                promptParts.push('Faça duas partes:');
-                promptParts.push('1. DIAGNÓSTICO — o que os dados indicam sobre o engajamento e possíveis causas.');
-                promptParts.push('2. SUGESTÕES DE MELHORIA — 3 melhorias concretas na atividade para aumentar participação, conclusão ou qualidade das interações.');
-              }
-
-              var prompt = promptParts.join('\n');
-              return Store.callAction('block_mwa_dashboard_get_ai_recommendation', {
-                courseid: courseid,
-                student_name: d.title,
-                prompt: prompt
-              });
-            }).then(function (res) {
-              var text = aiHtmlToText((res && (res.recommendation || res.response || res.content)) || '');
-              if (!text) throw new Error(tr('err_ajax_bridge'));
-              Store.renderHtml(out, '<div class="act-ai-text">' + esc(text).replace(/\n/g, '<br>') + '</div>');
-            }).catch(function (e) {
-              Store.renderHtml(out, '<div class="act-ai-error">' + esc(String((e && e.message) || e)) + '</div>');
-            }).then(function () {
-              btnAi.disabled = false;
-              btnAi.classList.remove('is-loading');
-              btnAi.textContent = '';
-              var generateIcon = document.createElement('span');
-              generateIcon.setAttribute('aria-hidden', 'true');
-              generateIcon.textContent = '✨';
-              btnAi.appendChild(generateIcon);
-              btnAi.appendChild(document.createTextNode(' ' + tr('act_ai_generate')));
-            });
           };
         }
         if (btnPend) {

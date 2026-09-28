@@ -1354,7 +1354,7 @@ define([
               var title = tr('hm_detail_title', 'Time detail') + ': ' + DAYS[Number(parts[0])] + ' ' + parts[1] + 'h';
               hmStoreDetail('cell', {key: key});
               renderHmDetail(title, cellBuckets[key] || [], {
-                suggestion: tr('hm_ai_default_suggestion')
+                suggestion: tr('hm_default_suggestion')
               });
             };
             box.onkeydown = function(e) {

@@ -58,25 +58,27 @@
 </svg>
 <div id="loading" class="loading"><div><div class="spinner"></div><h2 data-i18n="loading_title"></h2><p class="muted" id="loadStatus" data-i18n="loading_waiting"></p></div></div>
 <div class="app">
-  <div class="topbar"><div class="brand" id="mwaDashboardBrand"><div class="brand-inner"><img src="{{wwwroot}}/blocks/mwa_dashboard/pix/logo.png" data-i18n-attr="alt:brand_logo_alt" alt="" class="brand-logo"><div class="brand-text"><span data-i18n="brand_name"></span><br><small data-i18n="brand_subtitle"></small></div></div></div><div class="top-actions">{{#showgroupfilter}}<label class="mwa-group-filter"><span>{{#str}}group_filter_label, block_mwa_dashboard{{/str}}</span><select id="mwaGroupFilter">{{#groups}}<option value="{{id}}"{{#selected}} selected{{/selected}}>{{name}}</option>{{/groups}}</select></label>{{/showgroupfilter}}<input id="search" class="search" placeholder="" data-i18n-attr="placeholder:search_student" style="display:none"></div></div>
+  <div class="topbar"><div class="brand" id="mwaDashboardBrand"><div class="brand-inner"><img src="{{wwwroot}}/blocks/mwa_dashboard/pix/logo.png" data-i18n-attr="alt:brand_logo_alt" alt="" class="brand-logo"><div class="brand-text"><span data-i18n="brand_name"></span><br><small data-i18n="brand_subtitle"></small></div></div></div><div class="top-actions">
+    {{#hasmultiplecourses}}<form class="mwa-course-selector" method="get" action="{{wwwroot}}/blocks/mwa_dashboard/view.php"><label for="mwa-course-select">{{#str}}course, core{{/str}}</label><select id="mwa-course-select" name="course" class="form-select" onchange="this.form.submit()">{{#courseoptions}}<option value="{{id}}"{{#selected}} selected{{/selected}}>{{name}}</option>{{/courseoptions}}</select><noscript><button type="submit" class="btn btn-primary">{{#str}}go, core{{/str}}</button></noscript></form>{{/hasmultiplecourses}}
+    {{#showgroupfilter}}<label class="mwa-group-filter"><span>{{#str}}group_filter_label, block_mwa_dashboard{{/str}}</span><select id="mwaGroupFilter">{{#groups}}<option value="{{id}}"{{#selected}} selected{{/selected}}>{{name}}</option>{{/groups}}</select></label>{{/showgroupfilter}}<input id="search" class="search" placeholder="" data-i18n-attr="placeholder:search_student" style="display:none"></div></div>
   <div class="layout"><aside class="sidebar">
     <div class="nav-title" data-i18n="nav_today"></div>
     <div class="nav-item" data-page="ac" data-action-page="ac"><span><svg class="mwa-ui-icon"><use href="#mwa-icon-target"></use></svg></span><span data-i18n="nav_action_center"></span><span class="nav-badge" id="navActionBadge">0</span></div>
     <div class="nav-item" data-page="alerts" data-action-page="alerts"><span><svg class="mwa-ui-icon"><use href="#mwa-icon-bell"></use></svg></span><span data-i18n="nav_alerts"></span><span class="nav-badge amber" id="navAlertBadge">0</span></div>
 
     <div class="nav-title" data-i18n="nav_students"></div>
-    <div class="nav-item" data-page="classlist" data-action-page="classlist"><span><svg class="mwa-ui-icon"><use href="#mwa-icon-users"></use></svg></span><span data-i18n="nav_class_list"></span><span class="nav-badge ia">IA</span></div>
+    <div class="nav-item" data-page="classlist" data-action-page="classlist"><span><svg class="mwa-ui-icon"><use href="#mwa-icon-users"></use></svg></span><span data-i18n="nav_class_list"></span></div>
     <div class="nav-item" data-page="studentprofile" data-action-page="studentprofile"><span><svg class="mwa-ui-icon"><use href="#mwa-icon-user"></use></svg></span><span data-i18n="nav_student_profile"></span></div>
     <div class="nav-item" data-page="heatmap" data-action-page="heatmap"><span><svg class="mwa-ui-icon"><use href="#mwa-icon-flame"></use></svg></span><span data-i18n="nav_access_heatmap"></span></div>
 
     <div class="nav-title" data-i18n="nav_content"></div>
-    <div class="nav-item" data-page="activities" data-action-page="activities"><span><svg class="mwa-ui-icon"><use href="#mwa-icon-clipboard"></use></svg></span><span data-i18n="nav_activities"></span><span class="nav-badge ia">IA</span></div>
+    <div class="nav-item" data-page="activities" data-action-page="activities"><span><svg class="mwa-ui-icon"><use href="#mwa-icon-clipboard"></use></svg></span><span data-i18n="nav_activities"></span></div>
     <div class="nav-item" data-page="grades" data-action-page="grades"><span><svg class="mwa-ui-icon"><use href="#mwa-icon-file"></use></svg></span><span data-i18n="nav_grades"></span></div>
 
 
     <div class="nav-title" data-i18n="nav_report"></div>
     <div class="nav-item" data-page="interventions" data-action-page="interventions"><span><svg class="mwa-ui-icon"><use href="#mwa-icon-message"></use></svg></span><span data-i18n="nav_interventions"></span></div>
-    <div class="nav-item" data-page="teacherfeedback" data-action-page="teacherfeedback"><span><svg class="mwa-ui-icon"><use href="#mwa-icon-chart"></use></svg></span><span data-i18n="tf_nav"></span><span class="nav-badge ia">IA</span></div>
+    <div class="nav-item" data-page="teacherfeedback" data-action-page="teacherfeedback"><span><svg class="mwa-ui-icon"><use href="#mwa-icon-chart"></use></svg></span><span data-i18n="tf_nav"></span></div>
 
     <footer class="mwa-sidebar-version" aria-label="{{#str}}pluginversionlabel, block_mwa_dashboard{{/str}} {{pluginrelease}}">
       <span>MWA Analytics Dashboard</span>

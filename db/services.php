@@ -89,22 +89,6 @@ $functions = [
         'ajax'          => true,
         'loginrequired' => true,
     ],
-    'block_mwa_dashboard_get_ai_recommendation' => [
-        'classname'     => 'block_mwa_dashboard\external',
-        'methodname'    => 'get_ai_recommendation',
-        'description'   => 'Generate AI recommendation for a student or the class',
-        'type'          => 'read',
-        'ajax'          => true,
-        'loginrequired' => true,
-    ],
-    'block_mwa_dashboard_get_activity_content' => [
-        'classname'     => 'block_mwa_dashboard\external',
-        'methodname'    => 'get_activity_content',
-        'description'   => 'Extract text content from a course activity or resource for AI analysis',
-        'type'          => 'read',
-        'ajax'          => true,
-        'loginrequired' => true,
-    ],
     'block_mwa_dashboard_get_due_dates' => [
         'classname'     => 'block_mwa_dashboard\external',
         'methodname'    => 'get_due_dates',

@@ -26,10 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 if ($ADMIN->fulltree) {
 
-    // All core dashboard features (analytics, grades, alerts, interventions,
-    // class lists, student profiles, heatmaps) work without any external AI
-    // service. No licence, activation code or subscription is required.
-    // All configurable settings are managed on a dedicated administration page.
+    // Dashboard capture settings.
     $settings->add(new admin_setting_heading(
         'block_mwa_dashboard/general_heading',
         get_string('settings_general_heading', 'block_mwa_dashboard'),
@@ -43,18 +40,4 @@ if ($ADMIN->fulltree) {
         0
     ));
 
-    $settings->add(new admin_setting_description(
-        'block_mwa_dashboard/admin_page_link',
-        get_string('settings_admin_page', 'block_mwa_dashboard'),
-        html_writer::div(
-            get_string('settings_admin_page_desc', 'block_mwa_dashboard'),
-            'alert alert-info'
-        ) . html_writer::link(
-            new moodle_url('/blocks/mwa_dashboard/configaikey.php'),
-            get_string('settings_admin_page_button', 'block_mwa_dashboard'),
-            ['class' => 'btn btn-primary']
-        )
-    ));
-
-    $PAGE->requires->js_call_amd('block_mwa_dashboard/adminai', 'init');
 }

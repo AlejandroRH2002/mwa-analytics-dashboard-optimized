@@ -407,9 +407,6 @@ class external extends \external_api {
         if (!get_config('block_mwa_dashboard', 'ia_enabled')) {
             throw new \moodle_exception('ai_disabled', 'block_mwa_dashboard');
         }
-        if (!\block_mwa_dashboard\ai\client::is_configured()) {
-            throw new \moodle_exception('ai_configuration_incomplete', 'block_mwa_dashboard');
-        }
     }
     // -- get_logs ---------------------------------------------------------
 
@@ -468,7 +465,6 @@ class external extends \external_api {
         return [
             'strings' => json_encode($dashboard->get_strings(), JSON_UNESCAPED_UNICODE),
             'language' => current_language(),
-            'ia_enabled' => \block_mwa_dashboard\ai\client::is_configured(),
         ];
     }
 
@@ -476,7 +472,6 @@ class external extends \external_api {
         return new \external_single_structure([
             'strings' => new \external_value(PARAM_RAW, 'Dashboard language strings'),
             'language' => new \external_value(PARAM_TEXT, 'Current language'),
-            'ia_enabled' => new \external_value(PARAM_BOOL, 'Whether AI is configured'),
         ]);
     }
 
@@ -527,7 +522,6 @@ class external extends \external_api {
             'subject'             => new \external_value(PARAM_TEXT, 'Message subject'),
             'message'             => new \external_value(PARAM_RAW,  'Message body (HTML or plain)'),
             'intervention_reason' => new \external_value(PARAM_TEXT, 'Reason for intervention', VALUE_DEFAULT, ''),
-            'ai_generated'        => new \external_value(PARAM_INT,  '1 if AI-generated', VALUE_DEFAULT, 0),
             'send_type'           => new \external_value(PARAM_ALPHA,   'moodle, email or both', VALUE_DEFAULT, 'moodle'),
             'student_email'       => new \external_value(PARAM_NOTAGS, 'Student email for email send type', VALUE_DEFAULT, ''),
             'target_type'         => new \external_value(PARAM_ALPHANUMEXT, 'Tracked intervention target type', VALUE_DEFAULT, ''),
@@ -540,7 +534,7 @@ class external extends \external_api {
 
     public static function send_message(int $courseid, int $userid, string $subject,
                                         string $message, string $intervention_reason = '',
-                                        int $ai_generated = 0, string $send_type = 'moodle',
+                                        string $send_type = 'moodle',
                                          string $student_email = '', string $target_type = '',
                                          string $target_items = '[]', string $snapshot_situation = '',
                                          string $snapshot_objective = '', int $snapshot_engagement = -1): array {
@@ -552,7 +546,6 @@ class external extends \external_api {
             'subject'             => $subject,
             'message'             => $message,
             'intervention_reason' => $intervention_reason,
-            'ai_generated'        => $ai_generated,
             'send_type'           => $send_type,
             'student_email'       => $student_email,
             'target_type'         => $target_type,
@@ -714,7 +707,6 @@ class external extends \external_api {
         $record->message             = $params['message'];
         $record->timesent            = time();
         $record->status              = $status;
-        $record->ai_generated        = $params['ai_generated'];
         $record->send_type            = $sendtype;
         $record->intervention_reason  = substr($cleanreason, 0, 100);
         $record->moodle_msgid        = $msgid;
@@ -787,7 +779,6 @@ class external extends \external_api {
                 'message'             => $r->message,
                 'timesent'            => (int)$r->timesent,
                 'status'              => $r->status,
-                'ai_generated'        => (int)$r->ai_generated,
                 'intervention_reason' => $r->intervention_reason ?? '',
                 'send_type'           => preg_match('/\[(email)\]\s*$/i', $r->intervention_reason ?? '')
                     ? 'email' : ($r->send_type ?? 'moodle'),
@@ -978,89 +969,6 @@ class external extends \external_api {
         ]);
     }
 
-    public static function get_ai_recommendation_parameters(): \external_function_parameters {
-        return new \external_function_parameters([
-            'courseid'     => new \external_value(PARAM_INT,  'Course ID'),
-            'student_name' => new \external_value(PARAM_NOTAGS, 'Student name or empty for class'),
-            'prompt'       => new \external_value(PARAM_RAW,  'Prompt for the AI'),
-        ]);
-    }
-
-    public static function get_ai_recommendation(int $courseid, string $student_name, string $prompt): array {
-        global $USER;
-
-        $params = self::validate_parameters(self::get_ai_recommendation_parameters(), [
-            'courseid'     => $courseid,
-            'student_name' => $student_name,
-            'prompt'       => $prompt,
-        ]);
-
-        $context = \context_course::instance($params['courseid']);
-        self::validate_context($context);
-        require_capability('block/mwa_dashboard:view', $context);
-
-        self::require_ai_access($context);
-
-        $alias = self::pseudonymize_students_for_ai(
-            $params['courseid'],
-            $params['student_name']
-        ) ?: 'Class';
-        $instruction = self::pseudonymize_students_for_ai($params['courseid'], $params['prompt']);
-        $auditcategories = ['policy', 'individual_summary'];
-        if (strpos($instruction, '[Texto completo dos alunos') !== false ||
-                strpos($instruction, '[Atividade real do fórum]') !== false) {
-            $auditcategories[] = 'forum_post_content';
-        }
-        try {
-            $text = \block_mwa_dashboard\ai\client::complete([
-                [
-                    'role' => 'system',
-                    'category' => 'policy',
-                    'content' => 'You are a pedagogical assistant. Use only the minimised Moodle data supplied. ' .
-                        'Never infer a real identity from a student alias. ' .
-                        'The Subject alias is the only learner being analysed. Use that exact alias whenever addressing ' .
-                        'the learner. Refer to the educator only as "the teacher" or "the tutor"; never assign a ' .
-                        'Student-### alias to the educator and never invent additional student aliases.',
-                ],
-                ['role' => 'user', 'category' => 'individual_summary',
-                    'content' => "Subject: {$alias}\n\n{$instruction}"],
-            ], self::get_ai_forbidden_identifiers($params['courseid']));
-            \block_mwa_dashboard\ai\audit::record((int)$USER->id, $params['courseid'], 'recommendation',
-                'pedagogical_recommendation', $auditcategories, 'success');
-        } catch (\Throwable $exception) {
-            \block_mwa_dashboard\ai\audit::record((int)$USER->id, $params['courseid'], 'recommendation',
-                'pedagogical_recommendation', $auditcategories, 'error');
-            throw $exception;
-        }
-
-        // In a genuinely individual request, only the Subject alias represents the
-        // learner. If a provider invents another Student-### token for the educator,
-        // neutralise it before the normal local name restoration. This prevents a
-        // different enrolled person's name from being displayed as the teacher.
-        if (preg_match('/^Student-(\d{3})$/', $alias, $subjectmatch)) {
-            $subjectnumber = $subjectmatch[1];
-            $teacherlabel = get_string('teacher_label', 'block_mwa_dashboard');
-            $text = preg_replace_callback(
-                '/(?<![\p{L}\p{N}])Student(?:[\s\p{Pd}\x{2212}])*(\d{3})(?![\p{L}\p{N}])/ui',
-                static function(array $matches) use ($subjectnumber, $teacherlabel): string {
-                    return $matches[1] === $subjectnumber ? 'Student-' . $subjectnumber : $teacherlabel;
-                },
-                $text
-            );
-        }
-        $text = self::restore_students_in_ai_response($params['courseid'], $text);
-        return ['success' => !empty($text), 'recommendation' => $text ?: 'Sem resposta da IA.'];
-    }
-
-    public static function get_ai_recommendation_returns(): \external_single_structure {
-        return new \external_single_structure([
-            'success'        => new \external_value(PARAM_BOOL, 'Success'),
-            'recommendation' => new \external_value(PARAM_RAW,  'AI recommendation text'),
-        ]);
-    }
-
-    // ────────────────────────────────────────────────────────────
-    // ──── Per-course activity tracking ─────────────────────────
     public static function set_activity_tracking_parameters(): \external_function_parameters {
         return new \external_function_parameters([
             'courseid' => new \external_value(PARAM_INT, 'Course ID'),

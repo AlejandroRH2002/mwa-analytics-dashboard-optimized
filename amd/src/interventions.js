@@ -298,93 +298,6 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
         return String(text || '').replace(/\{firstname\}|\{nome\}|\{name\}/gi, fn);
       }
     
-      function parseGeneratedMessage(text) {
-        var source = String(text || '').replace(/\r\n|\r/g, '\n').trim();
-        var marker = '(?:SUBJECT|ASSUNTO|MESSAGE|MENSAGEM)';
-        var subject = '';
-        var body = '';
-        var subjMatch = source.match(new RegExp('^\\s*(?:SUBJECT|ASSUNTO)\\s*:\\s*(.*?)\\s*$', 'mi'));
-        if (subjMatch) {
-          subject = subjMatch[1].trim();
-        }
-        var msgMatch = new RegExp('^\\s*(?:MESSAGE|MENSAGEM)\\s*:\\s*', 'mi').exec(source);
-        if (msgMatch) {
-          body = source.slice(msgMatch.index + msgMatch[0].length);
-          var next = body.search(new RegExp('\\n\\s*' + marker + '\\s*:', 'i'));
-          if (next !== -1) {
-            body = body.slice(0, next);
-          }
-        } else {
-          body = source;
-        }
-        body = body
-          .replace(new RegExp('^\\s*(?:SUBJECT|ASSUNTO)\\s*:\\s*.*(?:\\n|$)', 'gmi'), '')
-          .replace(new RegExp('^\\s*(?:MESSAGE|MENSAGEM)\\s*:\\s*', 'gmi'), '')
-          .replace(/\n{3,}/g, '\n\n')
-          .trim();
-        return {subject: subject, message: body};
-      }
-
-      /* Generate message with AI */
-      function generateWithAI(studentName, studentId) {
-        var aiBtn  = document.getElementById('mwaMsgAIBtn');
-        var subj   = document.getElementById('mwaMsgSubject');
-        var body   = document.getElementById('mwaMsgBody');
-        var reason = (document.getElementById('mwaMsgReason') || {}).value || '';
-        var type   = selectedSendType();
-
-        if (aiBtn) { aiBtn.disabled = true; aiBtn.textContent = tr('ct_ai_generating'); }
-
-        // Look up the student data in state
-        var mwa = window.MWADashboard;
-        var state = (mwa && mwa.state) || {};
-        var student = (state.students || []).find(function(s) {
-          return s.userid === studentId || norm(s.name) === norm(studentName);
-        }) || {};
-
-        var reasonLabel = reason || tr('msg_reason_low_eng');
-        var courseid = parseInt((Store.getConfig ? Store.getConfig().courseid : 0) || 0, 10);
-        if (!courseid) {
-          var m = (window.location.search || '').match(/[?&]id=(\d+)/);
-          if (m) courseid = parseInt(m[1], 10);
-        }
-        if (!courseid) {
-          var blockEl = document.querySelector('[data-courseid]');
-          if (blockEl) courseid = parseInt(blockEl.getAttribute('data-courseid') || 0, 10);
-        }
-
-        var prompt = 'You are an educational tutor writing a pedagogical message in the same language as this system.\n\n'
-          + 'STUDENT: ' + studentName + '\n'
-          + 'REASON: ' + reasonLabel + '\n'
-          + 'CHANNEL: ' + (type === 'email' ? 'Email (formal)' : 'Moodle message (friendly)')  + '\n'
-          + (student.score !== undefined ? 'ENGAGEMENT SCORE: ' + student.score + '%\n' : '')
-          + (student.ago !== undefined ? 'DAYS WITHOUT ACCESS: ' + student.ago + '\n' : '')
-          + (student.grade !== null && student.grade !== undefined ? 'CURRENT GRADE: ' + student.grade + '\n' : '')
-          + '\nWrite a short, empathetic and personalised message to this student.\n'
-          + 'Return ONLY two lines:\n'
-          + 'SUBJECT: <subject line>\n'
-          + 'MESSAGE: <message body, 3-4 sentences>\n'
-          + 'Do not include any other text.';
-
-        Store.callAction('block_mwa_dashboard_get_ai_recommendation', {
-          courseid: courseid, student_name: studentName, prompt: prompt
-        }).then(function(res) {
-          var text = (res && (res.recommendation || res.response || res.content)) || '';
-          if (!text) throw new Error(tr('err_ajax_bridge'));
-
-          var parsed = parseGeneratedMessage(text);
-
-          if (parsed.subject && subj) subj.value = parsed.subject;
-          if (parsed.message && body) body.value  = parsed.message;
-
-          if (aiBtn) { aiBtn.disabled = false; aiBtn.textContent = tr('msg_ai_generate'); }
-          toast(tr('msg_ai_done'), 'success');
-        }).catch(function(e) {
-          if (aiBtn) { aiBtn.disabled = false; aiBtn.textContent = tr('msg_ai_generate'); }
-          toast(e.message, 'error');
-        });
-      }
-
       function openSendMessage(studentName, studentEmail, studentId, reason) {
         var old = document.getElementById('mwaMsgOverlay');
         if (old) old.remove();
@@ -457,7 +370,6 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
     
             + '</div>'
             + '<div class="mwa-msg-footer">'
-              + '<button id="mwaMsgAIBtn" class="mwa-msg-ai-btn">' + tr('msg_ai_generate') + '</button>'
               + '<button class="mwa-msg-cancel-btn" onclick="document.getElementById(\'mwaMsgOverlay\').remove()">'+tr('msg_cancel')+'</button>'
               + '<button class="mwa-msg-send-btn" id="mwaMsgSendBtn" '
                 + 'data-userid="' + (studentId || 0) + '" '
@@ -475,13 +387,6 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
         }
         document.body.appendChild(overlay);
 
-        var aiBtn = document.getElementById('mwaMsgAIBtn');
-        if (aiBtn) {
-          aiBtn.addEventListener('click', function() {
-            generateWithAI(studentName, studentId);
-          });
-        }
-    
         var reasonSelect = document.getElementById('mwaMsgReason');
         var suggestedObjectives = {
           never: tr('snapshot_objective_never'),
@@ -608,7 +513,6 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
           subject:             subject,
           message:             msgHtml,
           intervention_reason: reason,
-          ai_generated:        0,
           send_type:           sendType,
           student_email:       semail,
           snapshot_situation:  situation,
@@ -1793,7 +1697,6 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
             + '<div class="int-detail-grid">'
               + '<div class="int-detail-chip int-detail-student-chip"><div class="int-detail-person">' + avatar + '<div><span>' + esc(tr('int_col_student')) + '</span><strong>' + esc(d.student_name || '') + '</strong><small>' + esc(d.student_email || tr('msg_no_registered_email')) + '</small></div></div></div>'
               + '<div class="int-detail-chip"><span>' + esc(tr('int_col_teacher')) + '</span><strong>' + esc(d.teacher_name || '') + '</strong><small>' + esc(fmtDate(d.timesent)) + '</small></div>'
-              + '<div class="int-detail-chip"><span>' + esc(tr('msg_detail_reason')) + '</span><strong>' + esc(reason) + (d.ai_generated ? ' <span class="int-ai-badge">IA</span>' : '') + '</strong><small>' + esc(channel) + '</small></div>'
               + '<div class="int-detail-chip int-status-effect-chip"><span>' + esc(tr('int_col_status','Status')) + '</span><div style="margin-top:4px;">' + newStatusHtml + '</div></div>'
             + '</div>'
             + '<div class="int-detail-columns">'

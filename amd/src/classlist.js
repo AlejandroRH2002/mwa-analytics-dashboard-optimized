@@ -1004,13 +1004,9 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
             + '<div><h4>' + esc(tr('cl_th_activity_progress', 'Graded activities')) + '</h4>' + activityProgressHtml + '</div>'
             + '<div><h4>' + esc(tr('cl_th_resource_progress', 'Content/Resources')) + '</h4>' + resourceProgressHtml + '</div>'
           + '</div>'
-          + '<div class="ai-box cl-ai-box" id="clai' + esc(detailId) + '">'
-            + '<div class="ai-box-title">&#10022; ' + esc(tr('ev_ai_title', 'AI Analysis & Recommendation')) + '</div>'
             + '<div class="ai-loading"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div>'
-            + '<span style="margin-left:.5rem;font-size:.78rem;color:var(--muted);">' + esc(tr('ev_ai_hint', 'Click "Generate AI Recommendation" to analyze this student.')) + '</span></div>'
           + '</div>'
           + '<div class="cl-detail-actions">'
-            + '<button class="btn-accent cl-ai-generate-btn" type="button" onclick="window.MWAClassList&&window.MWAClassList.genAI(\'' + esc(detailId) + '\');event.stopPropagation()">&#10022; ' + esc(tr('ev_gen_ai', 'Generate AI Recommendation')) + '</button>'
             + '<button class="btn-ghost" type="button" onclick="window.MWAInterventions&&window.MWAInterventions.quickMessage(\'' + esc(item.name) + '\',\'' + esc(item.email || '') + '\',' + (item.userid || 0) + ',\'\');event.stopPropagation()">' + icon('mail') + ' ' + esc(tr('message')) + '</button>'
             + '<button class="btn-ghost cl-detail-inline-close" type="button">' + esc(tr('close', 'Close')) + '</button>'
           + '</div>'
@@ -1335,75 +1331,6 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
         window.goToStudentProfile(name);
       }
 
-      function genAIClassList(id) {
-        var item = CL_DETAIL_ITEMS[id];
-        var box = document.getElementById('clai' + id);
-        var cfg = Store.getConfig ? Store.getConfig() : {};
-        var courseid = parseInt(cfg.courseid || 0, 10);
-        var calc;
-        var prompt;
-        var aiButton = box && box.closest('.cl-detail-panel') ? box.closest('.cl-detail-panel').querySelector('.cl-ai-generate-btn') : null;
-        if (!item || !box) return;
-        if (aiButton && aiButton.disabled) return;
-        if (aiButton) aiButton.disabled = true;
-        if (!cfg.ia_enabled) {
-          Store.renderHtml(box,
-            '<div class="ai-box-title">&#10022; ' + esc(tr('ev_ai_title', 'AI Analysis & Recommendation')) + '</div>'
-            + '<div class="ai-box-text">' + esc(tr('ai_unavailable_message', '🔒 Artificial Intelligence features are unavailable. Configure a valid API key in MWA administration.')) + '</div>'
-          );
-          if (aiButton) aiButton.disabled = false;
-          return;
-        }
-        calc = item.calc || {};
-        Store.renderHtml(box,
-          '<div class="ai-box-title">&#10022; ' + esc(tr('ev_ai_title', 'AI Analysis & Recommendation')) + '</div>'
-          + '<div class="ai-loading"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div>'
-          + '<span style="margin-left:.5rem;font-size:.78rem;color:var(--muted);">' + esc(tr('loading', 'Carregando...')) + '</span></div>'
-        );
-        prompt = [
-          'Analise este aluno usando apenas os dados do painel da turma.',
-          'Escreva em portugues, com orientacao pratica para o professor.',
-          'Aluno: ' + item.name,
-          'Participacao: ' + item.score + '% (' + item.status.label + ')',
-          'Interacoes: ' + item.count,
-          'Dias ativos: ' + (calc.activeDays || 0),
-          'Ultimo acesso: ' + (calc.last ? fmtDate(calc.last) : '-'),
-          'Dias sem acesso: ' + (calc.daysWithoutAccess || 0),
-          'Atividades concluidas: ' + Math.round(calc.completion || 0) + '%',
-          'Cobertura de conteudo: ' + Math.round(calc.coverage || 0) + '%',
-          'Notas lancadas: ' + (calc.gradeLaunched || 0) + ' de ' + (calc.gradeItems || 0),
-          'Responda com: 1) diagnostico curto, 2) acao recomendada, 3) mensagem sugerida ao aluno.'
-        ].join('\n');
-        Store.callAction('block_mwa_dashboard_get_ai_recommendation', {
-          courseid: courseid,
-          student_name: item.name,
-          prompt: prompt
-        }).then(function (res) {
-          var text = (res && (res.recommendation || res.response || res.content)) || '';
-          if (!text) throw new Error(tr('err_ajax_bridge', 'Dashboard AJAX bridge is not available.'));
-          if (/^\s*User Safety\s*:\s*(?:safe|unsafe)\s*$/i.test(text)) throw new Error('invalid_ai_response');
-          text = text
-            .replace(/^#{1,6}\s*/gm, '')
-            .replace(/\*\*(.+?)\*\*/g, '$1')
-            .replace(/^\s*[-*]\s+/gm, '')
-            .replace(/\n{3,}/g, '\n\n')
-            .trim();
-          text = esc(text).replace(/\n/g, '<br>');
-          Store.renderHtml(box,
-            '<div class="ai-box-title">&#10022; ' + esc(tr('ev_ai_title', 'AI Analysis & Recommendation')) + '</div>'
-            + '<div class="ai-box-text">' + text + '</div>'
-          );
-        }).catch(function () {
-          Store.renderHtml(box,
-            '<div class="ai-box-title">&#10022; ' + esc(tr('ev_ai_title', 'AI Analysis & Recommendation')) + '</div>'
-            + '<div class="ai-box-text">' + esc(tr('ev_ai_conn_error', 'Error connecting to AI. Check module configuration.')) + '</div>'
-            + '<button type="button" class="btn-ghost cl-ai-retry-btn" onclick="window.MWAClassList&&window.MWAClassList.genAI(\'' + esc(id) + '\')">&#8635; ' + esc(tr('retry', 'Tentar novamente')) + '</button>'
-          );
-        }).then(function () {
-          if (aiButton) aiButton.disabled = false;
-        });
-      }
-    
       /* Public API */
       window.MWAClassList = {
         render: renderClassListUnified,
@@ -1415,7 +1342,6 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
         toggleDetail: toggleDetail,
         openStudent: openStudent,
         openProfile: openProfile,
-        genAI: genAIClassList,
         exportSpreadsheet: exportClassSpreadsheet
       };
     

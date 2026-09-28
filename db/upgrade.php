@@ -414,5 +414,20 @@ function xmldb_block_mwa_dashboard_upgrade($oldversion) {
         upgrade_block_savepoint(true, 2026092101, 'mwa_dashboard');
     }
 
+    if ($oldversion < 2026092801) {
+        // Remove AI provider credentials and configuration now that integrations are removed.
+        foreach ([
+            'ia_enabled', 'ia_provider', 'ia_model', 'ia_timeout', 'ia_institutional_url',
+            'ia_institutional_model', 'ia_institutional_private', 'ia_openrouter_model',
+            'ia_openrouter_free_only', 'ia_provider_credential', 'ia_credential_lastrotated',
+            'ia_institutional_credential', 'ia_institutional_credential_lastrotated',
+            'ia_apikey', 'apikey_lastrotated', 'ia_institutional_apikey',
+            'ia_institutional_apikey_lastrotated', 'ia_endpoint',
+        ] as $setting) {
+            unset_config($setting, 'block_mwa_dashboard');
+        }
+        upgrade_block_savepoint(true, 2026092801, 'mwa_dashboard');
+    }
+
     return true;
 }

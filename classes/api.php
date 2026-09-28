@@ -197,7 +197,7 @@ class api {
 
         return $DB->get_records_sql(
             "SELECT m.id, m.courseid, m.userid, m.teacherid, m.subject, m.message,
-                    m.timesent, m.status, m.ai_generated, m.intervention_reason, m.send_type,
+                    m.timesent, m.status, m.intervention_reason, m.send_type,
                     m.moodle_msgid, m.target_type, m.target_items, m.teacher_note,
                     m.teacher_note_updated,
                     s.reason AS snapshot_reason, s.situation AS snapshot_situation,
