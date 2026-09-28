@@ -65,6 +65,7 @@ $string['settings_trackallcourses_desc'] = 'Al activar esta opción, el seguimie
 $string['capture_global_enabled'] = 'El administrador habilitó el seguimiento de eventos en todo el sitio.';
 $string['capture_activate'] = 'Activar seguimiento';
 $string['capture_activated'] = 'Se activó el seguimiento de eventos para este curso.';
+$string['capture_inactive_notice'] = 'El seguimiento de este curso está inactivo. Pida a quien edita el curso que lo active desde el panel.';
 $string['chat_no_reply'] = 'No se pudo generar una respuesta. Inténtalo de nuevo.';
 $string['chat_error'] = 'Error al conectar con la IA';
 $string['chat_no_data'] = 'Sin datos';

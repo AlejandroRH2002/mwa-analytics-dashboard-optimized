@@ -2144,3 +2144,4 @@ $string['settings_trackallcourses_desc'] = 'Quando habilitado, o acompanhamento 
 $string['capture_global_enabled'] = 'O administrador habilitou o acompanhamento de eventos em todo o site.';
 $string['capture_activate'] = 'Ativar acompanhamento';
 $string['capture_activated'] = 'O acompanhamento de eventos foi ativado neste curso.';
+$string['capture_inactive_notice'] = 'O acompanhamento deste curso está inativo. Peça a quem edita o curso para ativá-lo no painel.';

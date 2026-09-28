@@ -69,6 +69,9 @@ echo $OUTPUT->header();
 if ($trackallcourses) {
     echo $OUTPUT->notification(get_string('capture_global_enabled', 'block_mwa_dashboard'),
         \core\output\notification::NOTIFY_INFO);
+} else if (!$canmanagecapture && !api::course_capture_enabled($courseid)) {
+    echo $OUTPUT->notification(get_string('capture_inactive_notice', 'block_mwa_dashboard'),
+        \core\output\notification::NOTIFY_INFO);
 } else if ($canmanagecapture && !api::course_capture_enabled($courseid)) {
     $activationform = html_writer::start_tag('form', [
         'method' => 'post',
