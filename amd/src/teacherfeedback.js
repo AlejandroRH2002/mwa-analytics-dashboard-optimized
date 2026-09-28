@@ -29,11 +29,11 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
     }
 
     var REASON_META = {
-        never: {label: function() { return tr('int_motivo_never'); }, icon: 'ban', color: '#e5484d'},
-        low: {label: function() { return tr('int_motivo_low'); }, icon: 'pulse', color: '#1769e0'},
-        pending: {label: function() { return tr('int_motivo_pending'); }, icon: 'document', color: '#f28c00'},
-        difficult: {label: function() { return tr('int_motivo_difficult'); }, icon: 'bars', color: '#198754'},
-        other: {label: function() { return tr('int_motivo_other'); }, icon: 'bubble', color: '#7030a0'}
+        never: {label: function() { return tr('int_motivo_never'); }, icon: 'ban', color: '#9b5e5e'},
+        low: {label: function() { return tr('int_motivo_low'); }, icon: 'pulse', color: '#002147'},
+        pending: {label: function() { return tr('int_motivo_pending'); }, icon: 'document', color: '#8a7147'},
+        difficult: {label: function() { return tr('int_motivo_difficult'); }, icon: 'bars', color: '#557764'},
+        other: {label: function() { return tr('int_motivo_other'); }, icon: 'bubble', color: '#002147'}
     };
 
     function svg(name, size) {
@@ -531,7 +531,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
             var yResp = padT + chartH - hResp;
             var detail2 = esc(JSON.stringify({series: tr('tf_reason_responded_pct'), label: d.label, value: rPct + '%', students: d.respondedNames}));
             var b2 = d.respondedPct !== null
-                ? '<rect class="fr-reason-bar" tabindex="0" role="button" data-fr-reason-detail="' + detail2 + '" x="' + cx + '" y="' + yResp + '" width="' + barW + '" height="' + hResp + '" rx="3" fill="#1769e0" opacity=".8"/>' +
+                ? '<rect class="fr-reason-bar" tabindex="0" role="button" data-fr-reason-detail="' + detail2 + '" x="' + cx + '" y="' + yResp + '" width="' + barW + '" height="' + hResp + '" rx="3" fill="#002147" opacity=".8"/>' +
                   (rPct > 0 ? '<text class="fr-bar-val" x="' + (cx + barW / 2) + '" y="' + (yResp - 4) + '" text-anchor="middle">' + rPct + '%</text>' : '')
                 : '';
 
@@ -544,7 +544,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
                     var yBar = dy < chartH / 2 ? padT + dy : midY;
                     var hBar = Math.abs(midY - (padT + dy));
                     hBar = Math.max(hBar, 3);
-                    var dColor = d.delta >= 0 ? '#15935f' : '#d93025';
+                    var dColor = d.delta >= 0 ? '#557764' : '#9b5e5e';
                     var detail3 = esc(JSON.stringify({series: tr('tf_reason_engage_delta'), label: d.label, value: (d.delta > 0 ? '+' : '') + formatNumber(d.delta), students: d.engagementNames}));
                     b3 = '<rect class="fr-reason-bar" tabindex="0" role="button" data-fr-reason-detail="' + detail3 + '" x="' + (cx + barW + gap) + '" y="' + yBar + '" width="' + barW + '" height="' + hBar + '" rx="3" fill="' + dColor + '" opacity=".8"/>' +
                         '<text class="fr-bar-val" x="' + (cx + barW * 1.5 + gap) + '" y="' + (Math.min(yBar, midY) - 4) + '" text-anchor="middle" fill="' + dColor + '">' +
@@ -573,8 +573,8 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
 
         /* Legend */
         var legend = '<span><i style="background:#a8b8d8"></i>' + tr('tf_reason_interventions') + '</span>' +
-            '<span><i style="background:#1769e0"></i>' + tr('tf_reason_responded_pct') + '</span>' +
-            '<span><i style="background:linear-gradient(#15935f 50%,#d93025 50%)"></i>' + tr('tf_reason_engage_delta') + '</span>';
+            '<span><i style="background:#002147"></i>' + tr('tf_reason_responded_pct') + '</span>' +
+            '<span><i style="background:linear-gradient(#557764 50%,#9b5e5e 50%)"></i>' + tr('tf_reason_engage_delta') + '</span>';
 
         var svgStyle = '<style>' +
             '.fr-grid-line{stroke:#e8ecf5;stroke-width:1}' +
@@ -606,16 +606,16 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
         var pr = pct(reached, total) || 0;
         var pm = pct(monitoring, total) || 0;
         var pn = Math.max(0, 100 - pr - pm);
-        var slices = [{label: tr('tf_kpi_evolved'), count: reached, percent: pr, color: '#198754', names: reachedGroups.map(function(group) { return group.name; })},
-            {label: tr('tf_kpi_tracking'), count: monitoring, percent: pm, color: '#ff8a00', names: monitoringGroups.map(function(group) { return group.name; })},
-            {label: tr('int_status_awaiting'), count: noResponse, percent: pn, color: '#e32929', names: noResponseGroups.map(function(group) { return group.name; })}];
+        var slices = [{label: tr('tf_kpi_evolved'), count: reached, percent: pr, color: '#557764', names: reachedGroups.map(function(group) { return group.name; })},
+            {label: tr('tf_kpi_tracking'), count: monitoring, percent: pm, color: '#8a7147', names: monitoringGroups.map(function(group) { return group.name; })},
+            {label: tr('int_status_awaiting'), count: noResponse, percent: pn, color: '#9b5e5e', names: noResponseGroups.map(function(group) { return group.name; })}];
         return '<div class="fr-donut-wrap"><div class="fr-donut" data-fr-donut="' + esc(JSON.stringify(slices)) +
-            '" style="background:conic-gradient(#198754 0 ' + pr + '%,#ff8a00 ' + pr + '% ' + (pr + pm) + '%,#e32929 ' + (pr + pm) + '% 100%)">' +
+            '" style="background:conic-gradient(#557764 0 ' + pr + '%,#8a7147 ' + pr + '% ' + (pr + pm) + '%,#9b5e5e ' + (pr + pm) + '% 100%)">' +
             '<span class="fr-donut-tooltip" hidden></span>' +
             '<div><strong class="fr-donut-center-value">' + pr + '%</strong><span class="fr-donut-center-label">' + tr('tf_donut_rate_label') + '</span></div></div>' +
-            '<ul><li title="' + reached + ' (' + pr + '%)"><i style="background:#198754"></i>' + tr('tf_kpi_evolved') + '</li>' +
-            '<li title="' + monitoring + ' (' + pm + '%)"><i style="background:#ff8a00"></i>' + tr('tf_kpi_tracking') + '</li>' +
-            '<li title="' + noResponse + ' (' + pn + '%)"><i style="background:#e32929"></i>' + tr('int_status_awaiting') + '</li></ul></div>' +
+            '<ul><li title="' + reached + ' (' + pr + '%)"><i style="background:#557764"></i>' + tr('tf_kpi_evolved') + '</li>' +
+            '<li title="' + monitoring + ' (' + pm + '%)"><i style="background:#8a7147"></i>' + tr('tf_kpi_tracking') + '</li>' +
+            '<li title="' + noResponse + ' (' + pn + '%)"><i style="background:#9b5e5e"></i>' + tr('int_status_awaiting') + '</li></ul></div>' +
             '<div class="fr-donut-detail" id="frDonutDetail"><strong>' + tr('tf_donut_select_prompt') + '</strong><span>' + tr('tf_donut_select_sub') + '</span></div>' +
             info(tr('tf_donut_info'));
     }
@@ -711,8 +711,6 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
         var total = groups.length;
         var responded = groups.filter(function(group) { return group.responded; });
         var evolved = groups.filter(function(group) { return group.reached; });
-        var partial = groups.filter(function(group) { return group.responded && !group.reached; });
-        var noResponse = groups.filter(function(group) { return !group.responded; });
         var engagement = summarize(pairs.engagement), grade = summarize(pairs.grade);
         var reasonResults = REASONS.map(function(reason) {
             var reasonGroups = groupStudents(rows.filter(function(row) { return row.reason === reason; }));
@@ -738,11 +736,6 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
                 ' (' + pctText(best.responded, best.total) + ').' + (weakest ? ' El menor se observó para el motivo ' + weakest.label + ': ' +
                     weakest.responded + ' de ' + weakest.total + ' (' + pctText(weakest.responded, weakest.total) + ').' : ''));
         }
-        var recommendations = [];
-        if (noResponse.length) { recommendations.push('Priorizar un nuevo contacto con ' + names(noResponse) + ', quienes aún no regresan después de la intervención.'); }
-        if (partial.length) { recommendations.push('Revisar la estrategia para ' + names(partial) + ', quienes regresaron, pero aún no alcanzan el resultado esperado.'); }
-        if (grade.declined.length || engagement.declined.length) { recommendations.push('Revisar individualmente los casos con disminución: ' + names(grade.declined.concat(engagement.declined)) + '.'); }
-        if (!recommendations.length) { recommendations.push('Mantener el seguimiento periódico para confirmar la continuidad de los avances observados.'); }
         var improved = engagement.improved.concat(grade.improved);
         var issuedAt = new Date().toLocaleString([], {dateStyle: 'long', timeStyle: 'short'});
         var period = filters.from || filters.to ? (filters.from ? new Date(filters.from + 'T00:00:00').toLocaleDateString() : 'inicio') +
@@ -760,8 +753,7 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
             '<div class="fr-analytical-title">' + svg('chart', 20) + '<div><h2>Análisis pedagógico del periodo</h2><p>Resumen de los datos antes y después de las intervenciones.</p></div></div>' +
             '<div class="fr-analytical-grid"><div><h3>Resultados observados</h3><ul>' + findings.map(function(item) { return '<li>' + esc(item) + '</li>'; }).join('') +
             '</ul></div><div><h3>Aspectos con mejora</h3><p>' + (improved.length ? 'Se observó una mejora medible en: ' + esc(names(improved)) + '.' :
-                'Aún no hay una mejora medible en los pares comparables de este periodo.') + '</p><h3>Puntos de atención y siguientes pasos</h3><ul>' +
-            recommendations.map(function(item) { return '<li>' + esc(item) + '</li>'; }).join('') + '</ul></div></div>' +
+                'Aún no hay una mejora medible en los pares comparables de este periodo.') + '</p></div></div>' +
             '<section class="fr-export-interventions"><h2>Intervenciones incluidas en el reporte</h2><p>Relación cronológica de las acciones del periodo y de las respuestas observadas posteriormente en Moodle.</p>' +
             '<table><thead><tr><th>Fecha de intervención</th><th>Estudiante</th><th>Motivo</th><th>Responsable</th><th>Situación observada</th><th>Tiempo hasta la respuesta</th></tr></thead><tbody>' +
             interventionRows + '</tbody></table></section>' +
@@ -825,9 +817,9 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
                 });
         }
         var series = [
-            {label: tr('tf_chart_engagement'), color: '#0b5be7', values: pairs.engagement},
-            {label: tr('tf_chart_grade'), color: '#11813b', values: pairs.grade},
-            {label: tr('tf_chart_approval'), color: '#6423a5', values: pairs.approval, approval: true}
+            {label: tr('tf_chart_engagement'), color: '#002147', values: pairs.engagement},
+            {label: tr('tf_chart_grade'), color: '#557764', values: pairs.grade},
+            {label: tr('tf_chart_approval'), color: '#64758a', values: pairs.approval, approval: true}
         ].filter(function(item) { return item.values.length; });
         if (!series.length) { return '<div class="fr-no-data">Sem pares snapshot × atual elegíveis para o gráfico.</div>'; }
         var timelineDays = {};
@@ -1095,10 +1087,10 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
             '<g class="grid">' + ticks + '</g><path class="fr-journey-area" d="' + areaPath + '"/>' +
             '<line class="fr-intervention-line" x1="' + left + '" y1="' + top + '" x2="' + left + '" y2="' + bottom + '"/>' +
             '<text class="fr-intervention-label" x="' + (left + 7) + '" y="31">' + tr('tf_journey_d0') + '</text>' +
-            '<g class="lines"><path d="' + accessPath + '" stroke="#2da873"/><path d="' + academicPath + '" stroke="#1769e0"/></g>' +
-            points(access, tr('tf_journey_access'), '#2da873') + points(academic, tr('tf_journey_academic'), '#1769e0') + labels +
-            '</svg><div class="fr-legend"><span><i style="background:#2da873"></i>' + tr('tf_journey_access') + '</span>' +
-            '<span><i style="background:#1769e0"></i>' + tr('tf_journey_academic') + '</span></div>' +
+            '<g class="lines"><path d="' + accessPath + '" stroke="#557764"/><path d="' + academicPath + '" stroke="#002147"/></g>' +
+            points(access, tr('tf_journey_access'), '#557764') + points(academic, tr('tf_journey_academic'), '#002147') + labels +
+            '</svg><div class="fr-legend"><span><i style="background:#557764"></i>' + tr('tf_journey_access') + '</span>' +
+            '<span><i style="background:#002147"></i>' + tr('tf_journey_academic') + '</span></div>' +
             '<div class="fr-chart-detail" id="frJourneyDetail"><strong>' + tr('tf_journey_select') + '</strong>' +
             '<span>' + tr('tf_journey_select_sub') + '</span></div></div>' +
             info(tr('tf_journey_info'));
@@ -1143,12 +1135,12 @@ define(['block_mwa_dashboard/dashboardstore'], function(Store) {
         var ignored = data.filter(function(row) { return !row.raw.snapshot_timecreated; }).length;
 
         var html = headerActionsHtml() + '<div class="fr-kpis">' +
-            kpi('users', tr('tf_kpi_students_tracked'), String(total), total ? tr('tf_kpi_students_all') : tr('tf_kpi_students_none'), '#1769e0', tr('tf_kpi_students_tracked_tip')) +
-            kpi('refresh', tr('tf_kpi_responded'), String(responded), pctText(responded, total) + ' ' + tr('tf_of_total'), '#1769e0', tr('tf_kpi_responded_tip')) +
-            kpi('target', tr('tf_kpi_evolved'), String(reached), pctText(reached, total) + ' ' + tr('tf_of_total'), '#198754', tr('tf_kpi_evolved_tip')) +
-            kpi('hourglass', tr('tf_kpi_tracking'), String(monitoring), pctText(monitoring, total) + ' ' + tr('tf_of_total'), '#ff7a00', tr('tf_kpi_tracking_tip')) +
-            kpi('close', tr('tf_kpi_no_response'), String(noResponse), pctText(noResponse, total) + ' ' + tr('tf_of_total'), '#ed0000', tr('tf_kpi_no_response_tip')) +
-            kpi('trend', tr('tf_kpi_sustained'), sustained.eligible ? String(sustained.count) : '—', sustained.eligible ? pctText(sustained.count, sustained.eligible) + ' ' + tr('tf_of_eligible') : tr('tf_no_eligible_after'), '#7030a0', tr('tf_kpi_sustained_tip')) +
+            kpi('users', tr('tf_kpi_students_tracked'), String(total), total ? tr('tf_kpi_students_all') : tr('tf_kpi_students_none'), '#002147', tr('tf_kpi_students_tracked_tip')) +
+            kpi('refresh', tr('tf_kpi_responded'), String(responded), pctText(responded, total) + ' ' + tr('tf_of_total'), '#002147', tr('tf_kpi_responded_tip')) +
+            kpi('target', tr('tf_kpi_evolved'), String(reached), pctText(reached, total) + ' ' + tr('tf_of_total'), '#557764', tr('tf_kpi_evolved_tip')) +
+            kpi('hourglass', tr('tf_kpi_tracking'), String(monitoring), pctText(monitoring, total) + ' ' + tr('tf_of_total'), '#8a7147', tr('tf_kpi_tracking_tip')) +
+            kpi('close', tr('tf_kpi_no_response'), String(noResponse), pctText(noResponse, total) + ' ' + tr('tf_of_total'), '#9b5e5e', tr('tf_kpi_no_response_tip')) +
+            kpi('trend', tr('tf_kpi_sustained'), sustained.eligible ? String(sustained.count) : '—', sustained.eligible ? pctText(sustained.count, sustained.eligible) + ' ' + tr('tf_of_eligible') : tr('tf_no_eligible_after'), '#002147', tr('tf_kpi_sustained_tip')) +
             '</div>' + filtersHtml(allRows) + tabsHtml();
 
         if (!rows.length) {

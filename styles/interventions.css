@@ -28,7 +28,7 @@
   align-items: center;
   gap: 12px;
   padding: 14px 22px;
-  background: linear-gradient(135deg, #3b5bdb11, #5b9bd511);
+  background: linear-gradient(135deg, #3b5bdb11, #49647f11);
   border-bottom: 1px solid var(--line);
 }.block-mwa-dashboard-app .mwa-msg-head-avatar{
   width: 42px;
@@ -705,7 +705,7 @@
 }
 .block-mwa-dashboard-app .int-collapse-top {
   align-items: center;
-  background: linear-gradient(135deg,rgba(79,142,247,.10),rgba(139,114,212,.08));
+  background: linear-gradient(135deg,rgba(79,142,247,.10),rgba(100, 117, 138,.08));
   border-bottom: 1px solid var(--line);
   display: flex;
   gap: 14px;
@@ -1269,7 +1269,7 @@
   gap: 8px;
 }
 .block-mwa-dashboard-app .int2-export-btn {
-  background: linear-gradient(135deg,#3ecf8e,#13794c);
+  background: linear-gradient(135deg,#557764,#557764);
   color: #fff;
   border: none;
   border-radius: 10px;
@@ -1476,7 +1476,7 @@
   color: var(--green);
 }
 .block-mwa-dashboard-app .int2-followup-icon.calendar {
-  color: #5b9bd5;
+  color: #49647f;
 }
 
 /* Actions menu button */
@@ -1783,7 +1783,7 @@
   border: 1px solid #bfd4f5;
   border-radius: 12px;
   background: linear-gradient(135deg,#eef5ff,#f7faff);
-  box-shadow: inset 4px 0 0 #5b9bd5;
+  box-shadow: inset 4px 0 0 #49647f;
 }
 .block-mwa-dashboard-app .int2-targets-title {
   font-size: .66rem;
@@ -1891,8 +1891,8 @@
 .block-mwa-dashboard-app .int-snapshot-situation-kpi{background:#fff4f4;border:1px solid #efc2c2;border-radius:14px;display:flex;flex-direction:column;justify-content:center;padding:12px 16px;}
 .block-mwa-dashboard-app .int-snapshot-situation-kpi span{color:var(--muted);font-size:.67rem;font-weight:900;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;}
 .block-mwa-dashboard-app .int-snapshot-situation-kpi strong{color:var(--text);font-size:.86rem;line-height:1.35;}
-.block-mwa-dashboard-app .int-snapshot-grade-value{align-items:center;background:#198754;border-radius:50%;color:#fff;display:flex;flex:0 0 62px;font-size:1.15rem;font-weight:900;height:62px;justify-content:center;}
-.block-mwa-dashboard-app .int-snapshot-grade-kpi.is-below-reference{background:linear-gradient(135deg,#fff1f2,#fff);border-color:#f2b8bd;}.block-mwa-dashboard-app .int-snapshot-grade-kpi.is-below-reference .int-snapshot-grade-value{background:#dc2626;}.block-mwa-dashboard-app .int-snapshot-grade-kpi.is-approved{background:linear-gradient(135deg,#f0fbf5,#fff);border-color:#b8e3ca;}.block-mwa-dashboard-app .int-snapshot-grade-kpi.is-approved .int-snapshot-grade-value{background:#198754;}
+.block-mwa-dashboard-app .int-snapshot-grade-value{align-items:center;background:#557764;border-radius:50%;color:#fff;display:flex;flex:0 0 62px;font-size:1.15rem;font-weight:900;height:62px;justify-content:center;}
+.block-mwa-dashboard-app .int-snapshot-grade-kpi.is-below-reference{background:linear-gradient(135deg,#fff1f2,#fff);border-color:#f2b8bd;}.block-mwa-dashboard-app .int-snapshot-grade-kpi.is-below-reference .int-snapshot-grade-value{background:#9b5e5e;}.block-mwa-dashboard-app .int-snapshot-grade-kpi.is-approved{background:linear-gradient(135deg,#f0fbf5,#fff);border-color:#b8e3ca;}.block-mwa-dashboard-app .int-snapshot-grade-kpi.is-approved .int-snapshot-grade-value{background:#557764;}
 .block-mwa-dashboard-app .int-snapshot-grade-kpi>div:last-child strong{display:block;font-size:.86rem;font-weight:900;}
 .block-mwa-dashboard-app .int-snapshot-grade-kpi>div:last-child small{color:var(--muted);display:block;font-size:.7rem;line-height:1.35;margin-top:4px;}
 .block-mwa-dashboard-app .int-snapshot-engagement-ring{align-items:center;background:conic-gradient(var(--snapshot-color,var(--blue)) calc(var(--snapshot-pct) * 1%),#e5ebf5 0);border-radius:50%;display:flex;height:62px;justify-content:center;position:relative;width:62px;}
@@ -2009,14 +2009,14 @@
 .block-mwa-dashboard-app #page-interventions .int2-table-header .cl-export-btn{
   align-items:center;
   background:#fff;
-  color:#13794c;
+  color:#557764;
   display:inline-flex;
   gap:7px;
   margin-left:auto;
   white-space:nowrap;
 }
 .block-mwa-dashboard-app #page-interventions .int2-table-header .cl-export-btn:hover{
-  border-color:#13794c;
+  border-color:#557764;
   color:#0b5d38;
 }
 .block-mwa-dashboard-app #page-interventions .int2-table-header .cl-export-btn .mwa-ui-icon{

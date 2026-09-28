@@ -1625,6 +1625,7 @@ $string['tf_progress_info']             = 'Engagement compares each student\'s f
 
 // Generic
 $string['message']                     = 'Message';
+$string['send_message']                = 'Send Message';
 
 $string['tf_med_first_response']     = 'First student response';
 $string['tf_med_first_academic']     = 'First activity, attempt or submission';

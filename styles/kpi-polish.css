@@ -73,13 +73,13 @@
 
 .block-mwa-dashboard-app #page-studentprofile .sp-kpi-icon-active {background:rgba(18,169,166,.08);border-color:rgba(18,169,166,.27);color:var(--teal);}
 .block-mwa-dashboard-app #page-studentprofile .sp-kpi-icon-grade {background:rgba(58,171,122,.08);border-color:rgba(58,171,122,.27);color:var(--green);}
-.block-mwa-dashboard-app #page-studentprofile .sp-kpi-icon-engagement {background:rgba(139,114,212,.08);border-color:rgba(139,114,212,.27);color:var(--purple);}
+.block-mwa-dashboard-app #page-studentprofile .sp-kpi-icon-engagement {background:rgba(100, 117, 138,.08);border-color:rgba(100, 117, 138,.27);color:var(--purple);}
 .block-mwa-dashboard-app #page-studentprofile .sp-kpi:last-child .sp-kpi-head::before {
   background: linear-gradient(currentColor,currentColor) 7px 17px / 3px 8px no-repeat,
               linear-gradient(currentColor,currentColor) 14px 12px / 3px 13px no-repeat,
               linear-gradient(currentColor,currentColor) 21px 7px / 3px 18px no-repeat,
-              rgba(139,114,212,.08);
-  border: 1px solid rgba(139,114,212,.27);
+              rgba(100, 117, 138,.08);
+  border: 1px solid rgba(100, 117, 138,.27);
   border-radius: 9px;
   box-sizing: border-box;
   color: var(--purple);

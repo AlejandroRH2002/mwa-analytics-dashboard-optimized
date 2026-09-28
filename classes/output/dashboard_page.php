@@ -1197,6 +1197,7 @@ class dashboard_page implements renderable, templatable {
             'dashboard_updated_at',
             // ── Generic ──
             'message',
+            'send_message',
         ];
     }
 

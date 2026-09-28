@@ -343,7 +343,7 @@ define([
         });
         
         var state={logs:[],grades:[],students:[],activities:[],seen:false};
-        var COLORS=['#4f8ef7','#2fb579','#d9962c','#8b6bd6','#e05a5a','#14b8a6','#f59e0b','#6366f1','#ec4899','#84cc16','#06b6d4','#f97316'];
+        var COLORS=['#002147','#557764','#8a7147','#64758a','#9b5e5e','#527579','#8a7147','#64758a','#6a5960','#557764','#527579','#8a7147'];
         function $(id){return document.getElementById(id)}
         function norm(v){return (v===undefined||v===null)?'':String(v).trim()}
         function lower(v){return norm(v).toLowerCase()}
@@ -464,7 +464,7 @@ define([
           var d = cur - prv;
           var pos = invertColors ? d < 0 : d > 0;
           var neg = invertColors ? d > 0 : d < 0;
-          var color  = d === 0 ? '#8a94a8' : pos ? '#13794c' : '#b42318';
+          var color  = d === 0 ? '#8a94a8' : pos ? '#557764' : '#9b5e5e';
           var bg     = d === 0 ? '#f0f2f7' : pos ? '#e8f7ef' : '#fdecec';
           var label  = d === 0 ? '0' : (d > 0 ? '+' + d : String(d));
           return '<span style="background:'+bg+';color:'+color+';font-size:.65rem;font-weight:800;padding:2px 7px;border-radius:99px;float:right;margin-left:4px;">'+label+'</span>';

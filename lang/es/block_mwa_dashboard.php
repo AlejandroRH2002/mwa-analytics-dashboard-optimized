@@ -57,6 +57,7 @@ $string['unique_students'] = 'Estudiantes únicos';
 $string['clearfilters'] = 'Limpiar filtros';
 $string['search_student'] = 'Buscar estudiante';
 $string['message'] = 'Mensaje';
+$string['send_message'] = 'Enviar mensaje';
 $string['close'] = 'Cerrar';
 $string['savechanges'] = 'Guardar cambios';
 $string['msg_conn_error'] = 'Error de conexión. Inténtalo de nuevo.';

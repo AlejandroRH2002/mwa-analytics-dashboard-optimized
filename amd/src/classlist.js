@@ -78,7 +78,7 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
         var d = Number(cur) - Number(prv);
         var label = d === 0 ? '0' : (d > 0 ? '+' + d : String(d));
         var good = invertColors ? d < 0 : d > 0;
-        var color = d === 0 ? '#8a94a8' : good ? '#13794c' : '#b42318';
+        var color = d === 0 ? '#8a94a8' : good ? '#557764' : '#9b5e5e';
         var bg = d === 0 ? '#f0f2f7' : good ? '#e8f7ef' : '#fdecec';
         return '<span style="background:' + bg + ';color:' + color + ';font-size:.65rem;font-weight:800;padding:2px 7px;border-radius:99px;">' + label + '</span>';
       }
@@ -96,7 +96,7 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
       var CL_EXPORT_RESOURCES = [];
     
       /* ── avatar colours (cycling by name) ── */
-      var AV_COLORS = ['#5b9bd5','#8b72d4','#3aab7a','#c98a2a','#d95f5f','#2aafaa','#e07ba0'];
+      var AV_COLORS = ['#49647f','#64758a','#557764','#8a7147','#9b5e5e','#527579','#6a5960'];
     
       /* ── helpers de data ── */
       function parseDate(log) {
@@ -650,9 +650,9 @@ define(['block_mwa_dashboard/dashboardstore', 'block_mwa_dashboard/engagementcal
           return {key: 'never', cls: 'never', color: '#7b8496', label: tr('ev_never_access', 'No recorded access')};
         }
         if (score >= 70) {
-          return {key: 'high', cls: 'high', color: '#3aab7a', label: tr('ev_high_part', 'Consistent pathway')};
+          return {key: 'high', cls: 'high', color: '#557764', label: tr('ev_high_part', 'Consistent pathway')};
         }
-        return {key: 'medium', cls: 'medium', color: '#8b72d4', label: tr('ev_med_part', 'Progressing')};
+        return {key: 'medium', cls: 'medium', color: '#64758a', label: tr('ev_med_part', 'Progressing')};
       }
 
       function hasNoReleasedGrade(item) {

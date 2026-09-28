@@ -136,7 +136,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
       var CURRENT_PAGE = 1;
 
       /* avatar colour palette */
-      var AV_COLORS = ['#5b9bd5','#8b72d4','#3aab7a','#c98a2a','#d95f5f','#2aafaa','#e07ba0'];
+      var AV_COLORS = ['#49647f','#64758a','#557764','#8a7147','#9b5e5e','#527579','#6a5960'];
 
       /* name initials */
       function initials(name) {
@@ -213,7 +213,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
           'animation:mwafadeIn .2s ease',
           'max-width:340px',
           'line-height:1.4',
-          'background:' + (type === 'error' ? '#d95f5f' : '#3aab7a'),
+          'background:' + (type === 'error' ? '#9b5e5e' : '#557764'),
           'color:#fff'
         ].join(';');
         root.appendChild(el);
@@ -863,10 +863,10 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
          🟠 Partial progress   (orange)
          🟢 Full progress / Goal reached  (green)
       */
-      var SVG_DOT_BLUE   = '<svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#4f8ef7"/></svg>';
-      var SVG_DOT_YELLOW = '<svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#f59e0b"/></svg>';
-      var SVG_DOT_ORANGE = '<svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#f97316"/></svg>';
-      var SVG_DOT_GREEN  = '<svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#22c55e"/></svg>';
+      var SVG_DOT_BLUE   = '<svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#002147"/></svg>';
+      var SVG_DOT_YELLOW = '<svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#8a7147"/></svg>';
+      var SVG_DOT_ORANGE = '<svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#8a7147"/></svg>';
+      var SVG_DOT_GREEN  = '<svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="5" fill="#557764"/></svg>';
       var SVG_CAL = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
       var SVG_REFRESH = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>';
 
@@ -1218,16 +1218,16 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
 
         /* ---- Build motivo cards ---- */
         // Inline SVG icons matching the reference image exactly
-        var SVG_NEVER    = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#d95f5f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>';
-        var SVG_LOW      = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5b9bd5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>';
-        var SVG_PENDING  = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#c98a2a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>';
-        var SVG_DIFFICULT= '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3aab7a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>';
-        var SVG_OTHER    = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8b72d4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
+        var SVG_NEVER    = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#9b5e5e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>';
+        var SVG_LOW      = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#49647f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>';
+        var SVG_PENDING  = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#8a7147" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>';
+        var SVG_DIFFICULT= '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#557764" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>';
+        var SVG_OTHER    = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#64758a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
         var motivoCards = [
           {
             bucket: 'never',
             icon: SVG_NEVER,
-            color: '#d95f5f',
+            color: '#9b5e5e',
             bg: 'rgba(217,95,95,.07)',
             border: 'rgba(217,95,95,.25)',
             label: tr('int_motivo_never'),
@@ -1237,7 +1237,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
           {
             bucket: 'low',
             icon: SVG_LOW,
-            color: '#5b9bd5',
+            color: '#49647f',
             bg: 'rgba(91,155,213,.07)',
             border: 'rgba(91,155,213,.25)',
             label: tr('int_motivo_low'),
@@ -1247,7 +1247,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
           {
             bucket: 'pending',
             icon: SVG_PENDING,
-            color: '#c98a2a',
+            color: '#8a7147',
             bg: 'rgba(201,138,42,.07)',
             border: 'rgba(201,138,42,.25)',
             label: tr('int_motivo_pending'),
@@ -1257,7 +1257,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
           {
             bucket: 'difficult',
             icon: SVG_DIFFICULT,
-            color: '#3aab7a',
+            color: '#557764',
             bg: 'rgba(58,171,122,.07)',
             border: 'rgba(58,171,122,.25)',
             label: tr('int_motivo_difficult'),
@@ -1267,7 +1267,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
           {
             bucket: 'other',
             icon: SVG_OTHER,
-            color: '#8b72d4',
+            color: '#64758a',
             bg: 'rgba(139,114,212,.07)',
             border: 'rgba(139,114,212,.25)',
             label: tr('int_motivo_other'),
@@ -1654,8 +1654,8 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates'], function(Store,
             captured.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
           var snapshotEngagement = Number(data.engagement);
           snapshotEngagement = isNaN(snapshotEngagement) ? null : Math.max(0, Math.min(100, Math.round(snapshotEngagement)));
-          var snapshotEngagementColor = snapshotEngagement === 0 ? '#8b72d4' :
-            (snapshotEngagement <= 40 ? '#d95f5f' : (snapshotEngagement < 70 ? '#c98a2a' : '#3aab7a'));
+          var snapshotEngagementColor = snapshotEngagement === 0 ? '#64758a' :
+            (snapshotEngagement <= 40 ? '#9b5e5e' : (snapshotEngagement < 70 ? '#8a7147' : '#557764'));
           var engagementKpi = snapshotEngagement === null ? '' : '<div class="int-snapshot-engagement-kpi" style="--snapshot-pct:' + snapshotEngagement + ';--snapshot-color:' + snapshotEngagementColor + ';">'
             + '<div class="int-snapshot-engagement-ring"><span>' + snapshotEngagement + '%</span></div>'
             + '<div><strong>' + esc(tr('snapshot_engagement_at_time')) + '</strong><small>' + esc(tr('snapshot_recorded_at')) + ': ' + esc(capturedLabel) + '</small></div>'

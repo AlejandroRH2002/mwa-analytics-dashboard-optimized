@@ -189,14 +189,14 @@
 .block-mwa-dashboard-app #page-classlist .cl-export-btn{
   align-items:center;
   background:#fff;
-  color:#13794c;
+  color:#557764;
   display:inline-flex;
   gap:7px;
   margin-left:auto;
   white-space:nowrap;
 }
 .block-mwa-dashboard-app #page-classlist .cl-export-btn:hover{
-  border-color:#13794c;
+  border-color:#557764;
   color:#0b5d38;
 }
 .cl-sort-select{
@@ -588,7 +588,7 @@
   color:var(--text);
 }
 .block-mwa-dashboard-app .cl-kpi-card.never strong{color:#7b8496;}
-.block-mwa-dashboard-app .cl-kpi-card.followup strong{color:#c98a2a;}
+.block-mwa-dashboard-app .cl-kpi-card.followup strong{color:#8a7147;}
 .block-mwa-dashboard-app .cl-kpi-card.low strong{color:#4f83d1;}
 .block-mwa-dashboard-app .cl-kpi-card.medium strong{color:var(--amber);}
 .block-mwa-dashboard-app .cl-kpi-card.high strong{color:var(--green);}
@@ -667,7 +667,7 @@
 .block-mwa-dashboard-app .cl-part-chip.followup{background:#fff5df;color:#a96d10;}
 .block-mwa-dashboard-app .cl-part-chip.low{background:#eaf2ff;color:#3972c2;}
 .block-mwa-dashboard-app .cl-part-chip.medium{background:#f0ebff;color:#7659c3;}
-.block-mwa-dashboard-app .cl-part-chip.high{background:#e6f7ef;color:#15935f;}
+.block-mwa-dashboard-app .cl-part-chip.high{background:#e6f7ef;color:#557764;}
 .block-mwa-dashboard-app .cl-student-detail-row td{
   padding:0 18px 18px !important;
   background:#f8fbff;
@@ -826,7 +826,7 @@
   stroke-width:2.2;
   width:12px;
 }
-.block-mwa-dashboard-app .cl-followup-reason.overdue{background:#fff0ef;border-color:#f2b8b4;color:#b42318;}
+.block-mwa-dashboard-app .cl-followup-reason.overdue{background:#fff0ef;border-color:#f2b8b4;color:#9b5e5e;}
 .block-mwa-dashboard-app .cl-followup-reason.inactive{background:#fff6df;border-color:#f2d28b;color:#9a650d;}
 .block-mwa-dashboard-app .cl-followup-reason.grade{background:#f2edff;border-color:#cfc0f5;color:#6e4fbd;}
 .block-mwa-dashboard-app .cl-detail-main strong{
@@ -873,7 +873,7 @@
 .block-mwa-dashboard-app .cl-det-chip.red{background:var(--red-dim);color:var(--red);}
 .block-mwa-dashboard-app .cl-det-chip.amber{background:#fff5df;color:#bf7f18;}
 .block-mwa-dashboard-app .cl-det-chip.blue{background:#edf4ff;color:var(--blue);}
-.block-mwa-dashboard-app .cl-det-chip.green{background:#e6f7ef;color:#15935f;}
+.block-mwa-dashboard-app .cl-det-chip.green{background:#e6f7ef;color:#557764;}
 .block-mwa-dashboard-app .cl-det-chip.slate{background:#f4f6fb;color:var(--muted);}
 .block-mwa-dashboard-app .cl-study-chip{
   display:inline-flex;
@@ -886,11 +886,11 @@
   font-weight:800;
   white-space:nowrap;
 }
-.block-mwa-dashboard-app .cl-study-chip.noturno{background:#f3edff;color:#8b72d4;border-color:#d9ccff;}
+.block-mwa-dashboard-app .cl-study-chip.noturno{background:#f2f4f6;color:#64758a;border-color:#cbd2d9;}
 .block-mwa-dashboard-app .cl-study-chip.vespertino{background:#edf4ff;color:#5b7fd5;border-color:#cfe0ff;}
 .block-mwa-dashboard-app .cl-study-chip.diurno{background:#fff8e5;color:#bf7f18;border-color:#f2dda5;}
 .block-mwa-dashboard-app .cl-study-chip.constante,
-.block-mwa-dashboard-app .cl-study-chip.alto{background:#e6f7ef;color:#15935f;border-color:#bdebd4;}
+.block-mwa-dashboard-app .cl-study-chip.alto{background:#e6f7ef;color:#557764;border-color:#bdebd4;}
 .block-mwa-dashboard-app .cl-study-chip.irregular,
 .block-mwa-dashboard-app .cl-study-chip.baixo{background:#fff5df;color:#bf7f18;border-color:#efd194;}
 .block-mwa-dashboard-app .cl-study-chip.risco,
@@ -1086,9 +1086,9 @@ body.mwa-detail-modal-open{overflow:hidden;}
 .block-mwa-dashboard-app #page-classlist .cl-kpi-card strong{color:var(--cl-kpi-color);font-family:'DM Mono',ui-monospace,monospace;font-size:1.75rem;margin:auto 0 0;}
 .block-mwa-dashboard-app #page-classlist .cl-kpi-pct{font-size:.68rem;margin-top:0;}
 .block-mwa-dashboard-app #page-classlist .cl-kpi-card.never{--cl-kpi-color:#7b8496;--cl-kpi-bg:rgba(123,132,150,.09);--cl-kpi-border:rgba(123,132,150,.3);}
-.block-mwa-dashboard-app #page-classlist .cl-kpi-card.followup{--cl-kpi-color:#c98a2a;--cl-kpi-bg:rgba(201,138,42,.09);--cl-kpi-border:rgba(201,138,42,.3);}
+.block-mwa-dashboard-app #page-classlist .cl-kpi-card.followup{--cl-kpi-color:#8a7147;--cl-kpi-bg:rgba(201,138,42,.09);--cl-kpi-border:rgba(201,138,42,.3);}
 .block-mwa-dashboard-app #page-classlist .cl-kpi-card.low{--cl-kpi-color:#4f83d1;--cl-kpi-bg:rgba(79,131,209,.08);--cl-kpi-border:rgba(79,131,209,.27);}
-.block-mwa-dashboard-app #page-classlist .cl-kpi-card.medium{--cl-kpi-color:#8b72d4;--cl-kpi-bg:rgba(139,114,212,.09);--cl-kpi-border:rgba(139,114,212,.3);}
+.block-mwa-dashboard-app #page-classlist .cl-kpi-card.medium{--cl-kpi-color:#64758a;--cl-kpi-bg:rgba(100, 117, 138,.09);--cl-kpi-border:rgba(100, 117, 138,.3);}
 .block-mwa-dashboard-app #page-classlist .cl-kpi-card.high{--cl-kpi-color:#2cab77;--cl-kpi-bg:rgba(44,172,119,.08);--cl-kpi-border:rgba(44,172,119,.27);}
 .block-mwa-dashboard-app #page-classlist .cl-kpi-card strong{color:var(--text);}
 

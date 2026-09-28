@@ -70,7 +70,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
         }
         delta = Number(delta);
         var good = invertColors ? delta < 0 : delta > 0;
-        var color = delta === 0 ? '#8a94a8' : good ? '#13794c' : '#b42318';
+        var color = delta === 0 ? '#8a94a8' : good ? '#557764' : '#9b5e5e';
         var bg = delta === 0 ? '#f0f2f7' : good ? '#e8f7ef' : '#fdecec';
         var label = delta === 0 ? '0' : (delta > 0 ? '+' + delta : String(delta));
         return '<span class="gr-kpi-chip" style="background:' + bg + ';color:' + color + ';">' + esc(label) + '</span>';
@@ -588,7 +588,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
             type: 'bar',
             data: {
               labels: ['0–20','20–40','40–60','60–80','80–100'],
-              datasets: [{ data: binCounts, backgroundColor: ['#d95f5f','#f5a623','#5b9bd5','#3aab7a','#8b72d4'], borderRadius: 5 }]
+              datasets: [{ data: binCounts, backgroundColor: ['#9b5e5e','#8a7147','#49647f','#557764','#64758a'], borderRadius: 5 }]
             },
             options: {
               responsive: true, maintainAspectRatio: false,
@@ -606,7 +606,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/chartjs'], function(Store, C
             type: 'doughnut',
             data: {
               labels: [tr('gr_approved'), tr('gr_in_progress'), tr('gr_no_grade')],
-              datasets: [{ data: [approved.length, inProg.length, noGrade.length], backgroundColor: ['#3aab7a','#f5a623','#d95f5f'], borderWidth: 0 }]
+              datasets: [{ data: [approved.length, inProg.length, noGrade.length], backgroundColor: ['#557764','#8a7147','#9b5e5e'], borderWidth: 0 }]
             },
             options: {
               responsive: true, maintainAspectRatio: false,

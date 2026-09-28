@@ -68,7 +68,7 @@ function(Store, EngagementCalc, ActionCenter, Templates, Chart) {
       var PENDING_PROFILE_STUDENT = '';
       var SP_SEARCH = '';
     
-      var AV_COLORS = ['#5b9bd5','#8b72d4','#3aab7a','#c98a2a','#d95f5f','#2aafaa','#e07ba0'];
+      var AV_COLORS = ['#49647f','#64758a','#557764','#8a7147','#9b5e5e','#527579','#6a5960'];
     
       function parseDate(log) {
         if (log._ts) return new Date(Number(log._ts) * 1000);
@@ -453,10 +453,10 @@ function(Store, EngagementCalc, ActionCenter, Templates, Chart) {
         function getColor(n) {
           if (n === 0) return 'rgba(0,0,0,.06)';
           var i = n / maxCount;
-          if (i < .25) return '#3aab7a30';
-          if (i < .50) return '#3aab7a60';
-          if (i < .75) return '#3aab7a90';
-          return '#3aab7a';
+          if (i < .25) return '#55776430';
+          if (i < .50) return '#55776460';
+          if (i < .75) return '#55776490';
+          return '#557764';
         }
         var monthMarkers = [];
         weeks.forEach(function (wk, wi) {
@@ -486,10 +486,10 @@ function(Store, EngagementCalc, ActionCenter, Templates, Chart) {
           more: tr('sp_calendar_more'),
           legend: [
             {color:'rgba(0,0,0,.06)'},
-            {color:'#3aab7a30'},
-            {color:'#3aab7a60'},
-            {color:'#3aab7a90'},
-            {color:'#3aab7a'}
+            {color:'#55776430'},
+            {color:'#55776460'},
+            {color:'#55776490'},
+            {color:'#557764'}
           ]
         });
       }
@@ -515,12 +515,12 @@ function(Store, EngagementCalc, ActionCenter, Templates, Chart) {
             datasets: [{
               label: tr('interactions'),
               data: arr.map(function (e) { return e[1]; }),
-              borderColor: '#3aab7a',
+              borderColor: '#557764',
               backgroundColor: 'rgba(58,171,122,.08)',
               fill: true,
               tension: .4,
               pointRadius: 3,
-              pointBackgroundColor: '#3aab7a'
+              pointBackgroundColor: '#557764'
             }]
           },
           options: {
@@ -628,7 +628,7 @@ function(Store, EngagementCalc, ActionCenter, Templates, Chart) {
         var maxS = Math.max.apply(null, spark.concat([1]));
         var sparkSvg = spark.map(function (v, i) {
           var h = Math.max(2, Math.round(v / maxS * 28));
-          var clr = v === 0 ? 'rgba(0,0,0,.12)' : v >= maxS * .7 ? '#3aab7a' : '#5b9bd5';
+          var clr = v === 0 ? 'rgba(0,0,0,.12)' : v >= maxS * .7 ? '#557764' : '#49647f';
           return '<rect x="' + (i * 9) + '" y="' + (30 - h) + '" width="6" height="' + h + '" rx="2" fill="' + clr + '"/>';
         }).join('');
         var initials = name.split(/\s+/).filter(Boolean).slice(0,2).map(function (w) { return w[0]; }).join('').toUpperCase();

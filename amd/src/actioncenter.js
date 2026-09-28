@@ -576,8 +576,8 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
         weekIndexMap.push(w);
       }
       var ptColors=values.map(function(v,i){
-        if(i===0)return '#4f8ef7';
-        return v>values[i-1]?'#3ecf8e':v<values[i-1]?'#f06570':'#4f8ef7';
+        if(i===0)return '#002147';
+        return v>values[i-1]?'#557764':v<values[i-1]?'#9b5e5e':'#002147';
       });
       if(window.mwaRetentionChart){try{window.mwaRetentionChart.destroy();}catch(e){}}
       var wrap=canvas.parentElement;
@@ -590,7 +590,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
         type:'line',
         data:{labels:labels,datasets:[{
           label:tr('active_students'),data:values,
-          borderColor:'#4f8ef7',backgroundColor:'rgba(79,142,247,.10)',
+          borderColor:'#002147',backgroundColor:'rgba(79,142,247,.10)',
           borderWidth:2.5,fill:true,tension:.35,
           pointBackgroundColor:ptColors,pointRadius:5,pointHoverRadius:8
         }]},
@@ -708,8 +708,8 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
       var actionsEl=$('actionsCount');if(actionsEl)actionsEl.textContent=latestActionCount;
       if($('navActionBadge'))$('navActionBadge').textContent=latestActionCount;
       renderTemplate($('actionCardsRow'),'content_inline_html',{bodyhtml:
-        actionCard('urgent',tr('urgent'),neverAccessed.length,neverAccessed.length?tr('ac_never_desc'):tr('ac_no_never_students'),neverAccessed,[],tr('message'),tr('view_list'),'alerts',tr('ac_never_insight'),'','classlist',tr('ac_tip_card_never'))
-        +actionCard('attention',tr('attention'),high.length,high.length?tr('urgent_desc'):tr('no_critical_students'),high,high.slice(0,3).map(function(s){return {name:s.name,value:s.score+'%'}}),tr('message'),tr('view_list'),'alerts',tr('urgent_insight'),'','classlist',tr('ac_tip_card_urgent'))
+        actionCard('urgent',tr('urgent'),neverAccessed.length,neverAccessed.length?tr('ac_never_desc'):tr('ac_no_never_students'),neverAccessed,[],tr('send_message'),tr('view_list'),'alerts',tr('ac_never_insight'),'','classlist',tr('ac_tip_card_never'))
+        +actionCard('attention',tr('attention'),high.length,high.length?tr('urgent_desc'):tr('no_critical_students'),high,high.slice(0,3).map(function(s){return {name:s.name,value:s.score+'%'}}),tr('send_message'),tr('view_list'),'alerts',tr('urgent_insight'),'','classlist',tr('ac_tip_card_urgent'))
         +actionCard('review',tr('ac_review'),lowCoverage.length,lowCoverage.length?tr('attention_desc'):tr('good_engagement'),med,lowCoverage,tr('analyse_activities'),tr('view_list'),'activities',lowCoverage.length?tr('attention_insight'):'','','activities',tr('ac_tip_card_attention'))
         +actionCard('opportunity',tr('opportunity'),peakLabel,peakDesc,[],[],tr('view_heatmap'),tr('view_profiles'),'heatmap',tr('opportunity_insight'),miniHourChart(peak),'classlist',tr('ac_tip_card_opportunity'))});
       renderRetentionCurve();
@@ -1066,8 +1066,8 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
       function ensureFirstNameToken(text){
         var value=String(text||'').trim().replace(/\{\{\s*firstname\s*\}\}/gi,'{firstname}');
         if(/\{firstname\}/i.test(value))return value;
-        value=value.replace(/^\s*(olá|ola|oi)\s*,?\s*(pessoal|turma|estudantes|alunos)\s*[!,.:–—-]*\s*/i,'');
-        return 'Olá, {firstname}!\n\n'+value;
+        value=value.replace(/^\s*(hola|hello|olá|ola|oi)\s*,?\s*(pessoal|turma|estudantes|alunos|students|class)\s*[!,.:–—-]*\s*/i,'');
+        return 'Hola, {firstname}!\n\n'+value;
       }
       function targetItemsHtml(items){
         items=(items||[]).filter(function(item){return item&&item.name;});
@@ -1323,7 +1323,7 @@ define(['block_mwa_dashboard/dashboardstore', 'core/templates',
     }
 window.toggleSelectPriority=toggleSelectPriority;window.openBulkEmail=openBulkEmail;
     
-    function gaugeColor(avg){return avg<40?'#d95f5f':avg<70?'#5b9bd5':'#3aab7a'}
+    function gaugeColor(avg){return avg<40?'#9b5e5e':avg<70?'#49647f':'#557764'}
     function renderSemiGauge(avg,labelText){
       var g=$('gauge');
       if(!g)return;

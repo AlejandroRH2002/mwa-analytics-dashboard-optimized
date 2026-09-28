@@ -563,7 +563,7 @@
 
 /* KPIs no padrão visual dos motivos de intervenção. */
 .block-mwa-dashboard-app #page-heatmap>.hm-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:20px;}
-.block-mwa-dashboard-app #page-heatmap .hm-kpi{--hm-kpi-color:#5b9bd5;--hm-kpi-bg:rgba(91,155,213,.08);--hm-kpi-border:rgba(91,155,213,.27);border-radius:14px;display:flex;flex-direction:column;gap:8px;min-height:132px;overflow:visible;padding:11px 14px 10px;position:relative;}
+.block-mwa-dashboard-app #page-heatmap .hm-kpi{--hm-kpi-color:#49647f;--hm-kpi-bg:rgba(91,155,213,.08);--hm-kpi-border:rgba(91,155,213,.27);border-radius:14px;display:flex;flex-direction:column;gap:8px;min-height:132px;overflow:visible;padding:11px 14px 10px;position:relative;}
 .block-mwa-dashboard-app #page-heatmap .hm-kpi::before{background:transparent;border:0;border-radius:14px;border-top:3px solid var(--hm-kpi-color);bottom:0;box-sizing:border-box;content:"";height:auto;left:0;opacity:0;pointer-events:none;position:absolute;right:0;top:0;transition:opacity .15s;}
 .block-mwa-dashboard-app #page-heatmap .hm-kpi:hover::before,.block-mwa-dashboard-app #page-heatmap .hm-kpi:focus::before{opacity:1;}
 .block-mwa-dashboard-app #page-heatmap .hm-kpi:hover,.block-mwa-dashboard-app #page-heatmap .hm-kpi:focus{background:var(--hm-kpi-bg);border-color:var(--hm-kpi-border);box-shadow:0 4px 16px rgba(0,0,0,.1);}
@@ -571,8 +571,8 @@
 .block-mwa-dashboard-app #page-heatmap .hm-kpi-icon{align-items:center;background:var(--hm-kpi-bg);border:1px solid var(--hm-kpi-border);border-radius:10px;color:var(--hm-kpi-color);display:inline-flex;flex:0 0 40px;font-size:1.25rem;height:40px;justify-content:center;line-height:1;width:40px;}
 .block-mwa-dashboard-app #page-heatmap .hm-kpi-lbl{color:var(--hm-kpi-color);font-size:.78rem;font-weight:900;line-height:1.2;}
 .block-mwa-dashboard-app #page-heatmap .hm-kpi-val{color:var(--hm-kpi-color);font-family:'DM Mono',ui-monospace,monospace;font-size:1.75rem;font-weight:900;line-height:1;margin:auto 0 0;}
-.block-mwa-dashboard-app #page-heatmap .hm-kpi-amber{--hm-kpi-color:#ca861a;--hm-kpi-bg:rgba(202,134,26,.08);--hm-kpi-border:rgba(202,134,26,.27);}
-.block-mwa-dashboard-app #page-heatmap .hm-kpi-blue{--hm-kpi-color:#5b9bd5;--hm-kpi-bg:rgba(91,155,213,.08);--hm-kpi-border:rgba(91,155,213,.27);}
+.block-mwa-dashboard-app #page-heatmap .hm-kpi-amber{--hm-kpi-color:#8a7147;--hm-kpi-bg:rgba(202,134,26,.08);--hm-kpi-border:rgba(202,134,26,.27);}
+.block-mwa-dashboard-app #page-heatmap .hm-kpi-blue{--hm-kpi-color:#49647f;--hm-kpi-bg:rgba(91,155,213,.08);--hm-kpi-border:rgba(91,155,213,.27);}
 .block-mwa-dashboard-app #page-heatmap .hm-kpi-teal{--hm-kpi-color:#20a99a;--hm-kpi-bg:rgba(32,169,154,.08);--hm-kpi-border:rgba(32,169,154,.27);}
 @media(max-width:900px){.block-mwa-dashboard-app #page-heatmap>.hm-kpis{grid-template-columns:repeat(2,minmax(0,1fr));}}
 @media(max-width:520px){.block-mwa-dashboard-app #page-heatmap>.hm-kpis{grid-template-columns:1fr;}}

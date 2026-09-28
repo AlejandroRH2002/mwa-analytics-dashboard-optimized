@@ -456,7 +456,7 @@
 }
 .block-mwa-dashboard-app select option:checked {
   background: linear-gradient(#edf3ff, #edf3ff);
-  color: #1769e0;
+  color: #002147;
   font-weight: 800;
 }
 .block-mwa-dashboard-app select option:disabled {
@@ -569,7 +569,7 @@
 .block-mwa-dashboard-app .mwa-select-option:focus,
 .block-mwa-dashboard-app .mwa-select-option.is-selected {
   background: #edf3ff;
-  color: #1769e0;
+  color: #002147;
   outline: 0;
 }
 .block-mwa-dashboard-app .mwa-select-option:disabled {
