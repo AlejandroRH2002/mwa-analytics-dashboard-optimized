@@ -102,11 +102,48 @@ class block_mwa_dashboard extends block_base {
         }
 
         $this->content = new stdClass();
-        $courseid = $COURSE->id;
+        $courseid = (int)($PAGE->course->id ?? $COURSE->id ?? SITEID);
+        if ($courseid <= SITEID) {
+            $courses = \block_mwa_dashboard\api::get_dashboard_courses();
+            $requestedcourseid = optional_param('course', 0, PARAM_INT);
+            $courseids = array_map(function($course): int {
+                return (int)$course->id;
+            }, $courses);
+
+            if (in_array($requestedcourseid, $courseids, true)) {
+                $courseid = $requestedcourseid;
+            } else if (count($courses) === 1) {
+                $courseid = (int)$courses[0]->id;
+            } else if (count($courses) > 1) {
+                $options = ['' => get_string('choose')];
+                foreach ($courses as $course) {
+                    $options[(int)$course->id] = format_string($course->fullname);
+                }
+                $selector = html_writer::start_tag('form', [
+                    'method' => 'get',
+                    'action' => (new moodle_url('/blocks/mwa_dashboard/view.php'))->out(false),
+                ]) . html_writer::label(get_string('course'), 'mwa-dashboard-course-' . (int)$this->instance->id) .
+                    html_writer::select($options, 'course', '', '', [
+                        'id' => 'mwa-dashboard-course-' . (int)$this->instance->id,
+                        'class' => 'form-select',
+                        'required' => 'required',
+                    ]) . html_writer::tag('button', get_string('opendashboard', 'block_mwa_dashboard'), [
+                        'type' => 'submit',
+                        'class' => 'btn btn-primary mt-2',
+                    ]) . html_writer::end_tag('form');
+                $this->content->text = $selector;
+                $this->content->footer = '';
+                return $this->content;
+            } else {
+                $this->content->text = '';
+                return $this->content;
+            }
+        }
+
         $context  = context_course::instance($courseid);
 
         if (!has_capability('block/mwa_dashboard:view', $context)) {
-            $this->content->text = get_string('nopermission', 'block_mwa_dashboard');
+            $this->content->text = '';
             return $this->content;
         }
 

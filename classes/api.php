@@ -31,6 +31,34 @@ class api {
     private static $excludedcmidcache = [];
 
     /**
+     * Return courses where the current user can view the dashboard.
+     *
+     * @return \stdClass[]
+     */
+    public static function get_dashboard_courses(): array {
+        global $USER;
+
+        $courses = get_user_capability_course(
+            'block/mwa_dashboard:view',
+            $USER->id,
+            false,
+            'fullname, shortname, visible',
+            'fullname ASC'
+        );
+        if (empty($courses)) {
+            return [];
+        }
+
+        foreach ($courses as $key => $course) {
+            if ((int)$course->id <= SITEID) {
+                unset($courses[$key]);
+            }
+        }
+
+        return array_values($courses);
+    }
+
+    /**
      * Check whether capture is enabled globally by the site administrator.
      *
      * @return bool

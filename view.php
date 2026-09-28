@@ -27,7 +27,63 @@ use block_mwa_dashboard\api;
 
 require_once('../../config.php');
 
-$courseid = required_param('course', PARAM_INT);
+$courseid = optional_param('course', 0, PARAM_INT);
+if ($courseid <= SITEID) {
+    $requestedcourseid = optional_param('mwa_courseid', 0, PARAM_INT);
+    require_login();
+    $courses = api::get_dashboard_courses();
+    $courseids = array_map(function($course): int {
+        return (int)$course->id;
+    }, $courses);
+
+    if (in_array($requestedcourseid, $courseids, true)) {
+        $courseid = $requestedcourseid;
+    } else if (count($courses) === 1) {
+        $courseid = (int)$courses[0]->id;
+    } else if (count($courses) > 1) {
+        $PAGE->set_context(context_system::instance());
+        $PAGE->set_url('/blocks/mwa_dashboard/view.php');
+        $PAGE->set_title(get_string('pluginname', 'block_mwa_dashboard'));
+        $PAGE->set_heading(get_string('pluginname', 'block_mwa_dashboard'));
+        $PAGE->set_pagelayout('embedded');
+        $PAGE->set_cacheable(false);
+
+        $options = ['' => get_string('choose')];
+        foreach ($courses as $course) {
+            $options[(int)$course->id] = format_string($course->fullname);
+        }
+        $selector = html_writer::start_tag('form', [
+            'method' => 'get',
+            'action' => (new moodle_url('/blocks/mwa_dashboard/view.php'))->out(false),
+        ]) . html_writer::label(get_string('course'), 'mwa-dashboard-course') .
+            html_writer::select($options, 'mwa_courseid', '', '', [
+                'id' => 'mwa-dashboard-course',
+                'class' => 'form-select',
+                'required' => 'required',
+            ]) . html_writer::tag('button', get_string('opendashboard', 'block_mwa_dashboard'), [
+                'type' => 'submit',
+                'class' => 'btn btn-primary mt-2',
+            ]) . html_writer::end_tag('form');
+
+        echo $OUTPUT->header();
+        echo html_writer::div($selector, 'container mt-4');
+        echo $OUTPUT->footer();
+        exit;
+    } else {
+        $PAGE->set_context(context_system::instance());
+        $PAGE->set_url('/blocks/mwa_dashboard/view.php');
+        $PAGE->set_title(get_string('pluginname', 'block_mwa_dashboard'));
+        $PAGE->set_heading(get_string('pluginname', 'block_mwa_dashboard'));
+        $PAGE->set_pagelayout('embedded');
+        $PAGE->set_cacheable(false);
+        echo $OUTPUT->header();
+        echo $OUTPUT->notification(get_string('nopermission', 'block_mwa_dashboard'),
+            \core\output\notification::NOTIFY_INFO);
+        echo $OUTPUT->footer();
+        exit;
+    }
+}
+
 require_login($courseid);
 
 $context = context_course::instance($courseid);
