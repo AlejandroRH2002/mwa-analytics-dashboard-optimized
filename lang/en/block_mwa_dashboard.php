@@ -1756,3 +1756,7 @@ $string['capture_global_enabled'] = 'Event tracking is enabled site-wide by the 
 $string['capture_activate'] = 'Activate tracking';
 $string['capture_activated'] = 'Event tracking has been activated for this course.';
 $string['capture_inactive_notice'] = 'Tracking for this course is inactive. Ask someone who can edit the course to activate it from the dashboard.';
+
+$string['pl_tag_night'] = 'Night';
+$string['pl_tag_afternoon'] = 'Afternoon';
+$string['pl_tag_daytime'] = 'Daytime';
